@@ -1,0 +1,42 @@
+﻿@page "/UsuarioManagement"
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Spinner
+@using TFG2022Server.Models
+@using TFG2022Server.Services
+@using TFG2022Server.Services.Contracts
+
+@inject IUsuarioManagementService UsuarioManagementService 
+
+<h3>_test</h3>
+
+<div>
+    <SfGrid DataSource="UsuarioData " AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)" Width="80px"></GridColumn>
+            <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Nombre)"></GridColumn>
+            <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Apellidos)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Rol)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Email)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Contraseña)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Telefono)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Dni)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.FechaNacimiento)" Format="d"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+@code {
+    private List<UsuarioModel>? UsuarioData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        UsuarioData = await UsuarioManagementService.GetUsuarios();
+    }
+
+}
