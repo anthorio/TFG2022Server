@@ -20,7 +20,7 @@
             <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)" Width="80px"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Nombre)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Apellidos)"></GridColumn>
-            <GridColumn Field="@nameof(UsuarioModel.Rol)"></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Rol)" ></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Email)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Contraseña)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Telefono)"></GridColumn>
@@ -32,11 +32,13 @@
 
 @code {
     private List<UsuarioModel>? UsuarioData = null;
+    private List<string>? rolUsuarioData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
 
     protected override async Task OnInitializedAsync()
     {
         UsuarioData = await UsuarioManagementService.GetUsuarios();
+        rolUsuarioData = UsuarioManagementService.GetRoles();
     }
 
 }

@@ -14,6 +14,16 @@ namespace TFG2022Server.Services
         {
             this.tfg2022Context = tfg2022Context;
         }
+
+        public List<string> GetRoles()
+        {
+            List<string> lista= new List<string>();
+            lista.Add("1");
+            lista.Add("2");
+            lista.Add("3");
+            return lista;
+        }
+
         public async Task<List<UsuarioModel>> GetUsuarios()
         {
             try

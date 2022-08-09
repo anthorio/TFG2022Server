@@ -5,5 +5,6 @@ namespace TFG2022Server.Services.Contracts
     public interface IUsuarioManagementService
     {
         Task<List<UsuarioModel>> GetUsuarios();
+        List<String> GetRoles();
     }
 }
