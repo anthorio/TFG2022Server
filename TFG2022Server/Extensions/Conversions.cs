@@ -36,5 +36,16 @@ namespace TFG2022Server.Extensions
 
                           }).ToListAsync();
         }
+        public static async Task<List<FamiliaProductoModel>> Convert(this IQueryable<FamiliaProducto> familiaProductos)
+        {
+            return await (from w in familiaProductos
+                          select new FamiliaProductoModel
+                          {
+                              FamiliaID = w.FamiliaID,
+                              Nombre = w.Nombre,
+                              Descripcion = w.Descripcion
+
+                          }).ToListAsync();
+        }
     }
 }

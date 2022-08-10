@@ -1,0 +1,40 @@
+﻿@page "/FamiliaProductoManagement"
+
+
+
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Spinner
+@using TFG2022Server.Models
+@using TFG2022Server.Services
+@using TFG2022Server.Services.Contracts
+
+@inject IFamiliaProductoManagementService FamiliaProductoManagementService
+
+<h3>FamiliaProductoManagement</h3>
+
+<div>
+    <SfGrid DataSource="FamiliaProductoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(FamiliaProductoModel.FamiliaID)"></GridColumn>
+            <GridColumn Field="@nameof(FamiliaProductoModel.Nombre)"></GridColumn>
+            <GridColumn Field="@nameof(FamiliaProductoModel.Descripcion)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+@code {
+    private List<FamiliaProductoModel>? FamiliaProductoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        FamiliaProductoData = await FamiliaProductoManagementService.GetFamiliaProductos();
+    }
+
+}

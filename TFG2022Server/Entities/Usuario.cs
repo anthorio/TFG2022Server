@@ -1,7 +1,10 @@
-﻿namespace TFG2022Server.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TFG2022Server.Entities
 {
     public class Usuario
     {
+        [Key]
         public int UsuarioId { get; set; }
         public string Rol { get; set; } = null!;
         public string Email { get; set; } = null!;

@@ -19,5 +19,6 @@ namespace TFG2022Server.Data
 
         public DbSet<Usuario> Usuarios { get; set; }// = null!;
         public DbSet<Cliente> Clientes { get; set; }// = null!;
+        public DbSet<FamiliaProducto> FamiliaProductos { get; set; }// = null!;
     }
 }
