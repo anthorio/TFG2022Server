@@ -1,0 +1,35 @@
+﻿@page "/LineaFacturaManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject ILineaFacturaManagementService LineaFacturaManagementService
+
+<h3>LineaFacturaManagement</h3>
+
+<div>
+    <SfGrid DataSource="lineaFacturaData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(LineaFacturaModel.LineaFacturaId)"></GridColumn>
+            <GridColumn Field="@nameof(LineaFacturaModel.ProductoLineaFactura)"></GridColumn>
+            <GridColumn Field="@nameof(LineaFacturaModel.FacturaLineaFactura)"></GridColumn>
+            <GridColumn Field="@nameof(LineaFacturaModel.Cantidad)"></GridColumn>
+            <GridColumn Field="@nameof(LineaFacturaModel.Importe)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<LineaFacturaModel>? lineaFacturaData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        lineaFacturaData = await LineaFacturaManagementService.GetLineaFacturaes();
+    }
+
+}

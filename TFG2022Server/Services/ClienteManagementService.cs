@@ -16,8 +16,6 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-
-
         public async Task<List<ClienteModel>> GetClientes()
         {
             try

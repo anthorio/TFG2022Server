@@ -1,0 +1,35 @@
+﻿@page "/LineaPedidoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject ILineaPedidoManagementService LineaPedidoManagementService
+
+<h3>LineaPedidoManagement</h3>
+
+<div>
+    <SfGrid DataSource="lineaPedidoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(LineaPedidoModel.LineaPedidoId)"></GridColumn>
+            <GridColumn Field="@nameof(LineaPedidoModel.PedidoLineaPedido)"></GridColumn>
+            <GridColumn Field="@nameof(LineaPedidoModel.ProductoLineaPedido)"></GridColumn>
+            <GridColumn Field="@nameof(LineaPedidoModel.Cantidad)"></GridColumn>
+            <GridColumn Field="@nameof(LineaPedidoModel.PrecioFinal)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<LineaPedidoModel>? lineaPedidoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        lineaPedidoData = await LineaPedidoManagementService.GetLineaPedidos();
+    }
+
+}

@@ -1,0 +1,33 @@
+﻿@page "/AlbaranManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IAlbaranManagementService AlbaranManagementService
+
+<h3>AlbaranManagement</h3>
+
+<div>
+    <SfGrid DataSource="albaranData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(AlbaranModel.AlbaranId)"></GridColumn>
+            <GridColumn Field="@nameof(AlbaranModel.PedidoAlbaran)"></GridColumn>
+            <GridColumn Field="@nameof(AlbaranModel.FechaEntrega)" Format="d"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<AlbaranModel>? albaranData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        albaranData = await AlbaranManagementService.GetAlbaranes();
+    }
+
+}

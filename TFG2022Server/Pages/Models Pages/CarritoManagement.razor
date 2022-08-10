@@ -1,0 +1,36 @@
+﻿@page "/CarritoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using TFG2022Server.Models
+@using TFG2022Server.Services
+@using TFG2022Server.Services.Contracts
+@using TFG2022Server.Entities
+
+@inject ICarritoManagementService CarritoManagementService
+
+<h3>CarritoManagement</h3>
+
+<div>
+    <SfGrid DataSource="carritoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(CarritoModel.CarritoId)"></GridColumn>
+            <GridColumn Field="@nameof(CarritoModel.UsuarioCarrito)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<CarritoModel>? carritoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        carritoData = await CarritoManagementService.GetCarritos();
+    }
+
+}

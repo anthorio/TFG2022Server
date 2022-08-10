@@ -1,0 +1,35 @@
+﻿@page "/PedidoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IPedidoManagementService PedidoManagementService
+
+<h3>PedidoManagement</h3>
+
+<div>
+    <SfGrid DataSource="pedidoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(PedidoModel.PedidoId)"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.UsuarioPedido)"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.FechaPedido)" Format="d"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.EstadoPedido)"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.TipoEnvio)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<PedidoModel>? pedidoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        pedidoData = await PedidoManagementService.GetPedidoes();
+    }
+
+}

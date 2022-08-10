@@ -1,0 +1,34 @@
+﻿@page "/LineaCarritoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject ILineaCarritoManagementService LineaCarritoManagementService
+
+<h3>LineaCarritoManagement</h3>
+
+<div>
+    <SfGrid DataSource="lineaCarritoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(LineaCarritoModel.LineaCarritoId)"></GridColumn>
+            <GridColumn Field="@nameof(LineaCarritoModel.CarritoLineaCarrito)"></GridColumn>
+            <GridColumn Field="@nameof(LineaCarritoModel.ProductoLineaCarrito)"></GridColumn>
+            <GridColumn Field="@nameof(LineaCarritoModel.Cantidad)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<LineaCarritoModel>? lineaCarritoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        lineaCarritoData = await LineaCarritoManagementService.GetLineaCarritos();
+    }
+
+}

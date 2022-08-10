@@ -1,0 +1,35 @@
+﻿@page "/LineaAlbaranManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject ILineaAlbaranManagementService LineaAlbaranManagementService
+
+<h3>LineaAlbaranManagement</h3>
+
+<div>
+    <SfGrid DataSource="lineaAlbaranData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(LineaAlbaranModel.LineaAlbaranId)"></GridColumn>
+            <GridColumn Field="@nameof(LineaAlbaranModel.AlbaranLineaAlbaran)"></GridColumn>
+            <GridColumn Field="@nameof(LineaAlbaranModel.LineaPedidoLineaAlbaran)"></GridColumn>
+            <GridColumn Field="@nameof(LineaAlbaranModel.Cantidad)"></GridColumn>
+            <GridColumn Field="@nameof(LineaAlbaranModel.Importe)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<LineaAlbaranModel>? lineaAlbaranData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        lineaAlbaranData = await LineaAlbaranManagementService.GetLineaAlbaranes();
+    }
+
+}

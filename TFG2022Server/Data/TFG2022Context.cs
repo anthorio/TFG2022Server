@@ -17,8 +17,19 @@ namespace TFG2022Server.Data
             SeedData.AddUsuarioData(modelBuilder);
         }
 
-        public DbSet<Usuario> Usuarios { get; set; }// = null!;
+        public DbSet<Albaran> Albaranes { get; set; }// = null!;
+        public DbSet<Carrito> Carritos { get; set; }
         public DbSet<Cliente> Clientes { get; set; }// = null!;
-        public DbSet<FamiliaProducto> FamiliaProductos { get; set; }// = null!;
+        public DbSet<Factura> Facturas { get; set; }
+        public DbSet<FamiliaProducto> FamiliaProductos { get; set; }
+        public DbSet<LineaAlbaran> LineaAlbaranes { get; set; }
+        public DbSet<LineaCarrito> LineaCarritos { get; set; }
+        public DbSet<LineaFactura> LineaFacturas { get; set; }
+        public DbSet<LineaPedido> LineaPedidos { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Proveedor> Proveedores { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }// = null!;
     }
 }

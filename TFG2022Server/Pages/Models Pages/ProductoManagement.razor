@@ -1,0 +1,38 @@
+﻿@page "/ProductoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IProductoManagementService ProductoManagementService
+
+<h3>ProductoManagement</h3>
+
+<div>
+    <SfGrid DataSource="productoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(ProductoModel.ProductoId)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.FamiliaProductoProducto)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.ProveedorProducto)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Nombre)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Descripcion)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Cantidad)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Precio)"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.UrlImagen)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<ProductoModel>? productoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        productoData = await ProductoManagementService.GetProductoes();
+    }
+
+}

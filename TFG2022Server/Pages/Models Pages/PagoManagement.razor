@@ -1,0 +1,35 @@
+﻿@page "/PagoManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IPagoManagementService PagoManagementService
+
+<h3>PagoManagement</h3>
+
+<div>
+    <SfGrid DataSource="pagoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(PagoModel.PagoId)"></GridColumn>
+            <GridColumn Field="@nameof(PagoModel.FacturaPago)"></GridColumn>
+            <GridColumn Field="@nameof(PagoModel.Fecha)" Format="d"></GridColumn>
+            <GridColumn Field="@nameof(PagoModel.Cantidad)"></GridColumn>
+            <GridColumn Field="@nameof(PagoModel.Observaciones)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<PagoModel>? pagoData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        pagoData = await PagoManagementService.GetPagoes();
+    }
+
+}

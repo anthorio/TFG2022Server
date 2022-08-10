@@ -1,0 +1,37 @@
+﻿@page "/FacturaManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IFacturaManagementService FacturaManagementService
+
+<h3>FacturaManagement</h3>
+
+<div>
+    <SfGrid DataSource="facturaData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(FacturaModel.FacturaId)"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.PedidoFactura)"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.InfoPedido)"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.FechaFactura)" Format="d"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.Iva)"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.Total)"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.EstadoFactura)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<FacturaModel>? facturaData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        facturaData = await FacturaManagementService.GetFacturas();
+    }
+
+}

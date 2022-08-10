@@ -1,0 +1,37 @@
+﻿@page "/ProveedorManagement"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+
+@inject IProveedorManagementService ProveedorManagementService
+
+<h3>ProveedorManagement</h3>
+
+<div>
+    <SfGrid DataSource="proveedorData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridPageSettings PageSize="5"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(ProveedorModel.ProveedorId)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.Nombre)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.Descripcion)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.Direccion)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.CodigoPostal)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.Telefono)"></GridColumn>
+            <GridColumn Field="@nameof(ProveedorModel.Email)"></GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+
+
+@code {
+    private List<ProveedorModel>? proveedorData = null;
+    private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        proveedorData = await ProveedorManagementService.GetProveedores();
+    }
+
+}
