@@ -22,5 +22,19 @@ namespace TFG2022Server.Extensions
                               FechaNacimiento=w.FechaNacimiento
                           }).ToListAsync();
         }
+        public static async Task<List<ClienteModel>> Convert(this IQueryable<Cliente> clientes)
+        {
+            return await (from w in clientes
+                          select new ClienteModel
+                          {
+                            ClienteId = w.ClienteId,
+                            Direccion = w.Direccion,
+                            Poblacion = w.Poblacion,
+                            CodigoPostal = w.CodigoPostal,
+                            Descuento = w.Descuento,
+                            UsuarioIdCliente = w.UsuarioIdCliente
+
+                          }).ToListAsync();
+        }
     }
 }

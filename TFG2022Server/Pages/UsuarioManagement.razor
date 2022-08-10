@@ -9,7 +9,7 @@
 
 @inject IUsuarioManagementService UsuarioManagementService 
 
-<h3>_test</h3>
+<h3>Usuarios</h3>
 
 <div>
     <SfGrid DataSource="UsuarioData " AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
@@ -17,7 +17,7 @@
         <GridPageSettings PageSize="5"></GridPageSettings>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)" Width="80px"></GridColumn>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Nombre)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Apellidos)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Rol)" ></GridColumn>
