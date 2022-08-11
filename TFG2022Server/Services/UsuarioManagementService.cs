@@ -15,13 +15,9 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-        public List<string> GetRoles()
+        public string[] GetRoles()
         {
-            List<string> lista= new List<string>();
-            lista.Add("1");
-            lista.Add("2");
-            lista.Add("3");
-            return lista;
+            return new string[] { "rol1", "rol2", "rol3" }; ;
         }
 
         public async Task<List<UsuarioModel>> GetUsuarios()
@@ -30,7 +26,7 @@ namespace TFG2022Server.Services
             {
                 return await this.tfg2022Context.Usuarios.Convert();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }

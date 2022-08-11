@@ -7,20 +7,26 @@
 @using TFG2022Server.Services
 @using TFG2022Server.Services.Contracts
 
-@inject IUsuarioManagementService UsuarioManagementService 
+@inject IUsuarioManagementService UsuarioManagementService
 
 <h3>Usuarios</h3>
 
 <div>
     <SfGrid DataSource="UsuarioData " AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
-        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true"></GridEditSettings> @* Para crear y editar, mejor en una ventan aparte *@
         <GridPageSettings PageSize="5"></GridPageSettings>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
             <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Nombre)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Apellidos)"></GridColumn>
-            <GridColumn Field="@nameof(UsuarioModel.Rol)" ></GridColumn>
+            <GridColumn Field="@nameof(UsuarioModel.Rol)">
+                <EditTemplate>
+                    <SfDropDownList DataSource="rolUsuarioData" TItem="string" TValue="string"
+                        @bind-value = "@((context as UsuarioModel).Rol)">
+                    </SfDropDownList>
+                </EditTemplate>
+            </GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Email)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Contraseña)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Telefono)"></GridColumn>
@@ -32,7 +38,8 @@
 
 @code {
     private List<UsuarioModel>? UsuarioData = null;
-    private List<string>? rolUsuarioData = null;
+    private string[]? rolUsuarioData = null;
+
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
 
     protected override async Task OnInitializedAsync()
