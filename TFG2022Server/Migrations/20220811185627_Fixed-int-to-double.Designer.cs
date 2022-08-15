@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFG2022Server.Data;
 
@@ -11,9 +12,10 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    partial class TFG2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20220811185627_Fixed-int-to-double")]
+    partial class Fixedinttodouble
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,7 +437,7 @@ namespace TFG2022Server.Migrations
                             Contraseña = "9shjdc78",
                             Dni = "12457896G",
                             Email = "sdasdf@sdkfjsd.com",
-                            FechaNacimiento = new DateTime(2022, 8, 11, 21, 28, 26, 437, DateTimeKind.Local).AddTicks(922),
+                            FechaNacimiento = new DateTime(2022, 8, 11, 20, 56, 27, 321, DateTimeKind.Local).AddTicks(9537),
                             Nombre = "Alberto",
                             Rol = "cliente",
                             Telefono = 154789632

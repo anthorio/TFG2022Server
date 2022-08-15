@@ -27,5 +27,10 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public string[] GetTiposPedido()
+        {
+            return Constants.TiposPedido;
+        }
     }
 }

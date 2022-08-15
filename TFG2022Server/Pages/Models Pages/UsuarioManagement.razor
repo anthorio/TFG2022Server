@@ -33,19 +33,23 @@
             <GridColumn Field="@nameof(UsuarioModel.Dni)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.FechaNacimiento)" Format="d"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
 @code {
     private List<UsuarioModel>? UsuarioData = null;
     private string[]? rolUsuarioData = null;
+    private bool VisibleSpinner { get; set; } = false;
 
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         UsuarioData = await UsuarioManagementService.GetUsuarios();
         rolUsuarioData = UsuarioManagementService.GetRoles();
+        VisibleSpinner = false;
     }
 
 }

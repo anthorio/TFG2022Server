@@ -9,6 +9,6 @@ namespace TFG2022Server.Entities
         public int PedidoLineaPedido { get; set; }
         public int ProductoLineaPedido { get; set; }
         public int Cantidad { get; set; }
-        public int PrecioFinal { get; set; }
+        public double PrecioFinal { get; set; }
     }
 }

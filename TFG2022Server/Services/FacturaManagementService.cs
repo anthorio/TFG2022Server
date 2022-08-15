@@ -16,6 +16,11 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
+        public string[] GetEstadosFactura()
+        {
+            return Constants.EstadosFactura;
+        }
+
         public async Task<List<FacturaModel>> GetFacturas()
         {
             try

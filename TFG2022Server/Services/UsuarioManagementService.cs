@@ -17,7 +17,7 @@ namespace TFG2022Server.Services
 
         public string[] GetRoles()
         {
-            return new string[] { "rol1", "rol2", "rol3" }; ;
+            return Constants.UsuarioRoles;
         }
 
         public async Task<List<UsuarioModel>> GetUsuarios()
