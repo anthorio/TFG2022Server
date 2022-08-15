@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
 
 @inject ILineaCarritoManagementService LineaCarritoManagementService
 
@@ -18,6 +19,7 @@
             <GridColumn Field="@nameof(LineaCarritoModel.ProductoLineaCarrito)"></GridColumn>
             <GridColumn Field="@nameof(LineaCarritoModel.Cantidad)"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -25,10 +27,13 @@
 @code {
     private List<LineaCarritoModel>? lineaCarritoData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         lineaCarritoData = await LineaCarritoManagementService.GetLineaCarritos();
+        VisibleSpinner = false;
     }
 
 }

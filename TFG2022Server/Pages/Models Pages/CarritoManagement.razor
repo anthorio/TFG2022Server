@@ -6,6 +6,7 @@
 @using TFG2022Server.Services
 @using TFG2022Server.Services.Contracts
 @using TFG2022Server.Entities
+@using Syncfusion.Blazor.Spinner
 
 @inject ICarritoManagementService CarritoManagementService
 
@@ -20,6 +21,7 @@
             <GridColumn IsPrimaryKey="true" Field="@nameof(CarritoModel.CarritoId)"></GridColumn>
             <GridColumn Field="@nameof(CarritoModel.UsuarioCarrito)"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -27,10 +29,13 @@
 @code {
     private List<CarritoModel>? carritoData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         carritoData = await CarritoManagementService.GetCarritos();
+        VisibleSpinner = false;
     }
 
 }

@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
 
 @inject IAlbaranManagementService AlbaranManagementService
 
@@ -17,6 +18,7 @@
             <GridColumn Field="@nameof(AlbaranModel.PedidoAlbaran)"></GridColumn>
             <GridColumn Field="@nameof(AlbaranModel.FechaEntrega)" Format="d"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -24,10 +26,13 @@
 @code {
     private List<AlbaranModel>? albaranData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+        private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         albaranData = await AlbaranManagementService.GetAlbaranes();
+        VisibleSpinner = false;
     }
 
 }

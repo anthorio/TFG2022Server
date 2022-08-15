@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
 
 @inject IProductoManagementService ProductoManagementService
 
@@ -22,6 +23,7 @@
             <GridColumn Field="@nameof(ProductoModel.Precio)"></GridColumn>
             <GridColumn Field="@nameof(ProductoModel.UrlImagen)"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -29,10 +31,13 @@
 @code {
     private List<ProductoModel>? productoData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         productoData = await ProductoManagementService.GetProductos();
+        VisibleSpinner = false;
     }
 
 }

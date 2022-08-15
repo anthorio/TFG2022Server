@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
 
 @inject IPagoManagementService PagoManagementService
 
@@ -19,6 +20,7 @@
             <GridColumn Field="@nameof(PagoModel.Cantidad)"></GridColumn>
             <GridColumn Field="@nameof(PagoModel.Observaciones)"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -26,10 +28,13 @@
 @code {
     private List<PagoModel>? pagoData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         pagoData = await PagoManagementService.GetPagos();
+        VisibleSpinner = false;
     }
 
 }

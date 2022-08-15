@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
 
 @inject ILineaPedidoManagementService LineaPedidoManagementService
 
@@ -19,6 +20,7 @@
             <GridColumn Field="@nameof(LineaPedidoModel.Cantidad)"></GridColumn>
             <GridColumn Field="@nameof(LineaPedidoModel.PrecioFinal)"></GridColumn>
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -26,10 +28,13 @@
 @code {
     private List<LineaPedidoModel>? lineaPedidoData = null;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         lineaPedidoData = await LineaPedidoManagementService.GetLineaPedidos();
+        VisibleSpinner = false;
     }
 
 }

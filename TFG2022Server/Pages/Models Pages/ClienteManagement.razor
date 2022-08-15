@@ -6,6 +6,7 @@
 @using TFG2022Server.Services
 @using TFG2022Server.Services.Contracts
 @using TFG2022Server.Entities
+@using Syncfusion.Blazor.Spinner
 
 @inject IClienteManagementService ClienteManagementService
 
@@ -41,6 +42,7 @@
             </GridForeignColumn>
 *@
         </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
 </div>
 
@@ -49,11 +51,14 @@
     private List<ClienteModel>? ClienteData = null;
     private List<Usuario>? ClienteUsuarioData;
     private List<object> toolbar = new List<object> { "Add", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        VisibleSpinner = true;
         ClienteData = await ClienteManagementService.GetClientes();
         ClienteUsuarioData = await ClienteManagementService.GetUsuarios();
+        VisibleSpinner = false;
     }
 
 }
