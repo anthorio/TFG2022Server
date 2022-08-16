@@ -12,18 +12,19 @@
 <h3>Usuarios</h3>
 
 <div>
-    <SfGrid DataSource="UsuarioData " AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
-        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true"></GridEditSettings> @* Para crear y editar, mejor en una ventan aparte *@
-        <GridPageSettings PageSize="5"></GridPageSettings>
+    <SfGrid @ref="SfUsuarioGrid" DataSource="UsuarioData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="false" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings> @* Para crear y editar, mejor en una ventan aparte *@
+        <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="UsuarioModel"></GridEvents>
+        <GridPageSettings PageSize="10" PageCount="5"></GridPageSettings>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)"></GridColumn>
+            <GridColumn AllowAdding="false" AllowEditing="false" IsPrimaryKey="true" Field="@nameof(UsuarioModel.UsuarioId)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Nombre)"></GridColumn>
             <GridColumn HeaderText="Nombre" Field="@nameof(UsuarioModel.Apellidos)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Rol)">
                 <EditTemplate>
                     <SfDropDownList DataSource="rolUsuarioData" TItem="string" TValue="string"
-                        @bind-value = "@((context as UsuarioModel).Rol)">
+                                    @bind-value="@((context as UsuarioModel).Rol)">
                     </SfDropDownList>
                 </EditTemplate>
             </GridColumn>
@@ -41,6 +42,8 @@
     private List<UsuarioModel>? UsuarioData = null;
     private string[]? rolUsuarioData = null;
     private bool VisibleSpinner { get; set; } = false;
+    private SfGrid<UsuarioModel>? SfUsuarioGrid { get; set; }
+
 
     private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
 
@@ -50,6 +53,37 @@
         UsuarioData = await UsuarioManagementService.GetUsuarios();
         rolUsuarioData = UsuarioManagementService.GetRoles();
         VisibleSpinner = false;
+    }
+
+    public async void ActionBeginHandler(ActionEventArgs<UsuarioModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await UsuarioManagementService.AddUsuario(args.Data);
+            }
+            else if (args.Action == "Edit")
+            {
+                await UsuarioManagementService.UpdateUsuario(args.Data);
+            }
+        }
+        else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await UsuarioManagementService.DeleteUsuario(args.Data.UsuarioId);
+        }
+    }
+    public async void ActionCompleteHandler(ActionEventArgs<UsuarioModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                UsuarioData = await UsuarioManagementService.GetUsuarios();
+                SfUsuarioGrid?.Refresh();
+            }
+
+        }
     }
 
 }

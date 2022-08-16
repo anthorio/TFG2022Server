@@ -195,7 +195,7 @@ namespace TFG2022Server.Extensions
                           select new ProveedorModel
                           {
                               ProveedorId = w.ProveedorId,
-                              Nombre= w.Nombre,
+                              Nombre = w.Nombre,
                               Descripcion = w.Descripcion,
                               Direccion = w.Direccion,
                               CodigoPostal = w.CodigoPostal,
@@ -205,5 +205,20 @@ namespace TFG2022Server.Extensions
                           }).ToListAsync();
         }
 
+        public static Usuario Convert(this UsuarioModel usuarioModel)
+        {
+            return new Usuario
+            {
+                // UsuarioId = usuarioModel.UsuarioId, ? hace falta ?
+                Rol = usuarioModel.Rol,
+                Email = usuarioModel.Email,
+                Contraseña = usuarioModel.Contraseña,
+                Nombre = usuarioModel.Nombre,
+                Apellidos = usuarioModel.Apellidos,
+                Telefono = usuarioModel.Telefono,
+                Dni = usuarioModel.Dni.ToUpper(),
+                FechaNacimiento = usuarioModel.FechaNacimiento
+            };
+        }
     }
 }
