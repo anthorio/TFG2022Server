@@ -33,6 +33,15 @@
             <GridColumn Field="@nameof(UsuarioModel.Telefono)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.Dni)"></GridColumn>
             <GridColumn Field="@nameof(UsuarioModel.FechaNacimiento)" Format="d"></GridColumn>
+          @*   <GridColumn HeaderText="Operations" Width="60">
+               <GridCommandColumns>
+                    <GridCommandColumn Type="CommandButtonType.Edit" ButtonOption="@(new CommandButtonOptions(){ IconCss = "e-icons e-edit", CssClass ="e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Delete" ButtonOption="@(new CommandButtonOptions(){ IconCss = "e-icons e-delete", CssClass ="e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Save" ButtonOption="@(new CommandButtonOptions(){ IconCss = "e-icons e-update", CssClass ="e-flat" })"></GridCommandColumn>
+                    <GridCommandColumn Type="CommandButtonType.Cancel" ButtonOption="@(new CommandButtonOptions(){ IconCss = "e-icons e-cancel-icon", CssClass ="e-flat" })"></GridCommandColumn>
+                     explica cómo meter comandos personalizados aquí https://youtu.be/xO17P9LVkK0?t=9547 
+                </GridCommandColumns>
+            </GridColumn>*@
         </GridColumns>
         <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>
