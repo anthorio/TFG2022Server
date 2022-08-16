@@ -12,9 +12,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Syncfusion.Blazor.Core" Version="20.2.0.43" />
-    <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.43" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.43" />
+    <PackageReference Include="Syncfusion.Blazor.Core" Version="20.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Lists" Version="20.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.44" />
   </ItemGroup>
 
 </Project>

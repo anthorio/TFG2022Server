@@ -20,7 +20,8 @@ namespace TFG2022Server.Services
         {
             try
             {
-                return await this.tfg2022Context.Productos.Convert();
+                //return await this.tfg2022Context.Productos.Convert();
+                return await this.tfg2022Context.Productos.Convert(tfg2022Context);
             }
             catch (Exception)
             {

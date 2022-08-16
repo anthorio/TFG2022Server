@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TFG2022Server.Entities;
 using TFG2022Server.Models;
+using TFG2022Server.Data;
 
 namespace TFG2022Server.Extensions
 {
@@ -186,6 +187,24 @@ namespace TFG2022Server.Extensions
                               Precio = w.Precio,
                               UrlImagen = w.UrlImagen
 
+                          }).ToListAsync();
+        }
+
+        public static async Task<List<ProductoModel>> Convert(this IQueryable<Producto> Products, TFG2022Context context)
+        {
+            return await (from prod in Products
+                          join familiaProd in context.FamiliaProductos
+                          on prod.FamiliaProductoProducto equals familiaProd.FamiliaID
+                          select new ProductoModel
+                          {
+                              ProductoId = prod.ProductoId,
+                              FamiliaProductoProducto = prod.FamiliaProductoProducto,
+                              ProveedorProducto = prod.ProveedorProducto,
+                              Nombre = prod.Nombre,
+                              Descripcion = prod.Descripcion,
+                              Cantidad = prod.Cantidad,
+                              Precio = prod.Precio,
+                              UrlImagen = prod.UrlImagen
                           }).ToListAsync();
         }
 

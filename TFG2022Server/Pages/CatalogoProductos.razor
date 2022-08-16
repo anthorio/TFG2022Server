@@ -1,0 +1,30 @@
+﻿@page "/CatalogoProductos"
+@using Syncfusion.Blazor.Lists
+@inject IProductoManagementService ProductoService
+
+<h3>CatalogoProductos</h3>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <SfListView DataSource="ProductoData">
+            <ListViewFieldSettings TValue="ProductoModel" Id="ProductoId" Text="Nombre"
+                                   GroupBy="FamiliaProductoProducto"></ListViewFieldSettings>
+            <ListViewTemplates TValue="ProductoModel">
+                <GroupTemplate>
+                    <h4>@context.Text</h4>
+                </GroupTemplate>
+            </ListViewTemplates>
+
+        </SfListView>
+    </div>
+</div>
+
+@code {
+    private List<ProductoModel> ProductoData { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProductoData = await ProductoService.GetProductos();
+    }
+}
