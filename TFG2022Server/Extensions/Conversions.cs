@@ -39,6 +39,26 @@ namespace TFG2022Server.Extensions
                           }).ToListAsync();
         }
 
+        public static async Task<List<UsuarioModel>> Convert(this IQueryable<Usuario> usuarios, TFG2022Context context)
+        {
+            return await (from u in usuarios
+                          join r in context.Carritos
+                          on u.UsuarioId equals r.UsuarioCarrito
+                          select new UsuarioModel
+                          {
+                              UsuarioId = u.UsuarioId,
+                              Rol = u.Rol,
+                              Email = u.Email,
+                              Contraseña = u.Contraseña,
+                              Nombre = u.Nombre,
+                              Apellidos = u.Apellidos,
+                              Telefono = u.Telefono,
+                              Dni = u.Dni,
+                              FechaNacimiento = u.FechaNacimiento
+
+                          }).ToListAsync();
+        }
+
         public static async Task<List<FamiliaProductoModel>> Convert(this IQueryable<FamiliaProducto> familiaProductos)
         {
             return await (from w in familiaProductos

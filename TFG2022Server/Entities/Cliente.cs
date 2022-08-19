@@ -9,7 +9,7 @@ namespace TFG2022Server.Entities
         public int ClienteId { get; set; }
         public string Direccion { get; set; } = null!;
         public string Poblacion { get; set; } = null!;
-        public int CodigoPostal { get; set; }
+        public string CodigoPostal { get; set; } = null!;
         public int Descuento { get; set; }
         public int UsuarioIdCliente { get; set; }
     }

@@ -12,12 +12,12 @@ namespace TFG2022Server.Data
             {
                 UsuarioId = 1,
                 Rol = "cliente",
-                Email= "sdasdf@sdkfjsd.com",
-                Contraseña= "9shjdc78",
-                Nombre= "Alberto",
+                Email = "sdasdf@sdkfjsd.com",
+                Contraseña = "9shjdc78",
+                Nombre = "Alberto",
                 Apellidos = "Perico",
-                Telefono= 154789632,
-                Dni= "12457896G",
+                Telefono = "123123123",
+                Dni = "12457896G",
                 FechaNacimiento = DateTime.Now,
 
             });
@@ -29,7 +29,7 @@ namespace TFG2022Server.Data
                 Contraseña = "asdasd",
                 Nombre = "pepep",
                 Apellidos = "lololol",
-                Telefono = 678867678,
+                Telefono = "678867678",
                 Dni = "14728539M",
                 FechaNacimiento = DateTime.Parse("10 Feb 1974"),
 
@@ -42,7 +42,7 @@ namespace TFG2022Server.Data
                 Contraseña = "312789adshjk",
                 Nombre = "Yoigo",
                 Apellidos = "Frefre",
-                Telefono = 123789798,
+                Telefono = "123789798",
                 Dni = "123890756D",
                 FechaNacimiento = DateTime.Parse("28 Feb 2000"),
 
@@ -54,8 +54,8 @@ namespace TFG2022Server.Data
                 ClienteId = 1,
                 Direccion = "Nerja noseque nosecuanto",
                 Poblacion = "Nerja",
-                CodigoPostal = 19285,
-                Descuento= 20,
+                CodigoPostal = "19285",
+                Descuento = 20,
                 UsuarioIdCliente = 1,
 
             });
@@ -65,7 +65,7 @@ namespace TFG2022Server.Data
                 ClienteId = 2,
                 Direccion = "Servilla cale noseweqe avenida tu",
                 Poblacion = "Torre",
-                CodigoPostal = 79852,
+                CodigoPostal = "79852",
                 Descuento = 50,
                 UsuarioIdCliente = 2,
 
@@ -75,12 +75,12 @@ namespace TFG2022Server.Data
                 ClienteId = 3,
                 Direccion = "Torremolainos bar misisipi",
                 Poblacion = "Torremolinos",
-                CodigoPostal = 59267,
+                CodigoPostal = "59267",
                 Descuento = 10,
                 UsuarioIdCliente = 3,
 
             });
-            
+
 
         }
     }

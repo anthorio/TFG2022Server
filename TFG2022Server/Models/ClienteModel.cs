@@ -11,7 +11,8 @@ namespace TFG2022Server.Models
         [Required]
         public string Poblacion { get; set; } = null!;
         [Required]
-        public int CodigoPostal { get; set; }
+        [StringLength(5, ErrorMessage = "The {0} value must have 5 characters.", MinimumLength = 5)]
+        public string CodigoPostal { get; set; } = null!;
         [Required]
         public int Descuento { get; set; }
         [Required]

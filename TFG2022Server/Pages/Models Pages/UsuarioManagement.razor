@@ -57,7 +57,7 @@
     protected override async Task OnInitializedAsync()
     {
         VisibleSpinner = true;
-        UsuarioData = await UsuarioManagementService.GetUsuarios();
+        UsuarioData = await UsuarioManagementService.GetAllUsuarios();
         rolUsuarioData = UsuarioManagementService.GetRoles();
         VisibleSpinner = false;
     }
@@ -86,7 +86,7 @@
         {
             if (args.Action == "Add")
             {
-                UsuarioData = await UsuarioManagementService.GetUsuarios();
+                UsuarioData = await UsuarioManagementService.GetAllUsuarios();
                 SfUsuarioGrid?.Refresh();
             }
 

@@ -26,6 +26,19 @@ namespace TFG2022Server.Services
         {
             try
             {
+                return await this.tfg2022Context.Usuarios.Convert(tfg2022Context);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<UsuarioModel>> GetAllUsuarios()
+        {
+            try
+            {
                 return await this.tfg2022Context.Usuarios.Convert();
             }
             catch (Exception)

@@ -11,7 +11,7 @@ namespace TFG2022Server.Entities
         public string Contraseña { get; set; } = null!;
         public string Nombre { get; set; } = null!;
         public string Apellidos { get; set; } = null!;
-        public int Telefono { get; set; }
+        public string Telefono { get; set; } = null!;
         public string Dni { get; set; } = null!;
         public DateTime FechaNacimiento { get; set; }
     }

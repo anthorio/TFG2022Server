@@ -5,6 +5,7 @@ namespace TFG2022Server.Services.Contracts
 {
     public interface IUsuarioManagementService
     {
+        Task<List<UsuarioModel>> GetAllUsuarios();
         Task<List<UsuarioModel>> GetUsuarios();
         string[] GetRoles();
         Task<Usuario> AddUsuario(UsuarioModel usuarioMod);

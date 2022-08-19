@@ -19,7 +19,8 @@ namespace TFG2022Server.Models
         [Required]
         public string Contraseña { get; set; } = null!;
         [Required]
-        public int Telefono { get; set; }
+        [StringLength(9, ErrorMessage = "The {0} value must have 9 characters.", MinimumLength = 9)]
+        public string Telefono { get; set; } = null!;
         [Required]
         [StringLength(9, ErrorMessage = "The {0} value must have 9 characters.", MinimumLength = 9)]
         public string Dni { get; set; } = null!;

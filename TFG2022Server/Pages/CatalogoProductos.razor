@@ -1,30 +1,69 @@
 ﻿@page "/CatalogoProductos"
 @using Syncfusion.Blazor.Lists
+@using Syncfusion.Blazor.DropDowns
+@using System.Globalization
 @inject IProductoManagementService ProductoService
+@inject IUsuarioManagementService UsuarioManagementService
 
 <h3>CatalogoProductos</h3>
 
 <div class="row mt-3">
     <div class="col-12">
-        <SfListView DataSource="ProductoData">
+        <SfComboBox CssClass="usuario-combo" DataSource="UsuarioData" TValue="int" TItem="UsuarioModel" @bind-Value="SelectedUsuarioId">
+            <ComboBoxFieldSettings Text="Nombre" Value="UsuarioId"></ComboBoxFieldSettings>
+        </SfComboBox>
+    </div>
+    <div class="col-12">
+        <SfListView ShowCheckBox="true" DataSource="ProductoData" CssClass="e-list-template listview-template">
             <ListViewFieldSettings TValue="ProductoModel" Id="ProductoId" Text="Nombre"
                                    GroupBy="FamiliaProductoProducto"></ListViewFieldSettings>
             <ListViewTemplates TValue="ProductoModel">
-                <GroupTemplate>
-                    <h4>@context.Text</h4>
-                </GroupTemplate>
+                <Template>
+                    <div class="e-list-wrapper e-list-multi-line">
+                        <span class="e-list-content">
+                            <img src="@context.UrlImagen" class="img-class"> 
+                        </span>
+                        <span class="e-list-content"><h5>@context.Nombre</h5></span>
+                        <span class="e-list-content"><b>@context.Precio.ToString("C",CultureInfo.CreateSpecificCulture("es-ES"))</b></span>
+                        <span class="e-list-content">@context.Descripcion</span>
+                    </div>
+                </Template>
             </ListViewTemplates>
 
         </SfListView>
     </div>
 </div>
 
+<style>
+    .listview-template{
+        border-radius: 2px;
+        height: 470px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        padding:20px;
+    }
+    .img-class{
+        height:90px;
+        width:150px;
+    }
+    .usuario-combo{
+        max-width:800px;
+    }
+</style>
+
 @code {
     private List<ProductoModel> ProductoData { get; set; }
+    private List<UsuarioModel> UsuarioData{ get; set; }
+    private int SelectedUsuarioId { get; set; } = 1;
+
 
 
     protected override async Task OnInitializedAsync()
     {
         ProductoData = await ProductoService.GetProductos();
+        UsuarioData = await UsuarioManagementService.GetUsuarios();
+    @*
+        La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto. Se usa
+        *@
     }
+
 }
