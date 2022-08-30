@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface ILineaPedidoManagementService
+    public interface ILineaPedidoService
     {
         Task<List<LineaPedidoModel>> GetLineaPedidos();
     }

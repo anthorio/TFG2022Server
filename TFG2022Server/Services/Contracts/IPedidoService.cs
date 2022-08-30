@@ -2,9 +2,10 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IPedidoManagementService
+    public interface IPedidoService
     {
         Task<List<PedidoModel>> GetPedidos();
         string[] GetTiposPedido();
+        Task CreatePedido(PedidoModel pedidoModel);
     }
 }

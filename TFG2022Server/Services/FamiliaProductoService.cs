@@ -7,20 +7,20 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class ProveedorManagementService : IProveedorManagementService
+    public class FamiliaProductoService : IFamiliaProductoService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public ProveedorManagementService(TFG2022Context tfg2022Context)
+        public FamiliaProductoService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<ProveedorModel>> GetProveedores()
+        public async Task<List<FamiliaProductoModel>> GetFamiliaProductos()
         {
             try
             {
-                return await this.tfg2022Context.Proveedores.Convert();
+                return await this.tfg2022Context.FamiliaProductos.Convert();
             }
             catch (Exception)
             {

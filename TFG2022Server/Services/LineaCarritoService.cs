@@ -7,20 +7,20 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class LineaFacturaManagementService : ILineaFacturaManagementService
+    public class LineaCarritoService : ILineaCarritoService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public LineaFacturaManagementService(TFG2022Context tfg2022Context)
+        public LineaCarritoService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<LineaFacturaModel>> GetLineaFacturas()
+        public async Task<List<LineaCarritoModel>> GetLineaCarritos()
         {
             try
             {
-                return await this.tfg2022Context.LineaFacturas.Convert();
+                return await this.tfg2022Context.LineaCarritos.Convert();
             }
             catch (Exception)
             {

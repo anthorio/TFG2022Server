@@ -3,7 +3,7 @@ using TFG2022Server.Models;
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IClienteManagementService
+    public interface IClienteService
     {
         Task<List<ClienteModel>> GetClientes();
         Task<List<Usuario>> GetUsuarios();

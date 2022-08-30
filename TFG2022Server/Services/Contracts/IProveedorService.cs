@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IProveedorManagementService
+    public interface IProveedorService
     {
         Task<List<ProveedorModel>> GetProveedores();
     }

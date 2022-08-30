@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TFG2022Server.Entities;
 
 namespace TFG2022Server.Models
 {
@@ -14,5 +15,8 @@ namespace TFG2022Server.Models
         public string EstadoPedido { get; set; }
         [Required]
         public string TipoEnvio { get; set; }
+        public List<LineaPedido> LineasPedido { get; set; }
+        public double PrecioTotal { get; set; }
+        public int CantidadTotal { get; set; }
     }
 }

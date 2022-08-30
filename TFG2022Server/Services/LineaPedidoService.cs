@@ -7,20 +7,20 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class AlbaranManagementService : IAlbaranManagementService
+    public class LineaPedidoService : ILineaPedidoService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public AlbaranManagementService(TFG2022Context tfg2022Context)
+        public LineaPedidoService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<AlbaranModel>> GetAlbaranes()
+        public async Task<List<LineaPedidoModel>> GetLineaPedidos()
         {
             try
             {
-                return await this.tfg2022Context.Albaranes.Convert();
+                return await this.tfg2022Context.LineaPedidos.Convert();
             }
             catch (Exception)
             {

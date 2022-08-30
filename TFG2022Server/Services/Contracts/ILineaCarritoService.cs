@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface ILineaCarritoManagementService
+    public interface ILineaCarritoService
     {
         Task<List<LineaCarritoModel>> GetLineaCarritos();
     }

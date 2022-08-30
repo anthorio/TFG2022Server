@@ -7,11 +7,11 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class LineaAlbaranManagementService : ILineaAlbaranManagementService
+    public class LineaAlbaranService : ILineaAlbaranService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public LineaAlbaranManagementService(TFG2022Context tfg2022Context)
+        public LineaAlbaranService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }

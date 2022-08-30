@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface ILineaAlbaranManagementService
+    public interface ILineaAlbaranService
     {
         Task<List<LineaAlbaranModel>> GetLineaAlbaranes();
     }

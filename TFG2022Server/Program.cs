@@ -20,20 +20,20 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddSyncfusionBlazor();
 
-builder.Services.AddScoped<IAlbaranManagementService, AlbaranManagementService>();
-builder.Services.AddScoped<ICarritoManagementService, CarritoManagementService>();
-builder.Services.AddScoped<IClienteManagementService, ClienteManagementService>();
-builder.Services.AddScoped<IFacturaManagementService, FacturaManagementService>();
-builder.Services.AddScoped<IFamiliaProductoManagementService, FamiliaProductoManagementService>();
-builder.Services.AddScoped<ILineaAlbaranManagementService, LineaAlbaranManagementService>();
-builder.Services.AddScoped<ILineaCarritoManagementService, LineaCarritoManagementService>();
-builder.Services.AddScoped<ILineaFacturaManagementService, LineaFacturaManagementService>();
-builder.Services.AddScoped<ILineaPedidoManagementService, LineaPedidoManagementService>();
-builder.Services.AddScoped<IPagoManagementService, PagoManagementService>();
-builder.Services.AddScoped<IPedidoManagementService, PedidoManagementService>();
-builder.Services.AddScoped<IProductoManagementService, ProductoManagementService>();
-builder.Services.AddScoped<IProveedorManagementService, ProveedorManagementService>();
-builder.Services.AddScoped<IUsuarioManagementService, UsuarioManagementService>();
+builder.Services.AddScoped<IAlbaranService, AlbaranService>();
+builder.Services.AddScoped<ICarritoService, CarritoService>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IFacturaService, FacturaService>();
+builder.Services.AddScoped<IFamiliaProductoService, FamiliaProductoService>();
+builder.Services.AddScoped<ILineaAlbaranService, LineaAlbaranService>();
+builder.Services.AddScoped<ILineaCarritoService, LineaCarritoService>();
+builder.Services.AddScoped<ILineaFacturaService, LineaFacturaService>();
+builder.Services.AddScoped<ILineaPedidoService, LineaPedidoService>();
+builder.Services.AddScoped<IPagoService, PagoService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<IProveedorService, ProveedorService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 var app = builder.Build();
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBaFt/QHJqVVhjWlpFdEBBXHxAd1p/VWJYdVt5flBPcDwsT3RfQF9jQX5bd0diXHxXcHNVRA==;Mgo+DSMBPh8sVXJ0S0R+XE9HcFRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3xTfkVrWH1fdXdcRmheUw==;Mgo+DSMBMAY9C3t2VVhiQlFadVlJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRdk1jUX5ccXFWT2BVVUY=;NjkzMTkxQDMyMzAyZTMyMmUzMGVUWk5qaEJUVVIzYmN5WWphTXE1V3RrUGtQUURmRVZHTnN5QzJSOUxsNDg9");

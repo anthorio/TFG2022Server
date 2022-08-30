@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFG2022Server.Data;
 
@@ -11,9 +12,10 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    partial class TFG2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20220823171209_precioTotal_Pedido_Added")]
+    partial class precioTotal_Pedido_Added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -299,9 +301,6 @@ namespace TFG2022Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PedidoId"), 1L, 1);
 
-                    b.Property<int>("CantidadTotal")
-                        .HasColumnType("int");
-
                     b.Property<string>("EstadoPedido")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -443,7 +442,7 @@ namespace TFG2022Server.Migrations
                             Contraseña = "9shjdc78",
                             Dni = "12457896G",
                             Email = "sdasdf@sdkfjsd.com",
-                            FechaNacimiento = new DateTime(2022, 8, 23, 19, 50, 47, 793, DateTimeKind.Local).AddTicks(4396),
+                            FechaNacimiento = new DateTime(2022, 8, 23, 19, 12, 9, 398, DateTimeKind.Local).AddTicks(4932),
                             Nombre = "Alberto",
                             Rol = "cliente",
                             Telefono = "123123123"

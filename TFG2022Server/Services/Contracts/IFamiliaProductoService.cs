@@ -3,7 +3,7 @@ using TFG2022Server.Models;
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IFamiliaProductoManagementService
+    public interface IFamiliaProductoService
     {
         Task<List<FamiliaProductoModel>> GetFamiliaProductos();
     }

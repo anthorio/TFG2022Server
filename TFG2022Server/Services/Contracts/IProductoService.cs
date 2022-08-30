@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IProductoManagementService
+    public interface IProductoService
     {
         Task<List<ProductoModel>> GetProductos();
     }

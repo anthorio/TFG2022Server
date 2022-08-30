@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface ICarritoManagementService
+    public interface ICarritoService
     {
         Task<List<CarritoModel>> GetCarritos();
     }

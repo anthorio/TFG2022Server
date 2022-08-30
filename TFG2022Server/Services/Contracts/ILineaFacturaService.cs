@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface ILineaFacturaManagementService
+    public interface ILineaFacturaService
     {
         Task<List<LineaFacturaModel>> GetLineaFacturas();
     }

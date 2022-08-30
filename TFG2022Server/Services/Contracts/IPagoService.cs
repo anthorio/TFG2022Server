@@ -2,7 +2,7 @@
 
 namespace TFG2022Server.Services.Contracts
 {
-    public interface IPagoManagementService
+    public interface IPagoService
     {
         Task<List<PagoModel>> GetPagos();
     }

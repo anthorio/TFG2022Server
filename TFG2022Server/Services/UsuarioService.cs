@@ -8,11 +8,11 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class UsuarioManagementService : IUsuarioManagementService
+    public class UsuarioService : IUsuarioService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public UsuarioManagementService(TFG2022Context tfg2022Context)
+        public UsuarioService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }

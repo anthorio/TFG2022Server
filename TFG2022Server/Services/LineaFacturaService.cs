@@ -7,30 +7,25 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class PedidoManagementService : IPedidoManagementService
+    public class LineaFacturaService : ILineaFacturaService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public PedidoManagementService(TFG2022Context tfg2022Context)
+        public LineaFacturaService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<PedidoModel>> GetPedidos()
+        public async Task<List<LineaFacturaModel>> GetLineaFacturas()
         {
             try
             {
-                return await this.tfg2022Context.Pedidos.Convert();
+                return await this.tfg2022Context.LineaFacturas.Convert();
             }
             catch (Exception)
             {
                 throw;
             }
-        }
-
-        public string[] GetTiposPedido()
-        {
-            return Constants.TiposPedido;
         }
     }
 }

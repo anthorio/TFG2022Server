@@ -4,7 +4,7 @@
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Spinner
 
-@inject IPedidoManagementService PedidoManagementService
+@inject IPedidoService PedidoManagementService
 
 <h3>PedidoManagement</h3>
 
@@ -35,6 +35,7 @@
         VisibleSpinner = true;
         pedidoData = await PedidoManagementService.GetPedidos();
         VisibleSpinner = false;
+        PedidoManagementService.CreatePedido(pedidoData.First());
     }
 
 }

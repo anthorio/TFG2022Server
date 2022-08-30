@@ -7,39 +7,30 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class ClienteManagementService : IClienteManagementService
+    public class FacturaService : IFacturaService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public ClienteManagementService(TFG2022Context tfg2022Context)
+        public FacturaService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<ClienteModel>> GetClientes()
+        public string[] GetEstadosFactura()
         {
-            try
-            {
-                return await this.tfg2022Context.Clientes.Convert();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            return Constants.EstadosFactura;
         }
 
-        public async Task<List<Usuario>> GetUsuarios()
+        public async Task<List<FacturaModel>> GetFacturas()
         {
-
             try
             {
-                return await this.tfg2022Context.Usuarios.ToListAsync();
+                return await this.tfg2022Context.Facturas.Convert();
             }
             catch (Exception)
             {
                 throw;
             }
-
         }
     }
 }

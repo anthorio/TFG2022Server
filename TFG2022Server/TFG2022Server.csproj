@@ -15,6 +15,7 @@
     <PackageReference Include="Syncfusion.Blazor.Core" Version="20.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Lists" Version="20.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="20.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.44" />
   </ItemGroup>
 

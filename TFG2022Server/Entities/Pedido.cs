@@ -10,5 +10,7 @@ namespace TFG2022Server.Entities
         public DateTime FechaPedido { get; set; }
         public string EstadoPedido { get; set; }
         public string TipoEnvio { get; set; }
+        public double PrecioTotal { get; set; }
+        public int CantidadTotal { get; set; }
     }
 }

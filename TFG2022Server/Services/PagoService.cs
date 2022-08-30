@@ -7,21 +7,20 @@ using TFG2022Server.Services.Contracts;
 
 namespace TFG2022Server.Services
 {
-    public class ProductoManagementService : IProductoManagementService
+    public class PagoService : IPagoService
     {
         private readonly TFG2022Context tfg2022Context;
 
-        public ProductoManagementService(TFG2022Context tfg2022Context)
+        public PagoService(TFG2022Context tfg2022Context)
         {
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<ProductoModel>> GetProductos()
+        public async Task<List<PagoModel>> GetPagos()
         {
             try
             {
-                //return await this.tfg2022Context.Productos.Convert();
-                return await this.tfg2022Context.Productos.Convert(tfg2022Context);
+                return await this.tfg2022Context.Pagos.Convert();
             }
             catch (Exception)
             {
