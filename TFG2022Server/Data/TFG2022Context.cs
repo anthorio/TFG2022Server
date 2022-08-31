@@ -31,5 +31,6 @@ namespace TFG2022Server.Data
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }// = null!;
+        public DbSet<VentasPedidoReport> VentasPedidoReportes { get; set; }
     }
 }

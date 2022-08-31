@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFG2022Server.Data;
 
@@ -11,9 +12,10 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    partial class TFG2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20220831174157_AddVentasPedidoReportesTable")]
+    partial class AddVentasPedidoReportesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -443,7 +445,7 @@ namespace TFG2022Server.Migrations
                             Contraseña = "9shjdc78",
                             Dni = "12457896G",
                             Email = "sdasdf@sdkfjsd.com",
-                            FechaNacimiento = new DateTime(2022, 8, 31, 20, 48, 12, 395, DateTimeKind.Local).AddTicks(7388),
+                            FechaNacimiento = new DateTime(2022, 8, 31, 19, 41, 56, 803, DateTimeKind.Local).AddTicks(534),
                             Nombre = "Alberto",
                             Rol = "cliente",
                             Telefono = "123123123"
@@ -516,6 +518,10 @@ namespace TFG2022Server.Migrations
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UsuarioApellidos")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");

@@ -39,7 +39,7 @@ namespace TFG2022Server.Services
                 this.tfg2022Context.AddRange(lineasPedidoToAdd);
                 await this.tfg2022Context.SaveChangesAsync();
 
-
+                await UpdateVentasPedidoReportes(pedidoId, pedido);
             }
             catch (Exception)
             {
@@ -76,6 +76,39 @@ namespace TFG2022Server.Services
                         Cantidad = lp.Cantidad,
                         PrecioFinal = lp.PrecioFinal
                     }).ToList();
+        }
+        private async Task UpdateVentasPedidoReportes(int pedidoId, Pedido pedido)
+        {
+            try
+            {
+                List<VentasPedidoReport> vpr = await (from pi in tfg2022Context.LineaPedidos
+                                                      where pi.PedidoLineaPedido == pedidoId
+                                                      select new VentasPedidoReport
+                                                      {
+
+                                                          PedidoId = pedidoId,
+                                                          FechaPedido = pedido.FechaPedido,
+                                                          PedidoTotal = pedido.PrecioTotal,
+                                                          CantidadTotal = pedido.CantidadTotal,
+                                                          LineaPedidoId = pi.LineaPedidoId,
+                                                          LineaPedidoCantidad = pi.Cantidad,
+                                                          LineaPedidoPrecio = pi.PrecioFinal,
+                                                          ProductoId = pi.ProductoLineaPedido,
+                                                          NombreProducto = tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).Nombre,
+                                                          FamiliaProductoId = tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).FamiliaProductoProducto,
+                                                          FamiliaProductoNombre = tfg2022Context.FamiliaProductos.FirstOrDefault(f => f.FamiliaID == tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).FamiliaProductoProducto).Nombre,
+                                                          UsuarioId = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).UsuarioId,
+                                                          UsuarioNombre = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).Nombre
+
+                                                      }).ToListAsync();
+                this.tfg2022Context.AddRange(vpr);
+                await this.tfg2022Context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
