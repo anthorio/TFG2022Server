@@ -71,5 +71,41 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<List<GroupedFieldCantidadModel>> GetCantidadPorMesData()
+        {
+            try
+            {
+                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
+                                        where v.UsuarioId == 1
+                                        group v by v.FechaPedido.Month into GroupedData
+                                        orderby GroupedData.Key
+                                        select new GroupedFieldCantidadModel
+                                        {
+                                            GroupedFieldCantidadKey = (
+                                              GroupedData.Key == 1 ? "Ene" :
+                                              GroupedData.Key == 2 ? "Feb" :
+                                              GroupedData.Key == 3 ? "Mar" :
+                                              GroupedData.Key == 4 ? "Abr" :
+                                              GroupedData.Key == 5 ? "May" :
+                                              GroupedData.Key == 6 ? "Jun" :
+                                              GroupedData.Key == 7 ? "Jul" :
+                                              GroupedData.Key == 8 ? "Ago" :
+                                              GroupedData.Key == 9 ? "Sep" :
+                                              GroupedData.Key == 1 ? "Oct" :
+                                              GroupedData.Key == 11 ? "Nov" :
+                                               GroupedData.Key == 12 ? "Dic" :
+                                              ""
+                                            ),
+                                            Cantidad = GroupedData.Sum(lp => lp.LineaPedidoCantidad)
+                                        }).ToListAsync();
+                return reportData;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

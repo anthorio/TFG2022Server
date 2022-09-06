@@ -6,5 +6,6 @@ namespace TFG2022Server.Services.Contracts
     {
         Task<List<GroupedFieldPrecioModel>> GetUsuarioPrecioPorMesData();
         Task<List<GroupedFieldCantidadModel>> GetCantidadPorFamiliaProducto();
+        Task<List<GroupedFieldCantidadModel>> GetCantidadPorMesData();
     }
 }
