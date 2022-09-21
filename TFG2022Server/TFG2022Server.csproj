@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\EncAlmDashboard.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">
       <PrivateAssets>all</PrivateAssets>
@@ -19,6 +23,18 @@
     <PackageReference Include="Syncfusion.Blazor.Lists" Version="20.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Notifications" Version="20.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.44" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\EncAlmDashboard.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\EncAlmDashboard.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\EncAlmDashboard.razor" />
   </ItemGroup>
 
 </Project>

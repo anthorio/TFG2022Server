@@ -107,5 +107,35 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<List<GroupedFieldPrecioModel>> GetVentasTotalesPorCliente()
+        {
+            try
+            {
+                List<int> trabajadoresIds = await GetTrabajadoresIds();
+                var reportData = await (from s in this.tfg2022Context.VentasPedidoReportes
+                                        where trabajadoresIds.Contains(s.UsuarioId)
+                                        group s by s.UsuarioNombre into GroupedData
+                                        orderby GroupedData.Key
+                                        select new GroupedFieldPrecioModel
+                                        {
+                                            GroupedFieldKey = GroupedData.Key,
+                                            Precio = Math.Round(GroupedData.Sum(oi => oi.LineaPedidoPrecio), 2)
+                                        }).ToListAsync();
+                return reportData;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        private async Task<List<int>> GetTrabajadoresIds()
+        {
+            List<int> trabajadoresIds = await this.tfg2022Context.Usuarios
+                                        .Where(e => e.Rol == "Empleado")
+                                        .Select(e => e.UsuarioId).ToListAsync();
+            return trabajadoresIds;
+        }
     }
 }

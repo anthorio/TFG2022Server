@@ -1,0 +1,150 @@
+﻿@page "/EADashboard"
+
+@using Syncfusion.Blazor.Charts
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Layouts
+@using System.Timers
+@inject NavigationManager NavigationManager
+@inject IVentasPedidoReportService VentasPedidoReportService
+
+<style>
+    .e-dashboardlayout {
+        padding: 20px;
+        z-index: 0;
+    }
+
+    .e-panel {
+        cursor: auto !important;
+    }
+
+    .chart-annotation {
+        font-weight: bold;
+        font-size: 11px;
+        position: relative;
+        border-radius: 3px;
+        background-color: rgb(36, 133, 250, 0.2);
+        padding: 5px;
+        color: @annotationFontColor;
+    }
+
+        .chart-annotation::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin: 0 auto;
+            width: 0;
+            height: 0;
+            border-top: 10px solid rgb(36, 133, 250, 0.2);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            z-index: 1
+        }
+
+    .title {
+        font-size: 13px;
+        font-weight: 500;
+    }
+</style>
+no funciona mu bien
+<div class="control-section">
+    <SfDashboardLayout CellSpacing="@(new double[]{15 ,15 })" CellAspectRatio="0.8" Columns="8">
+        <DashboardLayoutPanels>
+            <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
+            <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
+                <HeaderTemplate>
+                    <span class="title">Ventas / Mes</span>
+                </HeaderTemplate>
+                <ContentTemplate>
+                    @if (isLayoutRender)
+                    {
+                        <SfChart @ref="chart1" Title="Ventas / Mes">
+                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                            </ChartPrimaryXAxis>
+                            <ChartSeriesCollection>
+                                <ChartSeries DataSource="@TotalVentasPorMes"
+                                         XName="GroupedFieldKey"
+                                         YName="Precio"
+                                         Type="ChartSeriesType.Bar"></ChartSeries>
+                            </ChartSeriesCollection>
+                        </SfChart>
+                    }
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+        </DashboardLayoutPanels>
+    </SfDashboardLayout>
+</div>
+<style>
+    ellipse[id*=_Trackball_1] {
+        stroke-width: 1 !important;
+        stroke: white !important;
+    }
+
+    .e-chart-focused:focus {
+        outline: none !important;
+    }
+</style>
+@code {
+    List<GroupedFieldPrecioModel> TotalVentasPorMes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TotalVentasPorMes = await VentasPedidoReportService.GetVentasTotalesPorCliente();
+    }
+
+    private bool isLayoutRender;
+    private Theme theme;
+    private static Timer timer;
+    SfChart chart1;
+    SfChart chart2;
+    private string[] palettes = new string[] { "#61EFCD", "#CDDE1F", "#FEC200", "#CA765A", "#2485FA", "#F57D7D", "#C152D2",
+    "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
+    private string annotationFontColor;
+
+    protected override void OnInitialized()
+    {
+        annotationFontColor = NavigationManager.Uri.Contains("dark") || theme == Theme.HighContrast ? "#E9ECEF" : "#343A40";
+    }
+    public void LayoutCreated()
+    {
+        isLayoutRender = true;
+        timer = new Timer(1000);
+        timer.Elapsed += RefreshCharts;
+        timer.AutoReset = true;
+        timer.Enabled = true;
+    }
+    private void RefreshCharts(Object source, ElapsedEventArgs e)
+    {
+        if (chart1 == null && chart2 == null)
+            return;
+        chart1.RefreshAsync(false);
+        chart2.RefreshAsync(false);
+        timer.Enabled = false;
+        timer.AutoReset = false;
+    }
+    void OnChartAxisLabeRender(AxisLabelRenderEventArgs args)
+    {
+        args.Text = args.Text.Replace("10000", "10K").Replace("000", "K");
+    }
+    public void OnLegendRender(AccumulationLegendRenderEventArgs args)
+    {
+        string[] textCollection = args.Text.Split(":");
+        string space = "", product = ((textCollection[0] == "Laptop " || textCollection[0] == "Mobile " || textCollection[0] == "Camera ") ? textCollection[0] : textCollection[0].Trim());
+        int textCount = product.Length,
+        condition = textCount == 2 ? 8 : 9;
+        if (textCollection[0].Equals("Camera "))
+        {
+            space = "\u00A0\u00A0\u00A0";
+        }
+        else
+        {
+            for (int i = textCount; i < condition; i++)
+            {
+                space += "\u00A0\u00A0";
+            }
+        }
+        args.Text = product + space + (textCollection[1].Trim()) + "     ";
+    }
+
+}

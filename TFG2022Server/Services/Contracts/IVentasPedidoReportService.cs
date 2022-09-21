@@ -10,5 +10,6 @@ namespace TFG2022Server.Services.Contracts
         Task<List<GroupedFieldCantidadModel>> GetCantidadPorMesData();
 
         // Graficas que solo puede ver el encargado de almacen por ejemplo
+        Task<List<GroupedFieldPrecioModel>> GetVentasTotalesPorCliente();
     }
 }
