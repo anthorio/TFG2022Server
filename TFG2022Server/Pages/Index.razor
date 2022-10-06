@@ -1,14 +1,17 @@
 ﻿@page "/"
+@using Syncfusion.Blazor
 @using Syncfusion.Blazor.Lists
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Notifications
 @using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
 @using System.Globalization
 @inject IProductoService ProductoService
 @inject IUsuarioService UsuarioManagementService
 @inject IPedidoService PedidoService
+@inject IFamiliaProductoService FamiliaProductoService
 
 <div class="col-lg-4 control-section">
     <SfToast @ref="ToastObj" ID="toast_type">
@@ -16,32 +19,60 @@
     </SfToast>
 </div>
 
-
-@if (ProductoData == null || this.ProductoData.Count == 0)
-{
-    <div class="e-error">
-        <div class="e-error-content">No results found.</div>
-    </div>
-}
-else
-{
-    <div class="grid-container">
-        @foreach (ProductoModel producto in ProductoData)
+<SfTab>
+    <TabItems>
+        @* Tabs de familia *@
+        @if (FamiliaData == null || this.FamiliaData.Count == 0)
         {
-
-            <SfCard CssClass="e-card">
-                <CardImage Image="@producto.UrlImagen" />
-                <CardHeader Title="@producto.Nombre" SubTitle="@priceToString(@producto.Precio)" />
-                <CardContent Content="@producto.Descripcion" />
-                <CardFooter>
-                    <CardFooterContent>
-                        <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">Read More</SfButton>
-                    </CardFooterContent>
-                </CardFooter>
-            </SfCard>
+            <div class="e-error">
+                <div class="e-error-content">No results found.</div>
+            </div>
         }
-    </div>
-}
+        else
+        {
+            @foreach (FamiliaProductoModel familiap in FamiliaData)
+            {
+                <TabItem>
+                    <ChildContent>
+                        <TabHeader Text="@familiap.Nombre"></TabHeader>
+                    </ChildContent>
+                    <ContentTemplate>
+
+                        @* Grid de productos *@
+                        @if (ProductoData == null || this.ProductoData.Count == 0)
+                        {
+                            <div class="e-error">
+                                <div class="e-error-content">No results found.</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="grid-container">
+                                @foreach (ProductoModel producto in ProductoData)
+                                {
+
+                                    <SfCard CssClass="e-card">
+                                        <CardImage Image="@producto.UrlImagen" />
+                                        <CardHeader Title="@producto.Nombre" SubTitle="@priceToString(@producto.Precio)" />
+                                        <CardContent Content="@producto.Descripcion" />
+                                        <CardFooter>
+                                            <CardFooterContent>
+                                                <SfButton class="e-btn e-outline e-primary" @onclick="@(e => testCall())">🔎 Ver producto</SfButton>
+                                                <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">🛒 Añadir al carrito</SfButton>
+                                            </CardFooterContent>
+                                        </CardFooter>
+                                    </SfCard>
+                                }
+                            </div>
+                        }
+
+
+                    </ContentTemplate>
+                </TabItem>
+            }           }
+    </TabItems>
+</SfTab>
+
 <style>
     .listview-template {
         border-radius: 2px;
@@ -60,32 +91,38 @@ else
     }
 
     /*Grid Related*/
-    .e-card {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 200px;
-        width: 200px;
-    }
-
     .grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 20px;
     }
 
-/* 
-    .grid-container (min-width: 1200px) {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+    /*Card Related*/
+    .e-card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 350px;
+        width: 100%;
+        margin: auto;
     }
 
-    .grid-container (min-width: 1500px) {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 20px;
-    }*/
+    .e-card-image {
+        height: 180px;
+        width: 150px;
+    }
+
+    .e-card-header-caption .e-card-header-title {
+        font-size: 20px;
+        font-family: Helvetica, 'Segoe UI';
+        font-weight: bold;
+    }
+
+    .e-card-content {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 50px;
+    }
 
     /*Toast Related*/
     @@font-face {
@@ -152,6 +189,7 @@ else
     private List<ProductoModel> ProductoData { get; set; }
     private List<ProductoModel>? ProductoDataFiltrado { get; set; }
     private List<UsuarioModel> UsuarioData { get; set; }
+    private List<FamiliaProductoModel> FamiliaData { get; set; }
     private int SelectedUsuarioId { get; set; } = 1;
 
     private SfToast? ToastObj;
@@ -169,6 +207,7 @@ else
         ProductoData = await ProductoService.GetProductos();
         ProductoDataFiltrado = ProductoData;
         UsuarioData = await UsuarioManagementService.GetUsuarios();
+        FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
         @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto.
         *@
     }
@@ -224,12 +263,17 @@ else
 
     private string priceToString(double precio)
     {
-        return precio.ToString();
+        return precio.ToString() + " €";
     }
 
     public async Task addToCarrito(ProductoModel producto)
     {
-        ;
+        await this.ToastObj.ShowAsync(Toast[1]);
+    }
+
+    public async Task testCall()
+    {
+        await this.ToastObj.ShowAsync(Toast[2]);
     }
 
 }
