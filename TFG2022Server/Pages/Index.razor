@@ -19,8 +19,46 @@
     </SfToast>
 </div>
 
-<SfTab>
+<SfTab @bind-SelectedItem="SelectedTab">
     <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Catálogo General"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+
+                @* Grid de productos *@
+                @if (ProductoData == null || this.ProductoData.Count == 0)
+                {
+                    <div class="e-error">
+                        <div class="e-error-content">No results found.</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid-container">
+                        @foreach (ProductoModel producto in ProductoData)
+                        {
+
+                            <SfCard CssClass="e-card">
+                                <CardImage Image="@producto.UrlImagen" />
+                                <CardHeader Title="@producto.Nombre" SubTitle="@priceToString(@producto.Precio)" />
+                                <CardContent Content="@producto.Descripcion" />
+                                <CardFooter>
+                                    <CardFooterContent>
+                                        <SfButton class="e-btn e-outline e-primary" @onclick="@(e => testCall())">🔎 Ver producto</SfButton>
+                                        <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">🛒 Añadir al carrito</SfButton>
+                                    </CardFooterContent>
+                                </CardFooter>
+                            </SfCard>
+                        }
+                    </div>
+                }
+
+
+            </ContentTemplate>
+        </TabItem>
+
         @* Tabs de familia *@
         @if (FamiliaData == null || this.FamiliaData.Count == 0)
         {
@@ -48,7 +86,7 @@
                         else
                         {
                             <div class="grid-container">
-                                @foreach (ProductoModel producto in ProductoData)
+                                @foreach (ProductoModel producto in filtrarProductos(familiap))
                                 {
 
                                     <SfCard CssClass="e-card">
@@ -65,8 +103,6 @@
                                 }
                             </div>
                         }
-
-
                     </ContentTemplate>
                 </TabItem>
             }           }
@@ -187,10 +223,11 @@
     private SfListView<ProductoModel> SfSelectedProductos { get; set; }
 
     private List<ProductoModel> ProductoData { get; set; }
-    private List<ProductoModel>? ProductoDataFiltrado { get; set; }
+    private List<ProductoModel>? ProductoDataFiltradoBuscador { get; set; }
     private List<UsuarioModel> UsuarioData { get; set; }
     private List<FamiliaProductoModel> FamiliaData { get; set; }
     private int SelectedUsuarioId { get; set; } = 1;
+    private int SelectedTab = 0;
 
     private SfToast? ToastObj;
     private string ToastPosition = "Right";
@@ -205,25 +242,22 @@
     protected override async Task OnInitializedAsync()
     {
         ProductoData = await ProductoService.GetProductos();
-        ProductoDataFiltrado = ProductoData;
         UsuarioData = await UsuarioManagementService.GetUsuarios();
         FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
-        @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto.
-        *@
+        @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto. *@
     }
 
     void OnInput(InputEventArgs eventArgs)
     {
+        @*esto ta regular, ignorar*@
         if (eventArgs.Value != "")
         {
-            ProductoData = ProductoDataFiltrado.FindAll(e => e.Nombre.ToLower().Contains(eventArgs.Value.ToLower()));
+            ProductoData = ProductoDataFiltradoBuscador.FindAll(e => e.Nombre.ToLower().Contains(eventArgs.Value.ToLower()));
         }
         else
         {
-            ProductoData = ProductoDataFiltrado;
+            ProductoData = ProductoDataFiltradoBuscador;
         }
-
-
     }
 
     protected async Task CreatePedido()
@@ -274,6 +308,11 @@
     public async Task testCall()
     {
         await this.ToastObj.ShowAsync(Toast[2]);
+    }
+
+        private List<ProductoModel> filtrarProductos(FamiliaProductoModel familiaP)
+    {
+        return ProductoData.FindAll(e => e.FamiliaProductoProducto.Equals(familiaP.FamiliaID));
     }
 
 }
