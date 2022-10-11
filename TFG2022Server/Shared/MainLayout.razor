@@ -1,6 +1,14 @@
 ﻿@inherits LayoutComponentBase
+@using Syncfusion.Blazor.Buttons
 
 <PageTitle>TFG2022Server</PageTitle>
+
+<style>
+    .footer {
+        padding-top: 32px;
+        padding-left: 32px;
+    }
+</style>
 
 <div class="page">
     <div class="sidebar">
@@ -9,11 +17,16 @@
 
     <main>
         <div class="top-row px-4">
-            <h1>Logotipo</h1> <h2>Categorias</h2> <h3>barra de buscar</h3> <button>Conectate?</button> <button>Carrito vacío?</button>
+             <p><img src="~/../Shared/LogotipoSN.png"/> </p>  <h3> barra de buscar </h3> <button> Conectate? </button> <button> Carrito vacío? </button>
         </div>
 
         <article class="content px-4">
             @Body
         </article>
+
+        <div class="footer">
+            <SfButton>La empresa 🏢</SfButton>
+        </div>
+
     </main>
 </div>

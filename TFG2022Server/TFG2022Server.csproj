@@ -39,5 +39,5 @@
   <ItemGroup>
     <None Include="Pages\EncAlmDashboard.razor" />
   </ItemGroup>
-
+	
 </Project>
