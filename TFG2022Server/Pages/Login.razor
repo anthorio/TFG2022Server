@@ -1,0 +1,89 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Notifications
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+
+<h1>Login </h1>
+
+<div class="col-lg-4 control-section">
+    <SfToast @ref="ToastObj" ID="toast_type">
+        <ToastPosition X="@ToastPosition"></ToastPosition>
+    </SfToast>
+</div>
+
+
+@if(@storedUserEmail!=null){
+     <label> insertar la pagina de inicio cliente </label>
+}else{
+<div class="container">
+    <div class="row p-3">
+        <div class="col-4">
+            <label>Correo</label>
+        </div>
+        <div class="col-6">
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+    </div>
+    <div class="row p-3">
+        <div class="col-4">
+            <label>Contraseña</label>
+        </div>
+        <div class="col-6">
+            <input class="form-control" type="password" @bind="password"></input>
+        </div>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary" @onclick="Loginn">Login</button>
+    </div>
+</div>
+}
+
+
+@code {
+    string userImput;
+    string password;
+    string storedUserEmail;
+
+    private SfToast? ToastObj;
+    private string ToastPosition = "Right";
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Success!", Content="Has iniciado sesión correctamente", CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content="Usuario o contraseña incorrecta", CssClass="e-toast-danger", Icon="e-error toast-icons" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        storedUserEmail = result.Success ? result.Value : null;
+    }
+
+    public async Task Save(String key, Usuario value)
+    {
+        await LocalStorage.SetAsync("user", userImput);
+    }
+    public async Task Read()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        storedUserEmail = result.Success ? result.Value : null;
+    }
+    public async Task Delete()
+    {
+        await LocalStorage.DeleteAsync("user");
+    }
+
+    public async Task Loginn()
+    {
+        var inputOk = await UsuarioService.CheckLogin(userImput, password);
+        if (inputOk != null)
+        {
+            await Save("user", inputOk);
+            await this.ToastObj.ShowAsync(Toast[0]);
+        }
+        else
+        {
+            await this.ToastObj.ShowAsync(Toast[1]);
+        }
+    }
+}

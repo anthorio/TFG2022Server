@@ -11,5 +11,7 @@ namespace TFG2022Server.Services.Contracts
         Task<Usuario> AddUsuario(UsuarioModel usuarioMod);
         Task UpdateUsuario(UsuarioModel usuarioMod);
         Task DeleteUsuario(int id);
+        Task<Usuario> CheckLogin(string usermail, string password);
+        Task<Usuario> ReadUserbyEmail(string usermail);
     }
 }

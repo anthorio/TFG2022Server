@@ -107,5 +107,47 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<Usuario> CheckLogin(string usermail, string password)
+        {
+            var usuario = new Usuario();
+            try
+            {
+                // Obtener el usuario a travez del email (sólo habrá 1 usuario por email espero)
+                usuario = (await this.tfg2022Context.Usuarios.Where(u => u.Email == usermail).ToListAsync()).ElementAt(0);
+                if (usuario != null)
+                {
+                    if (password == usuario.Contraseña)
+                    {
+                        return usuario;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<Usuario> ReadUserbyEmail(string usermail)
+        {
+            var usuario = new Usuario();
+            try
+            {
+                // Obtener el usuario a travez del email (sólo habrá 1 usuario por email espero)
+                usuario = (await this.tfg2022Context.Usuarios.Where(u => u.Email == usermail).ToListAsync()).ElementAt(0);
+                if (usuario != null)
+                {
+                    return usuario;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

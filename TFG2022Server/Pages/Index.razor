@@ -222,10 +222,10 @@
 @code {
     private SfListView<ProductoModel> SfSelectedProductos { get; set; }
 
-    private List<ProductoModel> ProductoData { get; set; }
+    private List<ProductoModel>? ProductoData { get; set; }
     private List<ProductoModel>? ProductoDataFiltradoBuscador { get; set; }
-    private List<UsuarioModel> UsuarioData { get; set; }
-    private List<FamiliaProductoModel> FamiliaData { get; set; }
+    private List<UsuarioModel>? UsuarioData { get; set; }
+    private List<FamiliaProductoModel>? FamiliaData { get; set; }
     private int SelectedUsuarioId { get; set; } = 1;
     private int SelectedTab = 0;
 
@@ -246,10 +246,10 @@
         FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
         @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto. *@
     }
-
+    @*
     void OnInput(InputEventArgs eventArgs)
     {
-        @*esto ta regular, ignorar*@
+        esto ta regular, ignorar
         if (eventArgs.Value != "")
         {
             ProductoData = ProductoDataFiltradoBuscador.FindAll(e => e.Nombre.ToLower().Contains(eventArgs.Value.ToLower()));
@@ -258,7 +258,7 @@
         {
             ProductoData = ProductoDataFiltradoBuscador;
         }
-    }
+    }*@
 
     protected async Task CreatePedido()
     {
@@ -310,7 +310,7 @@
         await this.ToastObj.ShowAsync(Toast[2]);
     }
 
-        private List<ProductoModel> filtrarProductos(FamiliaProductoModel familiaP)
+    private List<ProductoModel> filtrarProductos(FamiliaProductoModel familiaP)
     {
         return ProductoData.FindAll(e => e.FamiliaProductoProducto.Equals(familiaP.FamiliaID));
     }
