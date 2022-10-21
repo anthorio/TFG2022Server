@@ -4,8 +4,46 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 
-<h3>UserMainPage</h3>
+
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+<div class="grid-container">
+
+    <SfCard ID="PersonalData" @onclick="@(e => undefined())">
+        <CardHeader Title="📒 Datos personales" />
+    </SfCard>
+    <SfCard ID="Pedidos" @onclick="@(e => undefined())">
+        <CardHeader Title="🚚 Mis pedidos" />
+    </SfCard>
+    <SfCard ID="Logout" @onclick="@(e => undefined())">
+        <CardHeader Title="❌ Cerrar sesión" />
+    </SfCard>
+
+</div>
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .e-card {
+        height: 150px;
+        width: 300px;
+        margin: 16px;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .e-card-header-caption .e-card-header-title {
+        text-align: center;
+        font-family: Helvetica, 'Segoe UI';
+    }
+</style>
 
 @code {
+    public void undefined()
+    {
 
+    }
 }
