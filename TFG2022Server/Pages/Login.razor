@@ -4,8 +4,6 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 
-<h1>Login </h1>
-
 <div class="col-lg-4 control-section">
     <SfToast @ref="ToastObj" ID="toast_type">
         <ToastPosition X="@ToastPosition"></ToastPosition>
@@ -14,7 +12,7 @@
 
 
 @if(@storedUserEmail!=null){
-     <label> insertar la pagina de inicio cliente </label>
+     <UserMainPage></UserMainPage>
 }else{
 <div class="container">
     <div class="row p-3">

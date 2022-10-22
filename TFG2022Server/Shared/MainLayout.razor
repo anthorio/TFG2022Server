@@ -8,13 +8,6 @@
 
 <PageTitle>TFG2022Server</PageTitle>
 
-<style>
-    .footer {
-        padding-top: 32px;
-        padding-left: 32px;
-    }
-</style>
-
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -22,27 +15,36 @@
 
     <main>
         <div class="top-row px-4">
-            <p><img src="" /> </p>  <h3> barra de buscar </h3>
+            <p><img src="" /> </p> 
             @if (@storedUserEmail != null && @storedUser != null)
             {
-                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton> <SfButton> Carrito vacío? </SfButton>
+                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton> <SfButton> *Carrito* </SfButton>
             }
             else
             {
-                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/login"))">Login</SfButton> <SfButton> Carrito vacío? </SfButton>
+                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/login"))">Login</SfButton>
             }
         </div>
 
         <article class="content px-4">
             @Body
         </article>
-
-        <div class="footer">
-            <SfButton>La empresa 🏢</SfButton>
-        </div>
-
     </main>
 </div>
+
+<footer class="footer">
+    <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/site"))">La empresa 🏢</SfButton>
+</footer>
+
+<style>
+    .footer {
+        padding-top: 32px;
+        padding-left: 32px;
+        background-color: #EFEFEF;
+        width: 100%;
+        position: relative;
+    }
+</style>
 
 @code {
     string storedUserEmail = "";
