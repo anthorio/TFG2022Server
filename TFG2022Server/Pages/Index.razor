@@ -8,6 +8,7 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Navigations
 @using System.Globalization
+@inject NavigationManager NavigationManager
 @inject IProductoService ProductoService
 @inject IUsuarioService UsuarioManagementService
 @inject IPedidoService PedidoService
@@ -45,8 +46,8 @@
                                 <CardHeader Title="@producto.Nombre" SubTitle="@priceToString(@producto.Precio)" />
                                 <CardContent Content="@producto.Descripcion" />
                                 <CardFooter>
-                                    <CardFooterContent>
-                                        <SfButton class="e-btn e-outline e-primary" @onclick="@(e => testCall())">🔎 Ver producto</SfButton>
+                                    <CardFooterContent>     
+                                        <SfButton class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/product/"+@producto.ProductoId))">🔎 Ver producto</SfButton>
                                         <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">🛒 Añadir al carrito</SfButton>
                                     </CardFooterContent>
                                 </CardFooter>
@@ -95,7 +96,7 @@
                                         <CardContent Content="@producto.Descripcion" />
                                         <CardFooter>
                                             <CardFooterContent>
-                                                <SfButton class="e-btn e-outline e-primary" @onclick="@(e => testCall())">🔎 Ver producto</SfButton>
+                                                <SfButton class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/product/"+@producto.ProductoId))">🔎 Ver producto</SfButton>
                                                 <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">🛒 Añadir al carrito</SfButton>
                                             </CardFooterContent>
                                         </CardFooter>
@@ -241,9 +242,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
         ProductoData = await ProductoService.GetProductos();
         UsuarioData = await UsuarioManagementService.GetUsuarios();
-        FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
         @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto. *@
     }
     @*

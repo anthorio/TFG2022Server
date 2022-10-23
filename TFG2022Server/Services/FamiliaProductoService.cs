@@ -27,5 +27,21 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<FamiliaProducto> GetFamiliaProducto(int fId)
+        {
+            try
+            {
+                var familia = await tfg2022Context.FamiliaProductos.FindAsync(fId);
+                return familia;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
     }
 }

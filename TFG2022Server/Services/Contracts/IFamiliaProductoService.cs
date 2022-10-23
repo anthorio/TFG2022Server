@@ -6,5 +6,6 @@ namespace TFG2022Server.Services.Contracts
     public interface IFamiliaProductoService
     {
         Task<List<FamiliaProductoModel>> GetFamiliaProductos();
+        Task<FamiliaProducto> GetFamiliaProducto(int id);
     }
 }

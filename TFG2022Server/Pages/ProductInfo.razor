@@ -1,0 +1,61 @@
+﻿@page "/product/{PathParam}"
+
+@inject IProductoService ProductoService
+@inject IFamiliaProductoService FamiliaProductoService
+
+@if (ProductoData == null)
+{
+    <div class="e-error">
+        <div class="e-error-content">No result found.</div>
+    </div>
+}
+else
+{
+    <div class="grid-container">
+        <img class="img-class" src=@ProductoData.UrlImagen />
+       <div><h2>@ProductoData.Nombre</h2>@FamiliaData.Nombre</div> 
+        <h2>@priceToString(@ProductoData.Precio)</h2>
+        <p>@ProductoData.Descripcion</p>
+
+        <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@ProductoData))">🛒 Añadir al carrito</SfButton>
+
+    </div>
+}
+
+<style>
+        .img-class {
+        width: 150px;
+    }
+
+    /*Grid Related*/
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+</style>
+
+
+@code {
+    [Parameter]
+    public string PathParam { get; set; }
+    private Producto? ProductoData { get; set; }
+    private FamiliaProducto? FamiliaData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProductoData = await ProductoService.GetProducto(int.Parse(PathParam));
+        FamiliaData = await FamiliaProductoService.GetFamiliaProducto(ProductoData.FamiliaProductoProducto);
+    }
+
+    private string priceToString(double precio)
+    {
+        return precio.ToString() + " €";
+    }
+
+    public async Task addToCarrito(Producto producto)
+    {
+
+    }
+
+}

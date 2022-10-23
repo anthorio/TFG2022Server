@@ -28,5 +28,19 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task<Producto> GetProducto(int productId)
+        {
+            try
+            {
+                var product = await tfg2022Context.Productos.FindAsync(productId);
+                return product;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
