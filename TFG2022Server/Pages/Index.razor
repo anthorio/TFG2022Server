@@ -8,11 +8,16 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Navigations
 @using System.Globalization
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject NavigationManager NavigationManager
 @inject IProductoService ProductoService
 @inject IUsuarioService UsuarioManagementService
 @inject IPedidoService PedidoService
 @inject IFamiliaProductoService FamiliaProductoService
+@inject ICarritoService CarritoService
+@inject ILineaCarritoService LineaCarritoService
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
 
 <div class="col-lg-4 control-section">
     <SfToast @ref="ToastObj" ID="toast_type">
@@ -46,7 +51,7 @@
                                 <CardHeader Title="@producto.Nombre" SubTitle="@priceToString(@producto.Precio)" />
                                 <CardContent Content="@producto.Descripcion" />
                                 <CardFooter>
-                                    <CardFooterContent>     
+                                    <CardFooterContent>
                                         <SfButton class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/product/"+@producto.ProductoId))">🔎 Ver producto</SfButton>
                                         <SfButton class="e-btn e-outline e-primary" @onclick="@(e => addToCarrito(@producto))">🛒 Añadir al carrito</SfButton>
                                     </CardFooterContent>
@@ -230,13 +235,16 @@
     private int SelectedUsuarioId { get; set; } = 1;
     private int SelectedTab = 0;
 
+    string storedUserEmail = "";
+    Usuario storedUser=null;
+
     private SfToast? ToastObj;
     private string ToastPosition = "Right";
     private List<ToastModel> Toast = new List<ToastModel>
     {
+        new ToastModel{ Title = "Error", Content="Hubo un problema al añadir el producto al carrito", CssClass="e-toast-danger", Icon="e-error toast-icons" },
+        new ToastModel{ Title = "Éxito", Content="El producto se añadió al carrito", CssClass="e-toast-success", Icon="e-success toast-icons" },
         new ToastModel{ Title = "Warning!", Content="There was a problem with your network connection.", CssClass="e-toast-warning", Icon="e-warning toast-icons" },
-        new ToastModel{ Title = "Success!", Content="Your order has been created successfully.", CssClass="e-toast-success", Icon="e-success toast-icons" },
-        new ToastModel{ Title = "Error!", Content="A problem occurred while creating your order.", CssClass="e-toast-danger", Icon="e-error toast-icons" },
         new ToastModel{ Title = "Information!", Content="Please read the comments carefully.", CssClass="e-toast-info", Icon="e-info toast-icons" }
     };
 
@@ -303,7 +311,37 @@
 
     public async Task addToCarrito(ProductoModel producto)
     {
-        await this.ToastObj.ShowAsync(Toast[1]);
+        try
+        {
+
+            if (producto != null)
+            {
+
+                if (storedUserEmail == null || storedUser==null)
+                {
+                    var result = await LocalStorage.GetAsync<string>("user");
+                    await Task.Delay(500);
+                    storedUserEmail = result.Success ? result.Value : null;
+                    storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+                }
+                
+
+                var carritoUsario = await CarritoService.GetCarritoByUser(storedUser.UsuarioId);
+                LineaCarritoModel lineaCarritoModel = new LineaCarritoModel
+                    {
+                        CarritoLineaCarrito = carritoUsario.CarritoId,
+                        ProductoLineaCarrito = producto.ProductoId,
+                        Cantidad = 1
+                    };
+
+                await LineaCarritoService.AnadirLinea(lineaCarritoModel);
+                await this.ToastObj.ShowAsync(Toast[1]);
+            }
+        }
+        catch (Exception)
+        {
+            await this.ToastObj.ShowAsync(Toast[0]);
+        }
     }
 
     public async Task testCall()
@@ -316,4 +354,12 @@
         return ProductoData.FindAll(e => e.FamiliaProductoProducto.Equals(familiaP.FamiliaID));
     }
 
+    protected async Task InicializarUsuario()
+    {
+        await Task.Delay(2000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(2000);
+        storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+    }
 }

@@ -259,5 +259,14 @@ namespace TFG2022Server.Extensions
                 FechaNacimiento = usuarioModel.FechaNacimiento
             };
         }
+        public static LineaCarrito Convert(this LineaCarritoModel lineaCarritoModel)
+        {
+            return new LineaCarrito
+            {
+                CarritoLineaCarrito = lineaCarritoModel.CarritoLineaCarrito,
+                ProductoLineaCarrito = lineaCarritoModel.ProductoLineaCarrito,
+                Cantidad = lineaCarritoModel.Cantidad
+            };
+        }
     }
 }
