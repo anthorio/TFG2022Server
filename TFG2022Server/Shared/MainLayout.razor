@@ -2,8 +2,11 @@
 @inject NavigationManager NavigationManager
 @using Syncfusion.Blazor.Buttons
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Popups
+@using TFG2022Server.Pages.Components
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
+
 
 
 <PageTitle>TFG2022Server</PageTitle>
@@ -15,15 +18,23 @@
 
     <main>
         <div class="top-row px-4">
-            <p><img src="" /> </p> 
+
+
+
+
+            <p><img src="" /> </p>
             @if (@storedUserEmail != null && @storedUser != null)
             {
-                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton> <SfButton> *Carrito* </SfButton>
+                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton>
             }
             else
             {
                 <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/login"))">Login</SfButton>
             }
+
+            <MyCarritoView user="@storedUser"></MyCarritoView>
+
+
         </div>
 
         <article class="content px-4">

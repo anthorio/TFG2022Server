@@ -35,9 +35,20 @@ namespace TFG2022Server.Services
             {
                 LineaCarrito lineaCarritoToAdd = lineaCarrito.Convert();
 
-                var result = await this.tfg2022Context.LineaCarritos.AddAsync(lineaCarritoToAdd);
-                await this.tfg2022Context.SaveChangesAsync();
-                return (result.Entity);
+                var lineaCarritoExistente = await this.tfg2022Context.LineaCarritos.SingleOrDefaultAsync(lincarr => lincarr.CarritoLineaCarrito == lineaCarrito.CarritoLineaCarrito && lincarr.ProductoLineaCarrito == lineaCarrito.ProductoLineaCarrito);
+                if (lineaCarritoExistente == null)
+                {
+                    var result = await this.tfg2022Context.LineaCarritos.AddAsync(lineaCarritoToAdd);
+                    await this.tfg2022Context.SaveChangesAsync();
+                    return (result.Entity);
+                }
+                else
+                {
+                    lineaCarritoExistente.Cantidad = lineaCarritoToAdd.Cantidad + lineaCarritoExistente.Cantidad;
+                    await this.tfg2022Context.SaveChangesAsync();
+                    return (lineaCarritoToAdd);
+                }
+
             }
             catch (Exception)
             {
