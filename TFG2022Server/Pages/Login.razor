@@ -3,6 +3,7 @@
 @using Syncfusion.Blazor.Notifications
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
 
 <div class="col-lg-4 control-section">
     <SfToast @ref="ToastObj" ID="toast_type">
@@ -10,47 +11,72 @@
     </SfToast>
 </div>
 
+@if (@storedUserEmail != null)
+{
+    <UserMainPage></UserMainPage>
+}
+else
+{
 
-@if(@storedUserEmail!=null){
-     <UserMainPage></UserMainPage>
-}else{
-<div class="container">
-    <div class="row p-3">
-        <div class="col-4">
-            <label>Correo</label>
+            <h3>Registro de cliente</h3>
+
+    <div class="row">
+        <div class="column">
+            <div class="container">
+                <div class="row p-3">
+                    <div class="col-4">
+                        <label>Correo</label>
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" @bind="userImput"></input>
+                    </div>
+                </div>
+                <div class="row p-3">
+                    <div class="col-4">
+                        <label>Contraseña</label>
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" type="password" @bind="password"></input>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary" @onclick="Loginn">Login</button>
+                </div>
+            </div>
         </div>
-        <div class="col-6">
-            <input class="form-control" @bind="userImput"></input>
+        <div class="column">
+            <button class="btn btn-primary" @onclick="@(()=>NavigationManager.NavigateTo("/registro"))">Registrarse como nuevo usuario</button>
         </div>
     </div>
-    <div class="row p-3">
-        <div class="col-4">
-            <label>Contraseña</label>
-        </div>
-        <div class="col-6">
-            <input class="form-control" type="password" @bind="password"></input>
-        </div>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary" @onclick="Loginn">Login</button>
-    </div>
-</div>
 }
 
+<style>
+    .column {
+        float: left;
+        width: 50%;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
 
 @code {
     string userImput;
     string password;
     string storedUserEmail;
-
+    
     private SfToast? ToastObj;
     private string ToastPosition = "Right";
     private List<ToastModel> Toast = new List<ToastModel>
-    {
+        {
         new ToastModel{ Title = "Success!", Content="Has iniciado sesión correctamente", CssClass="e-toast-success", Icon="e-success toast-icons" },
         new ToastModel{ Title = "Error!", Content="Usuario o contraseña incorrecta", CssClass="e-toast-danger", Icon="e-error toast-icons" }
     };
-
+    
     protected override async Task OnInitializedAsync()
     {
         var result = await LocalStorage.GetAsync<string>("user");
@@ -73,15 +99,24 @@
 
     public async Task Loginn()
     {
-        var inputOk = await UsuarioService.CheckLogin(userImput, password);
-        if (inputOk != null)
+        try
         {
-            await Save("user", inputOk);
-            await this.ToastObj.ShowAsync(Toast[0]);
+            var inputOk = await UsuarioService.CheckLogin(userImput, password);
+            if (inputOk != null)
+            {
+                await Save("user", inputOk);
+                await this.ToastObj.ShowAsync(Toast[0]);
+                NavigationManager.NavigateTo("", forceLoad: true);
+            }
+            else
+            {
+                await this.ToastObj.ShowAsync(Toast[1]);
+            }
         }
-        else
+        catch (Exception)
         {
             await this.ToastObj.ShowAsync(Toast[1]);
         }
+
     }
 }

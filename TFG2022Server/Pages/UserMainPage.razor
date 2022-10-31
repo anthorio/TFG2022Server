@@ -3,7 +3,8 @@
 @using Syncfusion.Blazor.Notifications
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
-
+@inject NavigationManager NavigationManager
+@inject ProtectedLocalStorage LocalStorage
 
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Buttons
@@ -15,7 +16,7 @@
     <SfCard ID="Pedidos" @onclick="@(e => undefined())">
         <CardHeader Title="🚚 Mis pedidos" />
     </SfCard>
-    <SfCard ID="Logout" @onclick="@(e => undefined())">
+    <SfCard ID="Logout" @onclick="@(e => cerrarSesion())">
         <CardHeader Title="❌ Cerrar sesión" />
     </SfCard>
 
@@ -46,4 +47,13 @@
     {
 
     }
+
+    public async Task cerrarSesion()
+    {
+        await LocalStorage.DeleteAsync("user");
+
+        NavigationManager.NavigateTo("", forceLoad: true);
+    }
+
+
 }

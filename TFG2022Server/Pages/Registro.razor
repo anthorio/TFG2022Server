@@ -1,0 +1,154 @@
+﻿@page "/registro"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Notifications
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+
+
+<div class="col-lg-4 control-section">
+    <SfToast @ref="ToastObj" ID="toast_type">
+        <ToastPosition X="@ToastPosition"></ToastPosition>
+    </SfToast>
+</div>
+
+@if (storedUserEmail != null)
+{
+    NavigationManager.NavigateTo("", forceLoad: true);
+}
+else
+{
+<h3>Registro de cliente </h3>
+<div class="row">
+    <div class="column_2_1">
+        <div>
+            <label>Nombre</label>
+        </div>
+        <div>
+            <label>Apellidos</label>
+        </div>
+        <div>
+            <label>Email</label>
+        </div>
+        <div>
+            <label>Teléfono</label>
+        </div>
+        <div>
+            <label>Fecha de nacimiento</label>
+        </div>
+        <div>
+            <label>DNI</label>
+        </div>
+        <div>
+            <label>Contraseña</label>
+        </div>
+        <div>
+            <label>Repite la contraseña</label>
+        </div>
+    </div>
+    <div class="column_2_2">
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+        <div>
+            <input class="form-control" @bind="userImput"></input>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column_3_1"> Direccion de entrega <div>
+                <input class="form-control" @bind="userImput"></input>
+            </div>
+        </div>
+        <div class="column_3_2"> Código Postal <div>
+                <input class="form-control" @bind="userImput"></input>
+            </div>
+        </div>
+        <div class="column_3_3"> Población <div>
+                <input class="form-control" @bind="userImput"></input>
+            </div>
+        </div>
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary">Registrarme</button>
+    </div>
+</div>
+
+}
+<style>
+    .column_2_1 {
+        float: left;
+        width: 25%;
+        background-color: red;
+        margin: px;
+    }
+
+    .column_2_2 {
+        float: left;
+        width: 75%;
+        background-color: green;
+    }
+
+    .column_3_1 {
+        float: left;
+        width: 40%;
+        background-color: blue;
+    }
+
+    .column_3_2 {
+        float: left;
+        width: 32%;
+        background-color: yellow;
+    }
+
+    .column_3_3 {
+        float: left;
+        width: 28%;
+        background-color: orange;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+</style>
+
+
+@code {
+    private string storedUserEmail { get; set; }
+
+        string userImput;
+
+    private SfToast? ToastObj;
+    private string ToastPosition = "Right";
+    private List<ToastModel> Toast = new List<ToastModel>
+    {
+        new ToastModel{ Title = "Success!", Content="Has iniciado sesión correctamente", CssClass="e-toast-success", Icon="e-success toast-icons" },
+        new ToastModel{ Title = "Error!", Content="Usuario o contraseña incorrecta", CssClass="e-toast-danger", Icon="e-error toast-icons" }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        storedUserEmail = result.Success ? result.Value : null;
+    }
+}

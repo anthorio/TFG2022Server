@@ -356,9 +356,9 @@
 
     protected async Task InicializarUsuario()
     {
-        await Task.Delay(2000);
+        await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
-        await Task.Delay(2000);
+        await Task.Delay(500);
         storedUserEmail = result.Success ? result.Value : null;
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
     }
