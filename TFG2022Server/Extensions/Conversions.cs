@@ -24,21 +24,6 @@ namespace TFG2022Server.Extensions
                           }).ToListAsync();
         }
 
-        public static async Task<List<ClienteModel>> Convert(this IQueryable<Cliente> clientes)
-        {
-            return await (from w in clientes
-                          select new ClienteModel
-                          {
-                              ClienteId = w.ClienteId,
-                              Direccion = w.Direccion,
-                              Poblacion = w.Poblacion,
-                              CodigoPostal = w.CodigoPostal,
-                              Descuento = w.Descuento,
-                              UsuarioIdCliente = w.UsuarioIdCliente
-
-                          }).ToListAsync();
-        }
-
         public static async Task<List<UsuarioModel>> Convert(this IQueryable<Usuario> usuarios, TFG2022Context context)
         {
             return await (from u in usuarios
@@ -110,19 +95,6 @@ namespace TFG2022Server.Extensions
                           }).ToListAsync();
         }
 
-        public static async Task<List<LineaAlbaranModel>> Convert(this IQueryable<LineaAlbaran> lineaAlbaranes)
-        {
-            return await (from w in lineaAlbaranes
-                          select new LineaAlbaranModel
-                          {
-                              LineaAlbaranId = w.LineaAlbaranId,
-                              AlbaranLineaAlbaran = w.AlbaranLineaAlbaran,
-                              LineaPedidoLineaAlbaran = w.LineaPedidoLineaAlbaran,
-                              Cantidad = w.Cantidad,
-                              Importe = w.Importe
-
-                          }).ToListAsync();
-        }
 
         public static async Task<List<LineaCarritoModel>> Convert(this IQueryable<LineaCarrito> lineaCarritos)
         {
@@ -133,20 +105,6 @@ namespace TFG2022Server.Extensions
                               CarritoLineaCarrito = w.CarritoLineaCarrito,
                               ProductoLineaCarrito = w.ProductoLineaCarrito,
                               Cantidad = w.Cantidad
-
-                          }).ToListAsync();
-        }
-
-        public static async Task<List<LineaFacturaModel>> Convert(this IQueryable<LineaFactura> lineaFacturas)
-        {
-            return await (from w in lineaFacturas
-                          select new LineaFacturaModel
-                          {
-                              LineaFacturaId = w.LineaFacturaId,
-                              ProductoLineaFactura = w.ProductoLineaFactura,
-                              FacturaLineaFactura = w.FacturaLineaFactura,
-                              Cantidad = w.Cantidad,
-                              Importe = w.Importe
 
                           }).ToListAsync();
         }

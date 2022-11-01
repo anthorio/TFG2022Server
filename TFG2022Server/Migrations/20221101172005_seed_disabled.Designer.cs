@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFG2022Server.Data;
 
@@ -11,9 +12,10 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    partial class TFG2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20221101172005_seed_disabled")]
+    partial class seed_disabled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,6 +57,37 @@ namespace TFG2022Server.Migrations
                     b.HasKey("CarritoId");
 
                     b.ToTable("Carritos");
+                });
+
+            modelBuilder.Entity("TFG2022Server.Entities.Cliente", b =>
+                {
+                    b.Property<int>("ClienteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClienteId"), 1L, 1);
+
+                    b.Property<string>("CodigoPostal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Descuento")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Poblacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsuarioIdCliente")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClienteId");
+
+                    b.ToTable("Clientes");
                 });
 
             modelBuilder.Entity("TFG2022Server.Entities.Factura", b =>
@@ -109,6 +142,31 @@ namespace TFG2022Server.Migrations
                     b.ToTable("FamiliaProductos");
                 });
 
+            modelBuilder.Entity("TFG2022Server.Entities.LineaAlbaran", b =>
+                {
+                    b.Property<int>("LineaAlbaranId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LineaAlbaranId"), 1L, 1);
+
+                    b.Property<int>("AlbaranLineaAlbaran")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Importe")
+                        .HasColumnType("float");
+
+                    b.Property<int>("LineaPedidoLineaAlbaran")
+                        .HasColumnType("int");
+
+                    b.HasKey("LineaAlbaranId");
+
+                    b.ToTable("LineaAlbaranes");
+                });
+
             modelBuilder.Entity("TFG2022Server.Entities.LineaCarrito", b =>
                 {
                     b.Property<int>("LineaCarritoId")
@@ -129,6 +187,31 @@ namespace TFG2022Server.Migrations
                     b.HasKey("LineaCarritoId");
 
                     b.ToTable("LineaCarritos");
+                });
+
+            modelBuilder.Entity("TFG2022Server.Entities.LineaFactura", b =>
+                {
+                    b.Property<int>("LineaFacturaId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LineaFacturaId"), 1L, 1);
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FacturaLineaFactura")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Importe")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ProductoLineaFactura")
+                        .HasColumnType("int");
+
+                    b.HasKey("LineaFacturaId");
+
+                    b.ToTable("LineaFacturas");
                 });
 
             modelBuilder.Entity("TFG2022Server.Entities.LineaPedido", b =>

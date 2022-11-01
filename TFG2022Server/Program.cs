@@ -23,12 +23,9 @@ builder.Services.AddSyncfusionBlazor();
 
 builder.Services.AddScoped<IAlbaranService, AlbaranService>();
 builder.Services.AddScoped<ICarritoService, CarritoService>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IFacturaService, FacturaService>();
 builder.Services.AddScoped<IFamiliaProductoService, FamiliaProductoService>();
-builder.Services.AddScoped<ILineaAlbaranService, LineaAlbaranService>();
 builder.Services.AddScoped<ILineaCarritoService, LineaCarritoService>();
-builder.Services.AddScoped<ILineaFacturaService, LineaFacturaService>();
 builder.Services.AddScoped<ILineaPedidoService, LineaPedidoService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
