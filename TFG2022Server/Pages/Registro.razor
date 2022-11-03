@@ -1,16 +1,10 @@
 ﻿@page "/registro"
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@using Syncfusion.Blazor.Notifications
+@using Syncfusion.Blazor.Buttons
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
 
-
-<div class="col-lg-4 control-section">
-    <SfToast @ref="ToastObj" ID="toast_type">
-        <ToastPosition X="@ToastPosition"></ToastPosition>
-    </SfToast>
-</div>
 
 @if (storedUserEmail != null)
 {
@@ -18,137 +12,139 @@
 }
 else
 {
-<h3>Registro de cliente </h3>
-<div class="row">
-    <div class="column_2_1">
-        <div>
-            <label>Nombre</label>
-        </div>
-        <div>
-            <label>Apellidos</label>
-        </div>
-        <div>
-            <label>Email</label>
-        </div>
-        <div>
-            <label>Teléfono</label>
-        </div>
-        <div>
-            <label>Fecha de nacimiento</label>
-        </div>
-        <div>
-            <label>DNI</label>
-        </div>
-        <div>
-            <label>Contraseña</label>
-        </div>
-        <div>
-            <label>Repite la contraseña</label>
-        </div>
-    </div>
-    <div class="column_2_2">
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-        <div>
-            <input class="form-control" @bind="userImput"></input>
-        </div>
-    </div>
-    <div class="row">
-        <div class="column_3_1"> Direccion de entrega <div>
-                <input class="form-control" @bind="userImput"></input>
-            </div>
-        </div>
-        <div class="column_3_2"> Código Postal <div>
-                <input class="form-control" @bind="userImput"></input>
-            </div>
-        </div>
-        <div class="column_3_3"> Población <div>
-                <input class="form-control" @bind="userImput"></input>
-            </div>
-        </div>
-    </div>
-    <div class="col-2">
-        <button class="btn btn-primary">Registrarme</button>
-    </div>
-</div>
 
+    @if (displaySuccessForm)
+    {
+        <h3>Gracias por registrarte, @userModel.Nombre</h3>
+        <label>Haz clic en el botón "Cónéctate" para iniciar sesión.</label>
+    }
+    else
+    {
+        <EditForm Model="@userModel" OnValidSubmit="@HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+            <h3>Registro de cliente </h3>
+
+            <DataAnnotationsValidator />
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Nombre *</label>
+                <div class="col-sm-10">
+                    <InputText class="form-control" placeholder="Nombre" @bind-Value="@userModel.Nombre" />
+                    <ValidationMessage For="@(()=>userModel.Nombre)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Apellidos *</label>
+                <div class="col-sm-10">
+                    <InputText class="form-control" placeholder="Apellidos" @bind-Value="@userModel.Apellidos" />
+                    <ValidationMessage For="@(()=>userModel.Apellidos)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Email *</label>
+                <div class="col-sm-10">
+                    <InputText class="form-control" placeholder="Email" @bind-Value="@userModel.Email" />
+                    <ValidationMessage For="@(()=>userModel.Email)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Teléfono *</label>
+                <div class="col-sm-10">
+                    <InputText class="form-control" placeholder="Teléfono" @bind-Value="@userModel.Telefono" />
+                    <ValidationMessage For="@(()=>userModel.Telefono)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Fecha de nacimiento </label>
+                <div class="col-sm-10">
+                    <InputDate class="form-control" placeholder="aweno" @bind-Value="@userModel.FechaNacimiento" />
+                    <ValidationMessage For="@(()=>userModel.FechaNacimiento)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> DNI *</label>
+                <div class="col-sm-10">
+                    <InputText class="form-control" placeholder="00000000X" @bind-Value="@userModel.Dni" />
+                    <ValidationMessage For="@(()=>userModel.Dni)" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Contraseña *</label>
+                <div class="col-sm-10">
+                    <InputText type="password" class="form-control" placeholder="" @bind-Value="@userModel.Contraseña" />
+                    <ValidationMessage For="@(()=>userModel.Contraseña)" />
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <label class="col-form-label"> Direccion de entrega *</label> <div>
+                        <InputText class="form-control" placeholder="Dirección" @bind-Value="@userModel.Direccion" />
+                        <ValidationMessage For="@(()=>userModel.Direccion)" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="col-form-label"> Código Postal *</label> <div>
+                        <InputText class="form-control" placeholder="00000" @bind-Value="@userModel.CodigoPostal" />
+                        <ValidationMessage For="@(()=>userModel.CodigoPostal)" />
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <label class="col-form-label"> Población *</label> <div>
+                        <InputText class="form-control" placeholder="Población" @bind-Value="@userModel.Poblacion" />
+                        <ValidationMessage For="@(()=>userModel.Poblacion)" />
+                         <p/>
+                        <SfButton type="submit" class="e-btn e-outline e-primary">Registrarme</SfButton>
+                    </div>
+                </div>
+            </div>
+
+            @if (displayValidationErrorMessages)
+            {
+                <div class="col-md-4" style="margin-top:10px">
+                    <label>Mensajes de Validación: </label>
+                    <ValidationSummary />
+                </div>
+            }
+        </EditForm>
+    }
 }
 <style>
-    .column_2_1 {
-        float: left;
-        width: 25%;
-        background-color: red;
-        margin: px;
-    }
 
-    .column_2_2 {
-        float: left;
-        width: 75%;
-        background-color: green;
-    }
-
-    .column_3_1 {
-        float: left;
-        width: 40%;
-        background-color: blue;
-    }
-
-    .column_3_2 {
-        float: left;
-        width: 32%;
-        background-color: yellow;
-    }
-
-    .column_3_3 {
-        float: left;
-        width: 28%;
-        background-color: orange;
-    }
-
-    /* Clear floats after the columns */
-    .row:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
 </style>
 
 
 @code {
+
+    private UsuarioModel userModel = new();
+    bool displayValidationErrorMessages = false;
+    bool displayUserAddedToDB = false;
+    bool displaySuccessForm = false;
+
     private string storedUserEmail { get; set; }
 
-        string userImput;
+    private DateTime datePlaceholder { get; set; }
 
-    private SfToast? ToastObj;
-    private string ToastPosition = "Right";
-    private List<ToastModel> Toast = new List<ToastModel>
-    {
-        new ToastModel{ Title = "Success!", Content="Has iniciado sesión correctamente", CssClass="e-toast-success", Icon="e-success toast-icons" },
-        new ToastModel{ Title = "Error!", Content="Usuario o contraseña incorrecta", CssClass="e-toast-danger", Icon="e-error toast-icons" }
-    };
 
     protected override async Task OnInitializedAsync()
     {
         var result = await LocalStorage.GetAsync<string>("user");
         storedUserEmail = result.Success ? result.Value : null;
+        datePlaceholder = DateTime.Now;
+        userModel.Rol = UsuarioService.GetRoles().First();
     }
+
+    private async Task HandleValidSubmit(EditContext context)
+    {
+        displayValidationErrorMessages = false;
+
+        await UsuarioService.AddUsuario(userModel);
+        displaySuccessForm = true;
+    }
+
+    private void HandleInvalidSubmit(EditContext context)
+    {
+        displayValidationErrorMessages = true;
+        displayUserAddedToDB = false;
+    }
+
 }

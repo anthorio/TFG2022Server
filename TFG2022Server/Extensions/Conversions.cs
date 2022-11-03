@@ -20,7 +20,11 @@ namespace TFG2022Server.Extensions
                               Apellidos = w.Apellidos,
                               Telefono = w.Telefono,
                               Dni = w.Dni,
-                              FechaNacimiento = w.FechaNacimiento
+                              FechaNacimiento = w.FechaNacimiento,
+                              Direccion = w.Direccion,
+                              Poblacion = w.Poblacion,
+                              CodigoPostal = w.CodigoPostal,
+                              Descuento = w.Descuento
                           }).ToListAsync();
         }
 
@@ -39,7 +43,11 @@ namespace TFG2022Server.Extensions
                               Apellidos = u.Apellidos,
                               Telefono = u.Telefono,
                               Dni = u.Dni,
-                              FechaNacimiento = u.FechaNacimiento
+                              FechaNacimiento = u.FechaNacimiento,
+                              Direccion = u.Direccion,
+                              Poblacion = u.Poblacion,
+                              CodigoPostal = u.CodigoPostal,
+                              Descuento = u.Descuento
 
                           }).ToListAsync();
         }
@@ -214,7 +222,11 @@ namespace TFG2022Server.Extensions
                 Apellidos = usuarioModel.Apellidos,
                 Telefono = usuarioModel.Telefono,
                 Dni = usuarioModel.Dni.ToUpper(),
-                FechaNacimiento = usuarioModel.FechaNacimiento
+                FechaNacimiento = usuarioModel.FechaNacimiento,
+                Direccion = usuarioModel.Direccion,
+                Poblacion = usuarioModel.Poblacion,
+                CodigoPostal = usuarioModel.CodigoPostal,
+                Descuento = usuarioModel.Descuento
             };
         }
         public static LineaCarrito Convert(this LineaCarritoModel lineaCarritoModel)
