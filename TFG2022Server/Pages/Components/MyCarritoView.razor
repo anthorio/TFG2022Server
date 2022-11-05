@@ -1,9 +1,26 @@
 ﻿@using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Cards
+@inject NavigationManager NavigationManager
 @inject ILineaCarritoService LineaCarritoManagementService
 @inject ICarritoService CarritoService
 @inject IProductoService ProductoService
+
+@if(@user==null){
+
+    <SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=100px Width=300px >
+    <TooltipTemplates>
+        <Content>
+            <div class='content'>
+                <h3 style='margin-top: 5px;'>Inicia sesión primero</h3>
+            </div>
+        </Content>
+    </TooltipTemplates>
+    @* Initializes the Button component *@
+    <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
+</SfTooltip>
+
+}else{
 
 
 <SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=600px Width=300px IsSticky=true>
@@ -43,13 +60,14 @@
                 </table>
 
                 <div style='margin-top: 20px;'></div>
-                <SfButton CssClass="e-outline" Content="Comprar"></SfButton>
+                <SfButton CssClass="e-outline" Content="Comprar" @onclick="@(()=>NavigationManager.NavigateTo("/compra"))"/>
             </div>
         </Content>
     </TooltipTemplates>
     @* Initializes the Button component *@
     <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
 </SfTooltip>
+}
 
 <style>
     .listview-template {
@@ -159,10 +177,10 @@
         {
             if (user != null)
             {
+                idCarrito = await getIdCarrito(user);
                 lineaCarritoData = await LineaCarritoManagementService.GetLineaCarritos();
                 filteredLineaCarritoData = await filtrarLineasCarrito(lineaCarritoData, user);
                 listaProductosCarrito = await listaLineaCarritosToProductos(filteredLineaCarritoData);
-                idCarrito = await getIdCarrito(user);
                 StateHasChanged();
             }
         }

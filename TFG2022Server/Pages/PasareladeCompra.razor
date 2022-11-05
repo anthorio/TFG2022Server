@@ -1,0 +1,347 @@
+﻿@page "/compra"
+
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Grids
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+
+@inject ProtectedLocalStorage LocalStorage
+@inject NavigationManager NavigationManager
+@inject ILineaCarritoService LineaCarritoManagementService
+@inject ICarritoService CarritoService
+@inject IProductoService ProductoService
+@inject IUsuarioService UsuarioService
+
+
+<h3>PasareladeCompra</h3>
+
+@if (@waitForUser() == null)
+{
+    NavigationManager.NavigateTo("", forceLoad: true);
+}
+else
+{
+    <div class="float-container">
+        <div class="float-child">
+            <SfCard CssClass="@((step==1? "e-card-step" : "e-card"))">
+                <CardHeader Title="Paso 1" SubTitle="Repasa la compra" />
+                <CardContent Content="Selecciona la zona de envío" />
+            </SfCard>
+        </div>
+        <div class="float-child">
+            <SfCard CssClass="@((step==2? "e-card-step" : "e-card"))">
+                <CardHeader Title="Paso 2" SubTitle="Realiza el pago" />
+                <CardContent Content="Selecciona tu método de pago preferido" />
+            </SfCard>
+        </div>
+        <div class="float-child">
+            <SfCard CssClass="@((step==3? "e-card-step" : "e-card"))">
+                <CardHeader Title="Paso 3" SubTitle="Resumen de la compra realizada" />
+                <CardContent Content="" />
+            </SfCard>
+        </div>
+    </div>
+
+
+    @if (@listaProductosCarrito != null)
+    {
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Tu carrito</th>
+                    <th>Precio /ud.</th>
+                    <th>Cantidad</th>
+                    <th>Descuento</th>
+                    <th>Importe total (IVA incluido)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProductoModel producto in listaProductosCarrito)
+                {
+                    <tr>
+                        <td>
+                            <img src="@producto.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@producto.Nombre</text>
+                        </td>
+                        <td>@producto.Precio €</td>
+                        <td>
+                            <div>@cantidadDeProducto(@producto, @filteredLineaCarritoData)</div>
+                            <div style="text-align: center">➕add funct➖❌</div>
+                        </td>
+                        <td>@user.Descuento %</td>
+                        <td>@totalProducto(@producto.Precio,@user.Descuento,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <hr />
+
+
+        <h4>Envío </h4>
+        <p>Comprueba que la dirección es la deseada.</p>
+        <p>Si quieres modificar tu dirección, deberás modificarla en tu perfil.</p>
+
+    @if (@user != null)
+    {
+    <div class="form-group row">
+            <label class="col-sm-2"> Nombre</label>
+            <div class="col-sm-10">
+                <p>@user.Nombre</p>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Apellidos</label>
+            <div class="col-sm-10">
+                <p>@user.Apellidos</p> 
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Email</label>
+            <div class="col-sm-10">
+                <p>@user.Email</p> 
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Teléfono</label>
+            <div class="col-sm-10">
+                <p>@user.Telefono</p> 
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 "> DNI</label>
+            <div class="col-sm-10">
+                <p>@user.Dni</p> 
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Direccion de entrega</label>
+            <div class="col-sm-10">
+                <p>@user.Direccion</p> 
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Código Postal</label> 
+            <div class="col-sm-10">
+                <p>@user.CodigoPostal</p>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2"> Población</label>
+            <div class="col-sm-10">
+                <p>@user.Poblacion </p> 
+            </div>
+        </div>
+        }
+    <hr />
+    <p>condiciones</p>
+    <hr />
+    <p>total</p>
+}
+
+<style>
+
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+
+
+    .e-card {
+        display: flex;
+        width: 100%;
+        margin: auto;
+    }
+
+    .e-card-step {
+        background-color: lightgrey;
+        display: flex;
+        width: 100%;
+        margin: auto;
+    }
+
+    .e-card-header-caption .e-card-header-title {
+        font-size: 20px;
+        font-family: Helvetica, 'Segoe UI';
+        font-weight: bold;
+    }
+
+    .e-card-content {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 50px;
+    }
+
+    .float-container {
+        border: 3px solid #fff;
+        padding: 20px;
+    }
+
+    .float-child {
+        width: 33%;
+        float: left;
+        padding: 20px;
+    }
+</style>
+
+@code {
+    private UsuarioModel userModel = new();
+
+    public Usuario user { get; set; }
+    private string storedUserEmail { get; set; }
+    private int idCarrito { get; set; }
+    private int step { get; set; }
+
+
+    private List<LineaCarritoModel>? lineaCarritoData { get; set; }
+    private List<ProductoModel>? listaProductosCarrito { get; set; }
+    private List<LineaCarritoModel>? filteredLineaCarritoData { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        step = 1;
+        await waitForUser();
+        user = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        idCarrito = await getIdCarrito(user);
+        lineaCarritoData = await LineaCarritoManagementService.GetLineaCarritos();
+        filteredLineaCarritoData = await filtrarLineasCarrito(lineaCarritoData, user);
+        listaProductosCarrito = await listaLineaCarritosToProductos(filteredLineaCarritoData);
+    }
+
+    private async Task<string> waitForUser()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        storedUserEmail = result.Success ? result.Value : null;
+
+        return storedUserEmail;
+    }
+
+    private async Task<List<ProductoModel>> listaLineaCarritosToProductos(List<LineaCarritoModel> listaLineaCarritos)
+    {
+        var result = new List<ProductoModel>();
+        try
+        {
+            if (listaLineaCarritos != null)
+            {
+                var listaProductos = await ProductoService.GetProductos();
+                foreach (var linea in listaLineaCarritos)
+                {
+                    foreach (var producto in listaProductos)
+                    {
+                        if (linea.ProductoLineaCarrito == producto.ProductoId)
+                        {
+                            result.Add(producto);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        catch (Exception)
+        {
+            return result;
+        }
+    }
+
+    private async Task<List<LineaCarritoModel>> filtrarLineasCarrito(List<LineaCarritoModel> listalc, Usuario usuario)
+    {
+        var result = new List<LineaCarritoModel>();
+        foreach (var linea in listalc)
+        {
+
+            if (linea.CarritoLineaCarrito.ToString() == idCarrito.ToString())
+            {
+                result.Add(linea);
+            }
+        }
+        return result;
+    }
+
+    private async Task<int> getIdCarrito(Usuario user)
+    {
+        try
+        {
+            return (await CarritoService.GetCarritoByUser(user.UsuarioId)).CarritoId;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private int cantidadDeProducto(ProductoModel producto, List<LineaCarritoModel> lineaCarr)
+    {
+        foreach (var item in lineaCarr)
+        {
+            if (item.ProductoLineaCarrito == producto.ProductoId) return item.Cantidad;
+        }
+        return 0;
+    }
+
+    private double totalCarrito()
+    {
+        double result = 0;
+        if (filteredLineaCarritoData != null && listaProductosCarrito != null)
+        {
+            foreach (var lincarr in filteredLineaCarritoData)
+            {
+                foreach (var producto in listaProductosCarrito)
+                {
+                    if (lincarr.ProductoLineaCarrito == producto.ProductoId)
+                        result = result + (producto.Precio) * lincarr.Cantidad;
+                }
+            }
+        }
+
+        return Math.Round(result, 2);
+    }
+
+    private double totalProducto(double productoPrecio, int usuarioDescuento, int lineaCantidad)
+    {
+        double result = productoPrecio * lineaCantidad;
+
+        result = result - ((result * usuarioDescuento) / 100);
+
+        return Math.Round(result, 2);
+    }
+
+    private void nulo()
+    {
+
+    }
+}
