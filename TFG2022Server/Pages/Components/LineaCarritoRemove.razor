@@ -1,0 +1,39 @@
+﻿@using Syncfusion.Blazor.Buttons
+
+@inject ILineaCarritoService LineaCarritoService
+
+<SfButton CssClass="e-small e-round" IsPrimary="true" OnClick="() => increaseLinea()"><SfIcon Name="IconName.Close"></SfIcon></SfButton>
+
+@code {
+    [Parameter]
+    public ProductoModel producto { get; set; }
+    [Parameter]
+    public int carrito { get; set; }
+    [Parameter]
+    public List<LineaCarritoModel> listaLineas { get; set; }
+
+    [CascadingParameter]
+    public PasareladeCompra _Parent { get; set; }
+
+    private LineaCarritoModel getLinea()
+    {
+        foreach (var linea in listaLineas)
+        {
+            if (linea.CarritoLineaCarrito == carrito && linea.ProductoLineaCarrito == producto.ProductoId)
+            {
+                return linea;
+            }
+        }
+        return null;
+    }
+
+    private async Task increaseLinea()
+    {
+        var linea = getLinea();
+        if (linea != null)
+        {
+            await LineaCarritoService.EliminarLinea(linea);
+            _Parent.RefreshState();
+        }
+    }
+}

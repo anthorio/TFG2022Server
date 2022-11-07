@@ -52,7 +52,64 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
 
+        public async Task Aumentar1CantidadLinea(LineaCarritoModel lineaCarrito)
+        {
+            try
+            {
+                var lineaCarritoExistente = await this.tfg2022Context.LineaCarritos.FindAsync(lineaCarrito.LineaCarritoId);
+                if (lineaCarritoExistente != null)
+                {
+                    lineaCarritoExistente.Cantidad=lineaCarrito.Cantidad + 1;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task Disminuir1CantidadLinea(LineaCarritoModel lineaCarrito)
+        {
+            try
+            {
+                var lineaCarritoExistente = await this.tfg2022Context.LineaCarritos.FindAsync(lineaCarrito.LineaCarritoId);
+                if (lineaCarritoExistente != null)
+                {
+                    if (lineaCarrito.Cantidad > 1)
+                    {
+                    lineaCarritoExistente.Cantidad = lineaCarrito.Cantidad - 1;
+                    await this.tfg2022Context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        await EliminarLinea(lineaCarrito);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task EliminarLinea(LineaCarritoModel lineaCarrito)
+        {
+            try
+            {
+                var linea = await this.tfg2022Context.LineaCarritos.FindAsync(lineaCarrito.LineaCarritoId);
+                if (linea != null)
+                {
+                    this.tfg2022Context.LineaCarritos.Remove(linea);
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
