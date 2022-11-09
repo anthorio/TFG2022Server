@@ -16,7 +16,7 @@ builder.Services.AddDbContext<TFG2022Context>(options => options.UseSqlServer(co
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+//builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 
 builder.Services.AddSyncfusionBlazor();

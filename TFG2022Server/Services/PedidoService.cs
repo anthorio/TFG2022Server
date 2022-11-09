@@ -16,7 +16,7 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task CreatePedido(PedidoModel pedidoModel)
+        public async Task<Pedido> CreatePedido(PedidoModel pedidoModel)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace TFG2022Server.Services
                     FechaPedido = pedidoModel.FechaPedido,
                     TipoEnvio = pedidoModel.TipoEnvio,
                     EstadoPedido = pedidoModel.EstadoPedido,
-                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal),
+                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal)+GetCosteEnvio(),
                     CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad)
                 };
                 var addedPedido = await this.tfg2022Context.Pedidos.AddAsync(pedido);
@@ -40,6 +40,7 @@ namespace TFG2022Server.Services
                 await this.tfg2022Context.SaveChangesAsync();
 
                 await UpdateVentasPedidoReportes(pedidoId, pedido);
+                return addedPedido.Entity;
             }
             catch (Exception)
             {
@@ -47,8 +48,10 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
-
-
+        public double GetCosteEnvio()
+        {
+            return Constants.costeEnvio;
+        }
         public async Task<List<PedidoModel>> GetPedidos()
         {
             try

@@ -10,5 +10,7 @@ namespace TFG2022Server.Services.Contracts
         Task Aumentar1CantidadLinea(LineaCarritoModel lineaCarrito);
         Task Disminuir1CantidadLinea(LineaCarritoModel lineaCarrito);
         Task EliminarLinea(LineaCarritoModel lineaCarrito);
+        Task DeleteAllLineasByCarrito(int carrito);
+
     }
 }

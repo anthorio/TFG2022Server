@@ -5,13 +5,17 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using TFG2022Server.Pages.Components
 @using Syncfusion.Blazor.Buttons
+@using TFG2022Server.Data
+@using TFG2022Server.Extensions
+@using System.IO;
 
 @inject ProtectedLocalStorage LocalStorage
 @inject NavigationManager NavigationManager
-@inject ILineaCarritoService LineaCarritoManagementService
+@inject ILineaCarritoService LineaCarritoService
 @inject ICarritoService CarritoService
 @inject IProductoService ProductoService
 @inject IUsuarioService UsuarioService
+@inject IPedidoService PedidoService
 
 
 <h3>PasareladeCompra</h3>
@@ -43,142 +47,259 @@ else
         </div>
     </div>
 
-
-    @if (@listaProductosCarrito != null)
+    @if (step == 1)
     {
+
+        @if (@listaProductosCarrito != null)
+        {
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Tu carrito</th>
+                        <th>Precio /ud.</th>
+                        <th>Cantidad</th>
+                        <th>Descuento</th>
+                        <th>Importe total (IVA incluido)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ProductoModel producto in listaProductosCarrito)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@producto.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@producto.Nombre</text>
+                            </td>
+                            <td>@producto.Precio €</td>
+                            <td>
+                                <div>@cantidadDeProducto(@producto, @filteredLineaCarritoData)</div>
+                                <div style="text-align: center">
+                                    <CascadingValue Value="this"><LineaCarritoIncrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                                    <CascadingValue Value="this"><LineaCarritoDecrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                                    <CascadingValue Value="this"><LineaCarritoRemove producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                                </div>
+                            </td>
+                            <td>@user.Descuento %</td>
+                            <td>@totalProducto(@producto.Precio,@user.Descuento,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <hr />
+
+
+        <h4>Envío </h4>
+        <p>Comprueba que la dirección es la deseada.</p>
+        <p>Si quieres modificar tu dirección, deberás modificarla en <a href="https://example.com">tu perfil</a></p>
+
+        @if (@user != null)
+        {
+            <table class="styled-table">
+                <tbody>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>@user.Nombre</td>
+                    </tr>
+                    <tr>
+                        <td>Apellidos</td>
+                        <td>@user.Apellidos</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>@user.Email</td>
+                    </tr>
+                    <tr>
+                        <td>Teléfono</td>
+                        <td>@user.Telefono</td>
+                    </tr>
+                    <tr>
+                        <td>DNI</td>
+                        <td>@user.Dni</td>
+                    </tr>
+                    <tr>
+                        <td>Direccion de entrega</td>
+                        <td>@user.Direccion</td>
+                    </tr>
+                    <tr>
+                        <td>Código Postal</td>
+                        <td>@user.CodigoPostal</td>
+                    </tr>
+                    <tr>
+                        <td>Población</td>
+                        <td>@user.Poblacion</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        }
+        <hr />
+        <div class="control-section">
+            <div class="checkbox-control">
+                @if (alertThatHasntAcceptCondiciones)
+                {
+                    <p style="color:red">Esta casilla no está marcada.</p>
+                }
+                <SfCheckBox @bind-Checked="@acceptCondiciones">Acepto las Condiciones generales de compra.</SfCheckBox>
+            </div>
+        </div>
+    }
+    else if (step == 2)
+    {
+        <h3>Datos de pago</h3>
+        <p>Cumpliendo con la nueva Directiva de Pagos Europea (PSD2), tu banco podrá pedirte alguna validación adicional a la que vienes haciendo en tus compras online.</p>
+
+        <div class="control-section">
+            <div class="radio-control">
+                <h3>Seleccione medio de pago</h3>
+                <div class="row">
+                    <SfRadioButton Label="Otras tarjetas" Name="payment" Value="tarjetas" @bind-Checked="@metodoDePago"></SfRadioButton>
+                </div>
+                <div class="row">
+                    <SfRadioButton Label="PayPal" Name="payment" Value="paypal" @bind-Checked="@metodoDePago"></SfRadioButton>
+                </div>
+                <div class="row">
+                    <SfRadioButton Label="Bizum" Name="payment" Value="bizum" @bind-Checked="@metodoDePago"></SfRadioButton>
+                </div>
+            </div>
+        </div>
+    }
+    else if (step == 3 && newPedido.UsuarioPedido == user.UsuarioId)
+    {
+        <p>Gracias por comprar en Suministros Nerja. A continuación ofrecemos un resumen con los detalles de tu pedido.</p>
+        <table class="styled-table">
+            <tbody>
+                <tr>
+                    <td>ID del pedido</td>
+                    <td>@newPedido.PedidoId</td>
+                </tr>
+                <tr>
+                    <td>Fecha de compra</td>
+                    <td>@newPedido.FechaPedido</td>
+                </tr>
+                <tr>
+                    <td>Importe</td>
+                    <td>@Math.Round(newPedido.PrecioTotal-PedidoService.GetCosteEnvio(), 2)</td>
+                </tr>
+                <tr>
+                    <td>Gastos de envío</td>
+                    <td>@PedidoService.GetCosteEnvio()</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>@Math.Round(newPedido.PrecioTotal, 2)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Dirección de envío:</p>
+        <table class="styled-table">
+            <tbody>
+                <tr>
+                    <td>Nombre</td>
+                    <td>@user.Nombre</td>
+                </tr>
+                <tr>
+                    <td>Apellidos</td>
+                    <td>@user.Apellidos</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>@user.Email</td>
+                </tr>
+                <tr>
+                    <td>Teléfono</td>
+                    <td>@user.Telefono</td>
+                </tr>
+                <tr>
+                    <td>DNI</td>
+                    <td>@user.Dni</td>
+                </tr>
+                <tr>
+                    <td>Direccion de entrega</td>
+                    <td>@user.Direccion</td>
+                </tr>
+                <tr>
+                    <td>Código Postal</td>
+                    <td>@user.CodigoPostal</td>
+                </tr>
+                <tr>
+                    <td>Población</td>
+                    <td>@user.Poblacion</td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>
+        </div>
+        <div>
+            <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
+        </div>
+    }
+    @if (step != 3)
+    {
+        <hr />
         <table class="styled-table">
             <thead>
                 <tr>
-                    <th>Tu carrito</th>
-                    <th>Precio /ud.</th>
-                    <th>Cantidad</th>
-                    <th>Descuento</th>
-                    <th>Importe total (IVA incluido)</th>
+                    <th>Total</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (ProductoModel producto in listaProductosCarrito)
-                {
-                    <tr>
-                        <td>
-                            <img src="@producto.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@producto.Nombre</text>
-                        </td>
-                        <td>@producto.Precio €</td>
-                        <td>
-                            <div>@cantidadDeProducto(@producto, @filteredLineaCarritoData)</div>
-                            <div style="text-align: center">
-                                <CascadingValue Value="this"><LineaCarritoIncrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
-                                <CascadingValue Value="this"><LineaCarritoDecrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
-                                <CascadingValue Value="this"><LineaCarritoRemove producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
-                            </div>
-                        </td>
-                        <td>@user.Descuento %</td>
-                        <td>@totalProducto(@producto.Precio,@user.Descuento,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
-                    </tr>
-                }
+                <tr>
+                    <td>
+                        Subtotal
+                    </td>
+                    <td>
+                        @totalCarrito()
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Envío
+                    </td>
+                    <td>
+                        @PedidoService.GetCosteEnvio()
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Total con envío
+                    </td>
+                    <td>
+                        @totalPedido()
+                    </td>
+                </tr>
             </tbody>
         </table>
+        <hr />
     }
-
-    <hr />
-
-
-    <h4>Envío </h4>
-    <p>Comprueba que la dirección es la deseada.</p>
-    <p>Si quieres modificar tu dirección, deberás modificarla en <a href="https://example.com">tu perfil</a></p>
-
-    @if (@user != null)
+    @if (step == 1)
     {
-        <div class="form-group row">
-            <label class="col-sm-2"> Nombre</label>
-            <div class="col-sm-10">
-                <p>@user.Nombre</p>
+        <div class="float-container">
+            <div class="float-child">
+                <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Seguir comprando</SfButton>
             </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Apellidos</label>
-            <div class="col-sm-10">
-                <p>@user.Apellidos</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Email</label>
-            <div class="col-sm-10">
-                <p>@user.Email</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Teléfono</label>
-            <div class="col-sm-10">
-                <p>@user.Telefono</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2 "> DNI</label>
-            <div class="col-sm-10">
-                <p>@user.Dni</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Direccion de entrega</label>
-            <div class="col-sm-10">
-                <p>@user.Direccion</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Código Postal</label>
-            <div class="col-sm-10">
-                <p>@user.CodigoPostal</p>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label class="col-sm-2"> Población</label>
-            <div class="col-sm-10">
-                <p>@user.Poblacion </p>
+            <div class="float-child">
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep2">Continuar con el pedido</SfButton>
             </div>
         </div>
     }
-    <hr />
-    <div class="control-section">
-        <div class="checkbox-control">
-            <SfCheckBox @bind-Checked="@acceptCondiciones">Acepto las Condiciones generales de compra.</SfCheckBox>
+    else if (step == 2)
+    {
+        <div class="float-container">
+            <div class="float-child">
+                <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
+            </div>
+            <div class="float-child">
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3" Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
+            </div>
         </div>
-    </div>
-    <hr />
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>Total</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    Subtotal
-                </td>
-                <td>
-                    @totalCarrito()
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Envío
-                </td>
-                <td>
-                    4.5€
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    Total con envío
-                </td>
-                <td>
-                    @totalPedido()
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    }
+
+
+
 }
 
 <style>
@@ -270,10 +391,15 @@ else
     private int idCarrito { get; set; }
     private int step { get; set; }
     private bool acceptCondiciones = false;
+    private bool alertThatHasntAcceptCondiciones = false;
 
     private List<LineaCarritoModel>? lineaCarritoData { get; set; }
     private List<ProductoModel>? listaProductosCarrito { get; set; }
     private List<LineaCarritoModel>? filteredLineaCarritoData { get; set; }
+
+    private string metodoDePago = "";
+
+    private Pedido newPedido = new Pedido();
 
     protected override async Task OnInitializedAsync()
     {
@@ -281,7 +407,7 @@ else
         await waitForUser();
         user = await UsuarioService.ReadUserbyEmail(storedUserEmail);
         idCarrito = await getIdCarrito(user);
-        lineaCarritoData = await LineaCarritoManagementService.GetLineaCarritos();
+        lineaCarritoData = await LineaCarritoService.GetLineaCarritos();
         filteredLineaCarritoData = await filtrarLineasCarrito(lineaCarritoData, user);
         listaProductosCarrito = await listaLineaCarritosToProductos(filteredLineaCarritoData);
     }
@@ -376,7 +502,7 @@ else
     private double totalPedido()
     {
 
-        return (totalCarrito() + 4.5);
+        return (totalCarrito() + PedidoService.GetCosteEnvio());
     }
 
     private double totalProducto(double productoPrecio, int usuarioDescuento, int lineaCantidad)
@@ -388,12 +514,80 @@ else
         return Math.Round(result, 2);
     }
 
-    public void RefreshState(){
-     NavigationManager.NavigateTo("/refresh/compra");//this.StateHasChanged();
-}
-
-    private void nulo()
+    public void RefreshState()
     {
+        NavigationManager.NavigateTo("/refresh/compra");//this.StateHasChanged();
+    }
+
+    private async Task goToStep2()
+    {
+        if (acceptCondiciones)
+        {
+            alertThatHasntAcceptCondiciones = false;
+            step = 2;
+
+        }
+        else
+        {
+            alertThatHasntAcceptCondiciones = true;
+        }
+    }
+    private async Task goToStep3()
+    {
+        try
+        {
+            newPedido = await CreatePedido();
+            await LineaCarritoService.DeleteAllLineasByCarrito(idCarrito);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
+
+        step = 3;
 
     }
+
+    protected async Task<Pedido> CreatePedido()
+    {
+        try
+        {
+            if (listaProductosCarrito.Count() > 0)
+            {
+
+                List<LineaPedido> lineasPedido = (from p in listaProductosCarrito
+                                                  select new LineaPedido
+                                                      {
+                                                          ProductoLineaPedido = p.ProductoId,
+                                                          PrecioFinal = totalProducto(p.Precio, user.Descuento, cantidadDeProducto(p, filteredLineaCarritoData)),
+                                                          Cantidad = cantidadDeProducto(p, filteredLineaCarritoData)
+
+                                                      }).ToList();
+                PedidoModel pedidoModel = new PedidoModel
+                    {
+                        UsuarioPedido = user.UsuarioId,
+                        LineasPedido = lineasPedido,
+                        FechaPedido = DateTime.Now,
+                        EstadoPedido = "estadoFIX",
+                        TipoEnvio = "tipoFIX"
+                    };
+                return await PedidoService.CreatePedido(pedidoModel);
+
+            }
+            return null;
+        }
+        catch (Exception)
+        {
+            // await this.ToastObj.ShowAsync(Toast[2]);
+            throw;
+        }
+    }
+
+    protected async Task ExportToPdf()
+    {
+        var lalal = "";
+    }
+
 }

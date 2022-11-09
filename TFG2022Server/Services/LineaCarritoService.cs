@@ -113,5 +113,23 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task DeleteAllLineasByCarrito(int carrito)
+        {
+
+            try
+            {
+               var lineas = this.tfg2022Context.LineaCarritos.Where(lc => lc.CarritoLineaCarrito==carrito);
+                foreach (var linea in lineas)
+                {
+                    this.tfg2022Context.LineaCarritos.Remove(linea);
+                }
+                    await this.tfg2022Context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

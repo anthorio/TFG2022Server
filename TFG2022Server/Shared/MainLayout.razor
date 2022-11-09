@@ -43,20 +43,6 @@
     </main>
 </div>
 
-<footer class="footer">
-    <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/site"))">La empresa 🏢</SfButton>
-</footer>
-
-<style>
-    .footer {
-        padding-top: 32px;
-        padding-left: 32px;
-        background-color: #EFEFEF;
-        width: 100%;
-        position: relative;
-    }
-</style>
-
 @code {
     string storedUserEmail = "";
     Usuario storedUser;
