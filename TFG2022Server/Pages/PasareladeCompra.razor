@@ -16,7 +16,8 @@
 @inject IProductoService ProductoService
 @inject IUsuarioService UsuarioService
 @inject IPedidoService PedidoService
-
+@inject ExportService exportService
+@inject Microsoft.JSInterop.IJSRuntime JS
 
 <h3>PasareladeCompra</h3>
 
@@ -282,7 +283,7 @@ else
                 <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Seguir comprando</SfButton>
             </div>
             <div class="float-child">
-                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep2">Continuar con el pedido</SfButton>
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep2" Disabled=@pedidoVacio>Continuar con el pedido</SfButton>
             </div>
         </div>
     }
@@ -293,7 +294,7 @@ else
                 <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
             </div>
             <div class="float-child">
-                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3" Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3"  Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
             </div>
         </div>
     }
@@ -391,6 +392,7 @@ else
     private int idCarrito { get; set; }
     private int step { get; set; }
     private bool acceptCondiciones = false;
+    private bool pedidoVacio { get; set; }
     private bool alertThatHasntAcceptCondiciones = false;
 
     private List<LineaCarritoModel>? lineaCarritoData { get; set; }
@@ -410,6 +412,7 @@ else
         lineaCarritoData = await LineaCarritoService.GetLineaCarritos();
         filteredLineaCarritoData = await filtrarLineasCarrito(lineaCarritoData, user);
         listaProductosCarrito = await listaLineaCarritosToProductos(filteredLineaCarritoData);
+        pedidoVacio = listaProductosCarrito.Count() < 1;
     }
 
     private async Task<string> waitForUser()
@@ -537,7 +540,7 @@ else
         try
         {
             newPedido = await CreatePedido();
-            await LineaCarritoService.DeleteAllLineasByCarrito(idCarrito);
+    await LineaCarritoService.DeleteAllLineasByCarrito(idCarrito);
         }
         catch (Exception)
         {
@@ -587,7 +590,9 @@ else
 
     protected async Task ExportToPdf()
     {
-        var lalal = "";
+        using(MemoryStream memoryStream = ExportService.CreatePdf(newPedido, user, listaProductosCarrito, filteredLineaCarritoData, PedidoService.GetCosteEnvio())){
+            await JS.SaveAs(newPedido.PedidoId.ToString()+newPedido.FechaPedido.ToShortDateString()+newPedido.FechaPedido.ToShortTimeString()+".pdf", memoryStream.ToArray());
+        }
     }
 
 }
