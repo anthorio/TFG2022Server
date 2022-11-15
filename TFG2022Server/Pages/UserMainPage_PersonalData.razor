@@ -1,0 +1,184 @@
+﻿@page "/usermainpage/data"
+@using Syncfusion.Blazor.Buttons
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+
+@if (isNotEditing)
+{
+    <h3>Datos personales de @usuarioModel.Nombre</h3>
+
+}
+else
+{
+    <h3>Modificando datos personales</h3>
+
+}
+
+<EditForm Model="@usuarioModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Nombre
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Nombre" disabled=@isNotEditing />
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Apellidos
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Apellidos" disabled=@isNotEditing />
+        </div>
+    </div>
+
+    <div class="form-group row">
+
+        <label class="col-sm-2 col-form-label">
+            Email
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Email" disabled=@isNotEditing />
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Teléfono
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Telefono" disabled=@isNotEditing />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Fecha de nacimiento
+        </label>
+        <div class="col-sm-10">
+            <InputDate @bind-Value="usuarioModel.FechaNacimiento" disabled=@isNotEditing />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Dni
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Dni" disabled=@isNotEditing />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Contraseña
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Contraseña" disabled=@isNotEditing />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Dirección de entrega
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Direccion" disabled=@isNotEditing />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Código Postal
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.CodigoPostal" disabled=@isNotEditing />
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">
+            Población
+        </label>
+        <div class="col-sm-10">
+            <InputText @bind-Value="usuarioModel.Poblacion" disabled=@isNotEditing />
+        </div>
+    </div>
+
+    @if (!isNotEditing)
+    {
+        <button type="submit">Guardar cambios</button>
+    }
+
+</EditForm>
+
+@if (isNotEditing)
+{
+
+    <SfButton IsPrimary="true" CssClass="e-outline" @onclick="changeEditing">
+
+        <p> Modificar mis datos </p>
+    </SfButton>
+}
+
+@code {
+    private UsuarioModel usuarioModel = new();
+    private bool isNotEditing { get; set; }
+    private Usuario storedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        isNotEditing = true;
+        await InicializarUsuario();
+        if (storedUser != null) PasarLosDatosDelNormalAlModel(storedUser);
+    }
+
+    protected async Task InicializarUsuario()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+    }
+
+    private async void HandleValidSubmit()
+    {
+        await UsuarioService.UpdateUsuario(usuarioModel);
+        await LocalStorage.DeleteAsync("user");
+        await LocalStorage.SetAsync("user", usuarioModel.Email);
+        isNotEditing = true;
+    }
+
+    private void PasarLosDatosDelNormalAlModel(Usuario user)
+    {
+        usuarioModel.Apellidos = user.Apellidos;
+        usuarioModel.CodigoPostal = user.CodigoPostal;
+        usuarioModel.Contraseña = user.Contraseña;
+        usuarioModel.Descuento = user.Descuento;
+        usuarioModel.Direccion = user.Direccion;
+        usuarioModel.Dni = user.Dni;
+        usuarioModel.Email = user.Email;
+        usuarioModel.FechaNacimiento = user.FechaNacimiento;
+        usuarioModel.Nombre = user.Nombre;
+        usuarioModel.Poblacion = user.Poblacion;
+        usuarioModel.Rol = user.Rol;
+        usuarioModel.Telefono = user.Telefono;
+        usuarioModel.UsuarioId = user.UsuarioId;
+    }
+
+    private void changeEditing()
+    {
+        isNotEditing = !isNotEditing;
+
+    }
+}

@@ -10,7 +10,7 @@
 @using Syncfusion.Blazor.Buttons
 <div class="grid-container">
 
-    <SfCard ID="PersonalData" @onclick="@(e => undefined())">
+    <SfCard ID="PersonalData" @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage/data"))">
         <CardHeader Title="📒 Datos personales" />
     </SfCard>
     <SfCard ID="Pedidos" @onclick="@(e => undefined())">

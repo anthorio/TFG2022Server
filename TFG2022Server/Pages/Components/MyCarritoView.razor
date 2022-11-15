@@ -6,30 +6,33 @@
 @inject ICarritoService CarritoService
 @inject IProductoService ProductoService
 
-@if(@user==null){
+@if (@user == null)
+{
 
-    <SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=100px Width=300px >
-    <TooltipTemplates>
-        <Content>
-            <div class='content'>
-                <h3 style='margin-top: 5px;'>Inicia sesión primero</h3>
-            </div>
-        </Content>
-    </TooltipTemplates>
-    @* Initializes the Button component *@
-    <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
-</SfTooltip>
+    <SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=100px Width=300px>
+        <TooltipTemplates>
+            <Content>
+                <div class='content'>
+                    <h3 style='margin-top: 5px;'>Inicia sesión primero</h3>
+                </div>
+            </Content>
+        </TooltipTemplates>
+        @* Initializes the Button component *@
+        <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
+    </SfTooltip>
 
-}else{
+}
+else
+{
 
 
-<SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=600px Width=300px IsSticky=true>
-    <TooltipTemplates>
-        <Content>
-            <div class='content'>
-                <h3 style='margin-top: 5px;'>🛒 Tu carrito</h3><hr>
-                <div>
-                    @if (@user != null && @listaProductosCarrito != null)
+    <SfTooltip Position="Syncfusion.Blazor.Popups.Position.TopLeft" Height=600px Width=300px IsSticky=true>
+        <TooltipTemplates>
+            <Content>
+                <div class='content'>
+                    <h3 style='margin-top: 5px;'>🛒 Tu carrito</h3><hr>
+                    <div>
+                        @if (@user != null && @listaProductosCarrito != null)
                     {
                         <div class="grid-container">
                             @foreach (ProductoModel producto in listaProductosCarrito)
@@ -60,14 +63,14 @@
                 </table>
 
                 <div style='margin-top: 20px;'></div>
-                <SfButton CssClass="e-outline" Content="Comprar" @onclick="@(()=>NavigationManager.NavigateTo("/compra"))"/>
+                <SfButton CssClass="e-outline" Content=@contenidoBoton() Disabled=@(listaProductosCarrito.Count<1) @onclick="@(()=>NavigationManager.NavigateTo("/compra"))" />
             </div>
         </Content>
     </TooltipTemplates>
     @* Initializes the Button component *@
     <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
 </SfTooltip>
-}
+        }
 
 <style>
     .listview-template {
@@ -78,13 +81,13 @@
     }
 
     table {
-  font-family: arial, sans-serif;
-  border: 1px solid #dddddd;
-  background-color: #424242;
-  border-collapse: collapse;
-  width: 100%;
-  font-c
-}
+        font-family: arial, sans-serif;
+        border: 1px solid #dddddd;
+        background-color: #424242;
+        border-collapse: collapse;
+        width: 100%;
+        font-c
+    }
 
     .img-class {
         height: 2px;
@@ -222,12 +225,19 @@
                 foreach (var producto in listaProductosCarrito)
                 {
                     if (lincarr.ProductoLineaCarrito == producto.ProductoId)
-                        result = result + (producto.Precio)*lincarr.Cantidad;
+                        result = result + (producto.Precio) * lincarr.Cantidad;
                 }
             }
         }
-
         return Math.Round(result, 2);
     }
+
+    private string contenidoBoton()
+    {
+
+        if (totalCarrito()>0) return "Comprar";
+        else return "Carrito vacío";
+    }
+
 
 }

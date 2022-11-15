@@ -535,6 +535,7 @@ else
             alertThatHasntAcceptCondiciones = true;
         }
     }
+
     private async Task goToStep3()
     {
         try
@@ -544,13 +545,9 @@ else
         }
         catch (Exception)
         {
-
             throw;
         }
-
-
         step = 3;
-
     }
 
     protected async Task<Pedido> CreatePedido()
