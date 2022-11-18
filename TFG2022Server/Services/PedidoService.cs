@@ -112,5 +112,17 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task<List<PedidoModel>> GetPedidosFromUser(int user)
+        {
+            try
+            {
+                var pedidos = await this.tfg2022Context.Pedidos.Convert();
+                return pedidos.FindAll(e => e.UsuarioPedido == user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

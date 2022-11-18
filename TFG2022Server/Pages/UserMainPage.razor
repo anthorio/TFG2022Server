@@ -13,7 +13,7 @@
     <SfCard ID="PersonalData" @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage/data"))">
         <CardHeader Title="📒 Datos personales" />
     </SfCard>
-    <SfCard ID="Pedidos" @onclick="@(e => undefined())">
+    <SfCard ID="Pedidos" @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage/pedidos"))">
         <CardHeader Title="🚚 Mis pedidos" />
     </SfCard>
     <SfCard ID="Logout" @onclick="@(e => cerrarSesion())">

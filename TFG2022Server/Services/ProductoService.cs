@@ -32,13 +32,10 @@ namespace TFG2022Server.Services
         {
             try
             {
-                var product = await tfg2022Context.Productos.FindAsync(productId);
-                return product;
-
+                return await tfg2022Context.Productos.FindAsync(productId);
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

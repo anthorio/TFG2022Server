@@ -585,7 +585,7 @@ else
         }
     }
 
-    protected async Task ExportToPdf()
+    public async Task ExportToPdf()
     {
         using(MemoryStream memoryStream = ExportService.CreatePdf(newPedido, user, listaProductosCarrito, filteredLineaCarritoData, PedidoService.GetCosteEnvio())){
             await JS.SaveAs(newPedido.PedidoId.ToString()+newPedido.FechaPedido.ToShortDateString()+newPedido.FechaPedido.ToShortTimeString()+".pdf", memoryStream.ToArray());

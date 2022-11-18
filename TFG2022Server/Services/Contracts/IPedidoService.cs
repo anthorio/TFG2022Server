@@ -9,5 +9,6 @@ namespace TFG2022Server.Services.Contracts
         string[] GetTiposPedido();
         Task<Pedido> CreatePedido(PedidoModel pedidoModel);
         double GetCosteEnvio();
+        Task<List<PedidoModel>> GetPedidosFromUser(int user);
     }
 }
