@@ -1,4 +1,5 @@
-﻿@page "/"
+﻿@page "/{SelectedTab:int?}"
+
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Lists
 @using Syncfusion.Blazor.DropDowns
@@ -24,7 +25,7 @@
     </SfToast>
 </div>
 
-<SfTab @bind-SelectedItem="SelectedTab">
+<SfTab @bind-SelectedItem="@SelectedTab">
     <TabItems>
         <TabItem>
             <ChildContent>
@@ -33,10 +34,15 @@
             <ContentTemplate>
 
                 @* Grid de productos *@
-                @if (ProductoData == null || this.ProductoData.Count == 0)
+                @if (ProductoData == null )
+                {
+                    <div>
+                        <div>Cargando...</div>
+                    </div>
+                }else if (this.ProductoData.Count == 0)
                 {
                     <div class="e-error">
-                        <div class="e-error-content">No results found.</div>
+                        <div class="e-error-content">No hay productos en esta categoría.</div>
                     </div>
                 }
                 else
@@ -65,11 +71,17 @@
         </TabItem>
 
         @* Tabs de familia *@
-        @if (FamiliaData == null || this.FamiliaData.Count == 0)
+        @if (FamiliaData == null )
+        {
+            <div>
+                        <div>Cargando...</div>
+                    </div>
+        }
+        else if (this.FamiliaData.Count == 0)
         {
             <div class="e-error">
-                <div class="e-error-content">No results found.</div>
-            </div>
+                        <div class="e-error-content">No hay productos en esta categoría.</div>
+                    </div>
         }
         else
         {
@@ -82,10 +94,15 @@
                     <ContentTemplate>
 
                         @* Grid de productos *@
-                        @if (ProductoData == null || this.ProductoData.Count == 0)
+                        @if (ProductoData == null )
                         {
-                            <div class="e-error">
-                                <div class="e-error-content">No results found.</div>
+                            <div >
+                                <div >Cargando...</div>
+                            </div>
+                        }else if (this.ProductoData.Count == 0)
+                        {
+                         <div class="e-error">
+                                <div class="e-error-content">No hay productos en esta categoría.</div>
                             </div>
                         }
                         else
@@ -225,14 +242,17 @@
 </style>
 
 @code {
+    [Parameter]
+    public int SelectedTab { get; set; } //= 0;
+
     private SfListView<ProductoModel> SfSelectedProductos { get; set; }
 
     private List<ProductoModel>? ProductoData { get; set; }
     private List<ProductoModel>? ProductoDataFiltradoBuscador { get; set; }
-    private List<UsuarioModel>? UsuarioData { get; set; }
+    //   private List<UsuarioModel>? UsuarioData { get; set; }
     private List<FamiliaProductoModel>? FamiliaData { get; set; }
     private int SelectedUsuarioId { get; set; } = 1; /* borrar ? */
-    private int SelectedTab = 0;
+
 
     private string storedUserEmail { get; set; }
     private Usuario storedUser { get; set; }
@@ -249,25 +269,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        storedUserEmail = "";
+        if (SelectedTab == null) SelectedTab = 0;
         FamiliaData = await FamiliaProductoService.GetFamiliaProductos();
+        this.StateHasChanged();
+        if (storedUser == null) await InicializarUsuario();
         ProductoData = await ProductoService.GetProductos();
-        UsuarioData = await UsuarioService.GetUsuarios();
-        @* La diferencia entre GetUsuarios y GetAllUsuarios es que Get Usuarios utiliza el contexto. *@
+        this.StateHasChanged();
     }
-    @*
-    void OnInput(InputEventArgs eventArgs)
-    {
-        esto ta regular, ignorar
-        if (eventArgs.Value != "")
-        {
-            ProductoData = ProductoDataFiltradoBuscador.FindAll(e => e.Nombre.ToLower().Contains(eventArgs.Value.ToLower()));
-        }
-        else
-        {
-            ProductoData = ProductoDataFiltradoBuscador;
-        }
-    }*@
 
     protected async Task CreatePedido()
     {
@@ -317,14 +325,14 @@
             if (producto != null)
             {
 
-                if (storedUserEmail == null || storedUser==null)
+                if (storedUserEmail == null || storedUser == null)
                 {
                     var result = await LocalStorage.GetAsync<string>("user");
                     await Task.Delay(500);
                     storedUserEmail = result.Success ? result.Value : null;
                     storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
                 }
-                
+
 
                 var carritoUsario = await CarritoService.GetCarritoByUser(storedUser.UsuarioId);
                 LineaCarritoModel lineaCarritoModel = new LineaCarritoModel
@@ -356,7 +364,7 @@
 
     protected async Task InicializarUsuario()
     {
-        await Task.Delay(1000);
+        await Task.Delay(800);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
         storedUserEmail = result.Success ? result.Value : null;
