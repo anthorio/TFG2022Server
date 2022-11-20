@@ -1,15 +1,14 @@
 ﻿@page "/usermainpage"
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Syncfusion.Blazor.Notifications
+
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
-@inject ProtectedLocalStorage LocalStorage
 
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Buttons
 <div class="grid-container">
-
     <SfCard ID="PersonalData" @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage/data"))">
         <CardHeader Title="📒 Datos personales" />
     </SfCard>
@@ -19,7 +18,13 @@
     <SfCard ID="Logout" @onclick="@(e => cerrarSesion())">
         <CardHeader Title="❌ Cerrar sesión" />
     </SfCard>
-
+    @* Si existe y NO es un cliente...  Es un administrador *@
+    @if (storedUser != null && storedUser.Rol != UsuarioService.GetRoles().First())
+    {
+        <SfCard ID="Logout" @onclick="@(e => cerrarSesion())">
+            <CardHeader Title="⚙ Administración del sitio" />
+        </SfCard>
+    }
 </div>
 <style>
     .grid-container {
@@ -43,9 +48,20 @@
 </style>
 
 @code {
-    public void undefined()
-    {
+    private Usuario storedUser { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await InicializarUsuario();
+    }
+
+    protected async Task InicializarUsuario()
+    {
+        await Task.Delay(800);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
     }
 
     public async Task cerrarSesion()
@@ -54,6 +70,4 @@
 
         NavigationManager.NavigateTo("", forceLoad: true);
     }
-
-
 }

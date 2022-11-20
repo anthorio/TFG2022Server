@@ -1,0 +1,43 @@
+﻿@page "/x"
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Buttons
+
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+
+
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    <h3>AdminMainPage</h3>
+    <SfButton class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/"))">x1</SfButton>
+    <SfButton class="e-btn e-outline e-primary" @onclick="@(e => testF())">x2</SfButton>
+}
+
+@code {
+    private Usuario? storedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InicializarUsuario();
+    }
+
+    protected async Task InicializarUsuario()
+    {
+        await Task.Delay(8000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+    }
+    protected void testF()
+    {
+
+    }
+}
