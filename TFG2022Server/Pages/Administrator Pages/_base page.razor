@@ -30,7 +30,7 @@ else if (@storedUser != null)
 
     protected async Task InicializarUsuario()
     {
-        await Task.Delay(8000);
+        await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
         var storedUserEmail = result.Success ? result.Value : null;

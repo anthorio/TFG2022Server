@@ -25,13 +25,13 @@
             <p><img src="" /> </p>
             @if (@storedUserEmail != null && @storedUser != null)
             {
-                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton>
+                <SfButton CssClass="btn" @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))">@storedUser.Nombre @storedUser.Apellidos</SfButton>
             }
             else
             {
-                <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/login"))">Conéctate</SfButton>
+                <SfButton CssClass="btn" @onclick="@(()=>NavigationManager.NavigateTo("/login"))">Conéctate</SfButton>
             }
-
+            
             <MyCarritoView user="@storedUser"></MyCarritoView>
 
 
@@ -42,6 +42,12 @@
         </article>
     </main>
 </div>
+
+<style>
+    .btn { 
+       margin-right: 12px; 
+    } 
+</style>
 
 @code {
     string storedUserEmail = "";

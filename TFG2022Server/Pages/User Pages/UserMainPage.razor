@@ -21,7 +21,7 @@
     @* Si existe y NO es un cliente...  Es un administrador *@
     @if (storedUser != null && storedUser.Rol != UsuarioService.GetRoles().First())
     {
-        <SfCard ID="Logout" @onclick="@(e => cerrarSesion())">
+        <SfCard ID="Admin" @onclick="@(()=>NavigationManager.NavigateTo("/admin/index"))">
             <CardHeader Title="⚙ Administración del sitio" />
         </SfCard>
     }
