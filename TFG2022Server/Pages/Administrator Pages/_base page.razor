@@ -25,17 +25,13 @@ else if (@storedUser != null)
 
     protected override async Task OnInitializedAsync()
     {
-        await InicializarUsuario();
-    }
-
-    protected async Task InicializarUsuario()
-    {
         await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
         var storedUserEmail = result.Success ? result.Value : null;
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
     }
+
     protected void testF()
     {
 

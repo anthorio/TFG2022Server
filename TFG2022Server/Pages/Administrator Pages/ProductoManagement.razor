@@ -1,0 +1,117 @@
+﻿@page "/admin/Productos"
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Buttons
+
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+@inject IProductoService ProductoService
+@inject IFamiliaProductoService FamiliaProductoService
+@inject IProveedorService ProveedorService
+
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    if (proveedorData != null)
+    {
+        <h3>Listado de Productos</h3>
+
+        <div>
+            <SfGrid @ref="SfProductoGrid" DataSource="@productoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+                <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+        <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductoModel"></GridEvents>
+                <GridPageSettings PageSize="20"></GridPageSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn IsPrimaryKey="true" Field="@nameof(ProductoModel.ProductoId)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
+                    <GridColumn Field="@nameof(ProductoModel.UrlImagen)" HeaderText="Imagen">
+                        <Template>
+                             @{
+                                var ProductoInfo = (context as ProductoModel);
+                                <div class="image">
+                                    <img src="@ProductoInfo.UrlImagen" height="40">
+                                </div>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridForeignColumn Field="@nameof(ProductoModel.FamiliaProductoProducto)" HeaderText="Familia"
+                               ForeignKeyValue="Nombre" ForeignKeyField="FamiliaID" ForeignDataSource="familiaProductoData"></GridForeignColumn>
+                     <GridForeignColumn Field="@nameof(ProductoModel.ProveedorProducto)" HeaderText="Proveedor"
+                               ForeignKeyValue="Nombre" ForeignKeyField="ProveedorId" ForeignDataSource="proveedorData"></GridForeignColumn>
+                    <GridColumn Field="@nameof(ProductoModel.Nombre)" HeaderText="Nombre"></GridColumn>
+                    <GridColumn Field="@nameof(ProductoModel.Descripcion)" HeaderText="Descripción"></GridColumn>
+                    <GridColumn Field="@nameof(ProductoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
+                    <GridColumn Field="@nameof(ProductoModel.Precio)" HeaderText="Precio"></GridColumn>
+                </GridColumns>
+                <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+            </SfGrid>
+        </div>
+    }
+}
+
+
+@code {
+    private List<ProductoModel>? productoData { get; set; }
+    private List<FamiliaProductoModel>? familiaProductoData { get; set; }
+    private List<ProveedorModel>? proveedorData { get; set; }
+    private SfGrid<ProductoModel>? SfProductoGrid { get; set; }
+
+
+    private List<object> toolbar = new List<object> { "Add","Edit", "Delete", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
+    private Usuario? storedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        VisibleSpinner = true;
+        productoData = await ProductoService.GetProductos();
+        familiaProductoData = await FamiliaProductoService.GetFamiliaProductos();
+        proveedorData = await ProveedorService.GetProveedores();
+        await Task.Delay(1000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        VisibleSpinner = false;
+    }
+
+        public async void ActionBeginHandler(ActionEventArgs<ProductoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await ProductoService.AddProducto(args.Data);
+            }
+            else if (args.Action == "Edit")
+            {
+                await ProductoService.UpdateProducto(args.Data);
+            }
+        }
+        else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await ProductoService.DeleteProducto(args.Data.ProductoId);
+        }
+    }
+    public async void ActionCompleteHandler(ActionEventArgs<ProductoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                productoData = await ProductoService.GetProductos();
+                SfProductoGrid?.Refresh();
+            }
+
+        }
+    }
+
+}

@@ -7,5 +7,8 @@ namespace TFG2022Server.Services.Contracts
     {
         Task<List<ProductoModel>> GetProductos();
         Task<Producto> GetProducto(int id);
+        Task<Producto> AddProducto(ProductoModel productoMod);
+        Task UpdateProducto(ProductoModel productoMod);
+        Task DeleteProducto(int id);
     }
 }

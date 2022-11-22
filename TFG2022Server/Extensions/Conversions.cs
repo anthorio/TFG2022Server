@@ -238,5 +238,19 @@ namespace TFG2022Server.Extensions
                 Cantidad = lineaCarritoModel.Cantidad
             };
         }
+        public static Producto Convert(this ProductoModel productoModel)
+        {
+            return new Producto
+            {
+                FamiliaProductoProducto = productoModel.FamiliaProductoProducto,
+                ProveedorProducto = productoModel.ProveedorProducto,
+                Nombre=productoModel.Nombre, 
+                Cantidad=productoModel.Cantidad,
+                Descripcion=productoModel.Descripcion,
+                Precio=productoModel.Precio,
+                ProductoId=productoModel.ProductoId, 
+                UrlImagen=    productoModel.UrlImagen
+            };
+        }
     }
 }

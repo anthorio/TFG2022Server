@@ -39,5 +39,63 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<Producto> AddProducto(ProductoModel productoMod)
+        {
+            try
+            {
+                Producto productoToAdd = productoMod.Convert();
+                var result = await this.tfg2022Context.Productos.AddAsync(productoToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+                return result.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task UpdateProducto(ProductoModel productoMod)
+        {
+            try
+            {
+                var productoToUpdate = await this.tfg2022Context.Productos.FindAsync(productoMod.ProductoId);
+
+                if (productoToUpdate != null)
+                {
+                    productoToUpdate.FamiliaProductoProducto = productoMod.FamiliaProductoProducto;
+                    productoToUpdate.ProveedorProducto = productoMod.ProveedorProducto;
+                    productoToUpdate.Nombre = productoMod.Nombre;
+                    productoToUpdate.Descripcion = productoMod.Descripcion;
+                    productoToUpdate.Cantidad = productoMod.Cantidad;
+                    productoToUpdate.Precio = productoMod.Precio;
+                    productoToUpdate.UrlImagen = productoMod.UrlImagen;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task DeleteProducto(int id)
+        {
+            try
+            {
+                var producto = await this.tfg2022Context.Productos.FindAsync(id);
+                if (producto != null)
+                {
+                    this.tfg2022Context.Productos.Remove(producto);
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
