@@ -43,5 +43,57 @@ namespace TFG2022Server.Services
             }
         }
 
+        public async Task<FamiliaProducto> AddFamilia(FamiliaProductoModel fproductoMod)
+        {
+            try
+            {
+                FamiliaProducto productoToAdd = fproductoMod.Convert();
+                var result = await this.tfg2022Context.FamiliaProductos.AddAsync(productoToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+                return result.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task UpdateFamilia(FamiliaProductoModel fproductoMod)
+        {
+            try
+            {
+                var fproductoToUpdate = await this.tfg2022Context.FamiliaProductos.FindAsync(fproductoMod.FamiliaID);
+
+                if (fproductoToUpdate != null)
+                {
+                    fproductoToUpdate.Nombre = fproductoMod.Nombre;
+                    fproductoToUpdate.Descripcion = fproductoMod.Descripcion;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task DeleteFamilia(int id)
+        {
+            try
+            {
+                var fproducto = await this.tfg2022Context.FamiliaProductos.FindAsync(id);
+                if (fproducto != null)
+                {
+                    this.tfg2022Context.FamiliaProductos.Remove(fproducto);
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -27,33 +27,33 @@ else if (@storedUser != null)
         <div>
             <SfGrid @ref="SfProductoGrid" DataSource="@productoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
                 <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
-        <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductoModel"></GridEvents>
+                <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductoModel"></GridEvents>
                 <GridPageSettings PageSize="20"></GridPageSettings>
                 <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
                 <GridColumns>
                     <GridColumn IsPrimaryKey="true" Field="@nameof(ProductoModel.ProductoId)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
                     <GridColumn Field="@nameof(ProductoModel.UrlImagen)" HeaderText="Imagen">
                         <Template>
-                             @{
+                            @{
                                 var ProductoInfo = (context as ProductoModel);
-                                <div class="image">
-                                    <img src="@ProductoInfo.UrlImagen" height="40">
-                                </div>
-                            }
-                        </Template>
-                    </GridColumn>
-                    <GridForeignColumn Field="@nameof(ProductoModel.FamiliaProductoProducto)" HeaderText="Familia"
+                        <div class="image">
+                            <img src="@ProductoInfo.UrlImagen" height="40">
+                        </div>
+                    }
+                </Template>
+            </GridColumn>
+            <GridForeignColumn Field="@nameof(ProductoModel.FamiliaProductoProducto)" HeaderText="Familia"
                                ForeignKeyValue="Nombre" ForeignKeyField="FamiliaID" ForeignDataSource="familiaProductoData"></GridForeignColumn>
-                     <GridForeignColumn Field="@nameof(ProductoModel.ProveedorProducto)" HeaderText="Proveedor"
+            <GridForeignColumn Field="@nameof(ProductoModel.ProveedorProducto)" HeaderText="Proveedor"
                                ForeignKeyValue="Nombre" ForeignKeyField="ProveedorId" ForeignDataSource="proveedorData"></GridForeignColumn>
-                    <GridColumn Field="@nameof(ProductoModel.Nombre)" HeaderText="Nombre"></GridColumn>
-                    <GridColumn Field="@nameof(ProductoModel.Descripcion)" HeaderText="Descripción"></GridColumn>
-                    <GridColumn Field="@nameof(ProductoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
-                    <GridColumn Field="@nameof(ProductoModel.Precio)" HeaderText="Precio"></GridColumn>
-                </GridColumns>
-                <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
-            </SfGrid>
-        </div>
+            <GridColumn Field="@nameof(ProductoModel.Nombre)" HeaderText="Nombre"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Descripcion)" HeaderText="Descripción"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Precio)" HeaderText="Precio"></GridColumn>
+        </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+    </SfGrid>
+</div>
     }
 }
 
@@ -65,7 +65,7 @@ else if (@storedUser != null)
     private SfGrid<ProductoModel>? SfProductoGrid { get; set; }
 
 
-    private List<object> toolbar = new List<object> { "Add","Edit", "Delete", "Update", "Cancel", "Search" };
+    private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
     private bool VisibleSpinner { get; set; } = false;
     private Usuario? storedUser { get; set; }
 
@@ -83,7 +83,7 @@ else if (@storedUser != null)
         VisibleSpinner = false;
     }
 
-        public async void ActionBeginHandler(ActionEventArgs<ProductoModel> args)
+    public async void ActionBeginHandler(ActionEventArgs<ProductoModel> args)
     {
         if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {

@@ -1,0 +1,94 @@
+﻿@page "/admin/FamiliaProductos"
+
+
+
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Spinner
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using TFG2022Server.Models
+@using TFG2022Server.Services
+@using TFG2022Server.Services.Contracts
+
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+@inject IFamiliaProductoService FamiliaProductoService
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    <h3>Listado de Familias de Productos</h3>
+
+    <div>
+        <SfGrid @ref="SfFamiliaProductoGrid" DataSource="FamiliaProductoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+            <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="FamiliaProductoModel"></GridEvents>
+            <GridPageSettings PageSize="20"></GridPageSettings>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridColumns>
+                <GridColumn IsPrimaryKey="true" Field="@nameof(FamiliaProductoModel.FamiliaID)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
+                <GridColumn Field="@nameof(FamiliaProductoModel.Nombre)"></GridColumn>
+                <GridColumn Field="@nameof(FamiliaProductoModel.Descripcion)"></GridColumn>
+            </GridColumns>
+            <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+        </SfGrid>
+    </div>
+}
+
+@code {
+    private List<FamiliaProductoModel>? FamiliaProductoData = null;
+    private SfGrid<FamiliaProductoModel>? SfFamiliaProductoGrid { get; set; }
+
+    private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
+    private bool VisibleSpinner { get; set; } = false;
+    private Usuario? storedUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        VisibleSpinner = true;
+        FamiliaProductoData = await FamiliaProductoService.GetFamiliaProductos();
+        await Task.Delay(1000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        VisibleSpinner = false;
+    }
+
+    public async void ActionBeginHandler(ActionEventArgs<FamiliaProductoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await FamiliaProductoService.AddFamilia(args.Data);
+            }
+            else if (args.Action == "Edit")
+            {
+                await FamiliaProductoService.UpdateFamilia(args.Data);
+            }
+        }
+        else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await FamiliaProductoService.DeleteFamilia(args.Data.FamiliaID);
+        }
+    }
+    public async void ActionCompleteHandler(ActionEventArgs<FamiliaProductoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                FamiliaProductoData = await FamiliaProductoService.GetFamiliaProductos();
+                SfFamiliaProductoGrid?.Refresh();
+            }
+
+        }
+    }
+}

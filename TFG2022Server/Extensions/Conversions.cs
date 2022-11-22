@@ -252,5 +252,14 @@ namespace TFG2022Server.Extensions
                 UrlImagen=    productoModel.UrlImagen
             };
         }
+        public static FamiliaProducto Convert(this FamiliaProductoModel fproductoModel)
+        {
+            return new FamiliaProducto
+            {
+                FamiliaID = fproductoModel.FamiliaID, 
+                Nombre = fproductoModel.Nombre,
+                Descripcion = fproductoModel.Descripcion
+            };
+        }
     }
 }
