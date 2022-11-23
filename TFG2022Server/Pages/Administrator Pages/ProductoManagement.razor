@@ -25,7 +25,7 @@ else if (@storedUser != null)
         <h3>Listado de Productos</h3>
 
         <div>
-            <SfGrid @ref="SfProductoGrid" DataSource="@productoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+            <SfGrid @ref="SfProductoGrid" DataSource="@productoData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
                 <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
                 <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProductoModel"></GridEvents>
                 <GridPageSettings PageSize="20"></GridPageSettings>

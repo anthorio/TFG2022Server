@@ -61,7 +61,6 @@
         rolUsuarioData = UsuarioManagementService.GetRoles();
         VisibleSpinner = false;
     }
-
     public async void ActionBeginHandler(ActionEventArgs<UsuarioModel> args)
     {
         if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
