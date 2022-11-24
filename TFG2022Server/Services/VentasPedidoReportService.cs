@@ -13,8 +13,6 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-
-
         public async Task<List<GroupedFieldPrecioModel>> GetUsuarioPrecioPorMesData()
         {
             try
@@ -46,7 +44,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -67,7 +64,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -103,7 +99,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -126,7 +121,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

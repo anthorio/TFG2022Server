@@ -570,8 +570,7 @@ else
                         UsuarioPedido = user.UsuarioId,
                         LineasPedido = lineasPedido,
                         FechaPedido = DateTime.Now,
-                        EstadoPedido = Constants.EstadosPedido.First(),
-                        TipoEnvio = "a"
+                        EstadoPedido = Constants.EstadosPedido.First()
                     };
                 return await PedidoService.CreatePedido(pedidoModel);
 

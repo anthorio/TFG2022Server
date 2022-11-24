@@ -75,7 +75,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -93,7 +92,6 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

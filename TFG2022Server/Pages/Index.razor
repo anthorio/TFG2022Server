@@ -277,41 +277,6 @@
         this.StateHasChanged();
     }
 
-    protected async Task CreatePedido()
-    {
-        try
-        {
-            SelectedItems<ProductoModel> productosPedidos = await SfSelectedProductos.GetCheckedItemsAsync();
-            if (productosPedidos.Data.Count() > 0)
-            {
-
-                List<LineaPedido> lineasPedido = (from p in productosPedidos.Data
-                                                  select new LineaPedido
-                                                      {
-                                                          ProductoLineaPedido = p.ProductoId,
-                                                          PrecioFinal = p.Precio,
-                                                          Cantidad = p.Cantidad
-
-                                                      }).ToList();
-                PedidoModel pedidoModel = new PedidoModel
-                    {
-                        UsuarioPedido = SelectedUsuarioId,
-                        LineasPedido = lineasPedido,
-                        FechaPedido = DateTime.Now,
-                        EstadoPedido = "estado",
-                        TipoEnvio = "tipo"
-                    };
-                await PedidoService.CreatePedido(pedidoModel);
-                await this.ToastObj.ShowAsync(Toast[1]);
-            }
-        }
-        catch (Exception)
-        {
-            await this.ToastObj.ShowAsync(Toast[2]);
-            // throw;   si mostramos el error, comentamos esto
-        }
-    }
-
     private string priceToString(double precio)
     {
         return precio.ToString() + " €";

@@ -16,8 +16,6 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-
-
         public async Task<List<LineaCarritoModel>> GetLineaCarritos()
         {
             try
@@ -48,7 +46,6 @@ namespace TFG2022Server.Services
                     await this.tfg2022Context.SaveChangesAsync();
                     return (lineaCarritoToAdd);
                 }
-
             }
             catch (Exception)
             {

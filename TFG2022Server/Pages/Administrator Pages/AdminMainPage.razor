@@ -1,4 +1,4 @@
-﻿@page "/admin/index"
+﻿@page "/admin"
 
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Syncfusion.Blazor.Buttons
@@ -6,7 +6,6 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
-
 
 @if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
 {
@@ -63,7 +62,7 @@ else if (@storedUser != null)
                 <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo(""))">Análisis y estadísticas</SfButton>
             </div>
         </div>
-        
+
     </main>
 }
 
@@ -88,12 +87,10 @@ else if (@storedUser != null)
         position: relative;
     }
     /*Buttons*/
-    .btn { 
-       margin-top: 5px;
-  @*    border-radius: 0;    height: 24px; background-color: #007BFF; *@
-        width: 90%; 
-        
-    } 
+    .btn {
+        margin-top: 5px;
+    @* border-radius: 0; height: 24px; background-color: #007BFF; *@ width: 90%;
+    }
 </style>
 
 @code {

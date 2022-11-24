@@ -85,7 +85,7 @@ else if (@storedUser != null)
             {
                 await UsuarioService.AddUsuario(args.Data);
             }
-            else if (args.Action == "Edit")   
+            else if (args.Action == "Edit")
             {
                 await UsuarioService.UpdateUsuario(args.Data);
             }

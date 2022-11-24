@@ -13,8 +13,6 @@ namespace TFG2022Server.Models
         public DateTime FechaPedido { get; set; }
         [Required]
         public string EstadoPedido { get; set; }
-        [Required]
-        public string TipoEnvio { get; set; }
         public List<LineaPedido> LineasPedido { get; set; }
         public double PrecioTotal { get; set; }
         public int CantidadTotal { get; set; }

@@ -16,7 +16,6 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-
         public async Task<List<CarritoModel>> GetCarritos()
         {
             try
@@ -28,6 +27,7 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
         public async Task<Carrito> GetCarritoByUser(int user)
         {
             var carrito = new Carrito();
@@ -35,7 +35,7 @@ namespace TFG2022Server.Services
             {
                 // Obtener el usuario a travez del email (sólo habrá 1 usuario por email espero)
                 carrito = (await this.tfg2022Context.Carritos.Where(u => u.UsuarioCarrito == user).ToListAsync()).ElementAt(0);
-                
+
                 return carrito;
             }
             catch (Exception)
@@ -53,7 +53,6 @@ namespace TFG2022Server.Services
                 }
                 catch (Exception)
                 {
-
                     throw;
                 }
             }

@@ -195,8 +195,7 @@
                         UsuarioPedido = SelectedUsuarioId,
                         LineasPedido = lineasPedido,
                         FechaPedido = DateTime.Now,
-                        EstadoPedido = "estado",
-                        TipoEnvio = "tipo"
+                        EstadoPedido = "estado"
                     };
                 await PedidoService.CreatePedido(pedidoModel);
                 await this.ToastObj.ShowAsync(Toast[1]);

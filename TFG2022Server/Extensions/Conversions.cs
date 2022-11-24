@@ -27,7 +27,6 @@ namespace TFG2022Server.Extensions
                               Descuento = w.Descuento
                           }).ToListAsync();
         }
-
         public static async Task<List<UsuarioModel>> Convert(this IQueryable<Usuario> usuarios, TFG2022Context context)
         {
             return await (from u in usuarios
@@ -48,7 +47,6 @@ namespace TFG2022Server.Extensions
                               Poblacion = u.Poblacion,
                               CodigoPostal = u.CodigoPostal,
                               Descuento = u.Descuento
-
                           }).ToListAsync();
         }
 
@@ -60,7 +58,6 @@ namespace TFG2022Server.Extensions
                               FamiliaID = w.FamiliaID,
                               Nombre = w.Nombre,
                               Descripcion = w.Descripcion
-
                           }).ToListAsync();
         }
 
@@ -72,7 +69,6 @@ namespace TFG2022Server.Extensions
                               AlbaranId = w.AlbaranId,
                               PedidoAlbaran = w.PedidoAlbaran,
                               FechaEntrega = w.FechaEntrega
-
                           }).ToListAsync();
         }
 
@@ -83,7 +79,6 @@ namespace TFG2022Server.Extensions
                           {
                               CarritoId = w.CarritoId,
                               UsuarioCarrito = w.UsuarioCarrito
-
                           }).ToListAsync();
         }
 
@@ -97,12 +92,10 @@ namespace TFG2022Server.Extensions
                               InfoPedido = w.InfoPedido,
                               FechaFactura = w.FechaFactura,
                               Iva = w.Iva,
-                              Total = w.Total,
+                              Total = Math.Round(w.Total, 2),
                               EstadoFactura = w.EstadoFactura
-
                           }).ToListAsync();
         }
-
 
         public static async Task<List<LineaCarritoModel>> Convert(this IQueryable<LineaCarrito> lineaCarritos)
         {
@@ -113,7 +106,6 @@ namespace TFG2022Server.Extensions
                               CarritoLineaCarrito = w.CarritoLineaCarrito,
                               ProductoLineaCarrito = w.ProductoLineaCarrito,
                               Cantidad = w.Cantidad
-
                           }).ToListAsync();
         }
 
@@ -126,8 +118,7 @@ namespace TFG2022Server.Extensions
                               PedidoLineaPedido = w.PedidoLineaPedido,
                               ProductoLineaPedido = w.ProductoLineaPedido,
                               Cantidad = w.Cantidad,
-                              PrecioFinal = w.PrecioFinal
-
+                              PrecioFinal = Math.Round(w.PrecioFinal, 2)
                           }).ToListAsync();
         }
 
@@ -139,9 +130,8 @@ namespace TFG2022Server.Extensions
                               PagoId = w.PagoId,
                               FacturaPago = w.FacturaPago,
                               Fecha = w.Fecha,
-                              Cantidad = w.Cantidad,
+                              Cantidad = Math.Round(w.Cantidad, 2),
                               Observaciones = w.Observaciones
-
                           }).ToListAsync();
         }
 
@@ -154,8 +144,8 @@ namespace TFG2022Server.Extensions
                               UsuarioPedido = w.UsuarioPedido,
                               FechaPedido = w.FechaPedido,
                               EstadoPedido = w.EstadoPedido,
-                              TipoEnvio = w.TipoEnvio
-
+                              PrecioTotal = Math.Round(w.PrecioTotal, 2),
+                              CantidadTotal = w.CantidadTotal
                           }).ToListAsync();
         }
 
@@ -170,9 +160,8 @@ namespace TFG2022Server.Extensions
                               Nombre = w.Nombre,
                               Descripcion = w.Descripcion,
                               Cantidad = w.Cantidad,
-                              Precio = w.Precio,
+                              Precio = Math.Round(w.Precio, 2),
                               UrlImagen = w.UrlImagen
-
                           }).ToListAsync();
         }
 
@@ -189,7 +178,7 @@ namespace TFG2022Server.Extensions
                               Nombre = prod.Nombre,
                               Descripcion = prod.Descripcion,
                               Cantidad = prod.Cantidad,
-                              Precio = prod.Precio,
+                              Precio = Math.Round(prod.Precio, 2),
                               UrlImagen = prod.UrlImagen
                           }).ToListAsync();
         }
@@ -206,7 +195,6 @@ namespace TFG2022Server.Extensions
                               CodigoPostal = w.CodigoPostal,
                               Telefono = w.Telefono,
                               Email = w.Email
-
                           }).ToListAsync();
         }
 
@@ -244,19 +232,19 @@ namespace TFG2022Server.Extensions
             {
                 FamiliaProductoProducto = productoModel.FamiliaProductoProducto,
                 ProveedorProducto = productoModel.ProveedorProducto,
-                Nombre=productoModel.Nombre, 
-                Cantidad=productoModel.Cantidad,
-                Descripcion=productoModel.Descripcion,
-                Precio=productoModel.Precio,
-                ProductoId=productoModel.ProductoId, 
-                UrlImagen=    productoModel.UrlImagen
+                Nombre = productoModel.Nombre,
+                Cantidad = productoModel.Cantidad,
+                Descripcion = productoModel.Descripcion,
+                Precio = Math.Round(productoModel.Precio, 2),
+                ProductoId = productoModel.ProductoId,
+                UrlImagen = productoModel.UrlImagen
             };
         }
         public static FamiliaProducto Convert(this FamiliaProductoModel fproductoModel)
         {
             return new FamiliaProducto
             {
-                FamiliaID = fproductoModel.FamiliaID, 
+                FamiliaID = fproductoModel.FamiliaID,
                 Nombre = fproductoModel.Nombre,
                 Descripcion = fproductoModel.Descripcion
             };
