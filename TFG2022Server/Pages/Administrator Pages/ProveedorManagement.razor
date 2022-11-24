@@ -1,4 +1,4 @@
-﻿@page "/admin/FamiliaProductos"
+﻿@page "/admin/Proveedores"
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Grids
@@ -12,7 +12,7 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
-@inject IFamiliaProductoService FamiliaProductoService
+@inject IProveedorService ProveedorService
 
 @if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
 {
@@ -23,15 +23,19 @@ else if (@storedUser != null)
     <h3>Listado de Familias de Productos</h3>
 
     <div>
-        <SfGrid @ref="SfFamiliaProductoGrid" DataSource="FamiliaProductoData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar" AllowResizing="true">
+        <SfGrid @ref="SfProveedorGrid" DataSource="ProveedorData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar" AllowResizing="true">
             <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
-            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="FamiliaProductoModel"></GridEvents>
+            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="ProveedorModel"></GridEvents>
             <GridPageSettings PageSize="20"></GridPageSettings>
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns>
-                <GridColumn IsPrimaryKey="true" Field="@nameof(FamiliaProductoModel.FamiliaID)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
-                <GridColumn Field="@nameof(FamiliaProductoModel.Nombre)"></GridColumn>
-                <GridColumn Field="@nameof(FamiliaProductoModel.Descripcion)" HeaderText="Descripción"></GridColumn>
+                <GridColumn IsPrimaryKey="true" Field="@nameof(ProveedorModel.ProveedorId)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.Nombre)"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.Descripcion)" HeaderText="Descripción"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.Direccion)" HeaderText="Dirección"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.CodigoPostal)" HeaderText="Código Postal"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.Telefono)" HeaderText="Teléfono"></GridColumn>
+                <GridColumn Field="@nameof(ProveedorModel.Email)" HeaderText="Email"></GridColumn>
             </GridColumns>
             <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
         </SfGrid>
@@ -39,8 +43,8 @@ else if (@storedUser != null)
 }
 
 @code {
-    private List<FamiliaProductoModel>? FamiliaProductoData = null;
-    private SfGrid<FamiliaProductoModel>? SfFamiliaProductoGrid { get; set; }
+    private List<ProveedorModel>? ProveedorData = null;
+    private SfGrid<ProveedorModel>? SfProveedorGrid { get; set; }
 
     private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
     private bool VisibleSpinner { get; set; } = false;
@@ -49,7 +53,7 @@ else if (@storedUser != null)
     protected override async Task OnInitializedAsync()
     {
         VisibleSpinner = true;
-        FamiliaProductoData = await FamiliaProductoService.GetFamiliaProductos();
+        ProveedorData = await ProveedorService.GetProveedores();
         await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
@@ -58,32 +62,32 @@ else if (@storedUser != null)
         VisibleSpinner = false;
     }
 
-    public async void ActionBeginHandler(ActionEventArgs<FamiliaProductoModel> args)
+    public async void ActionBeginHandler(ActionEventArgs<ProveedorModel> args)
     {
         if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (args.Action == "Add")
             {
-                await FamiliaProductoService.AddFamilia(args.Data);
+                await ProveedorService.AddProveedor(args.Data);
             }
             else if (args.Action == "Edit")
             {
-                await FamiliaProductoService.UpdateFamilia(args.Data);
+                await ProveedorService.UpdateProveedor(args.Data);
             }
         }
         else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
         {
-            await FamiliaProductoService.DeleteFamilia(args.Data.FamiliaID);
+            await ProveedorService.DeleteProveedor(args.Data.ProveedorId);
         }
     }
-    public async void ActionCompleteHandler(ActionEventArgs<FamiliaProductoModel> args)
+    public async void ActionCompleteHandler(ActionEventArgs<ProveedorModel> args)
     {
         if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
         {
             if (args.Action == "Add")
             {
-                FamiliaProductoData = await FamiliaProductoService.GetFamiliaProductos();
-                SfFamiliaProductoGrid?.Refresh();
+                ProveedorData = await ProveedorService.GetProveedores();
+                SfProveedorGrid?.Refresh();
             }
 
         }

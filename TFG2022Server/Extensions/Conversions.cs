@@ -249,5 +249,18 @@ namespace TFG2022Server.Extensions
                 Descripcion = fproductoModel.Descripcion
             };
         }
+        public static Proveedor Convert(this ProveedorModel proveedor)
+        {
+            return new Proveedor
+            {
+                ProveedorId = proveedor.ProveedorId,
+                CodigoPostal = proveedor.CodigoPostal,
+                Descripcion = proveedor.Descripcion,
+                Direccion = proveedor.Direccion,
+                Email = proveedor.Email,
+                Nombre = proveedor.Nombre,
+                Telefono = proveedor.Telefono
+            };
+        }
     }
 }

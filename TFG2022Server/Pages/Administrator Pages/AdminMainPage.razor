@@ -37,15 +37,8 @@ else if (@storedUser != null)
         <div class="column">
             <h2>Proveedores</h2>
             <div>
-                <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo(""))">Proveedores</SfButton>
+                <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin/Proveedores"))">Proveedores</SfButton>
             </div>
-        </div>
-        <div class="column">
-            <h2>Almacén</h2>
-            <div>
-                <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo(""))">Inventario</SfButton>
-            </div>
-
         </div>
         <div class="column">
             <h2>Contabilidad</h2>
@@ -83,7 +76,7 @@ else if (@storedUser != null)
     }
     /* Columns */
     .column {
-        width: 16%;
+        width: 20%;
         position: relative;
     }
     /*Buttons*/
