@@ -124,5 +124,25 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task UpdatePedido(PedidoModel pedidoMod)
+        {
+            // No va a actualizarlo todo, sólo el estado y el tipo
+            try
+            {
+                var pedidoToUpdate = await this.tfg2022Context.Pedidos.FindAsync(pedidoMod.PedidoId);
+
+                if (pedidoToUpdate != null)
+                {
+                    pedidoToUpdate.TipoEnvio = pedidoMod.TipoEnvio;
+                    pedidoToUpdate.EstadoPedido = pedidoMod.EstadoPedido;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

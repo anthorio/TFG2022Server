@@ -43,6 +43,46 @@
     </SfGrid>
 </div>
 
+
+@if (productosData != null)
+{
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Total</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (LineaPedidoModel lpm in lineaPedidoData)
+                @foreach (Producto prod in productosData)
+                {
+                    if (lpm.ProductoLineaPedido == prod.ProductoId)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@prod.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@prod.Nombre</text>
+                            </td>
+                            <td>
+                                <text>@lpm.Cantidad</text>
+                            </td>
+                            <td>
+                                <text>@prod.Precio</text>
+                            </td>
+                            <td>
+                                <text> @lpm.PrecioFinal €</text>
+                            </td>
+                        </tr>
+                    }
+                }
+        </tbody>
+    </table>
+    <SfButton @onclick="@ExportToPdf"> Exportar a PDF </SfButton>
+}
+
 <style>
     .styled-table {
         border-collapse: collapse;
@@ -85,46 +125,6 @@
                 border-bottom: 2px solid #009879;
             }
 </style>
-
-@if (productosData != null)
-{
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Total</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (LineaPedidoModel lpm in lineaPedidoData)
-                @foreach (Producto prod in productosData)
-                {
-                    if (lpm.ProductoLineaPedido == prod.ProductoId)
-                    {
-                        <tr>
-                            <td>
-                                <img src="@prod.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@prod.Nombre</text>
-                            </td>
-                            <td>
-                                <text>@lpm.Cantidad</text>
-                            </td>
-                            <td>
-                                <text>@prod.Precio</text>
-                            </td>
-                            <td>
-                                <text> @lpm.PrecioFinal €</text>
-                            </td>
-                        </tr>
-                    }
-                }
-        </tbody>
-    </table>
-    <SfButton @onclick="@ExportToPdf"> Exportar a PDF </SfButton>
-
-}
 
 @code {
     SfGrid<PedidoModel> Grid;
