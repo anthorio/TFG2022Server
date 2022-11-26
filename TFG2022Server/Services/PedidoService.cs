@@ -46,6 +46,36 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task<Pedido> CreateVentaFisica(PedidoModel pedidoModel)
+        {
+            try
+            {
+                Pedido pedido = new Pedido
+                {
+                    UsuarioPedido = pedidoModel.UsuarioPedido,
+                    FechaPedido = pedidoModel.FechaPedido,
+                    EstadoPedido = pedidoModel.EstadoPedido,
+                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal),
+                    CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad)
+                };
+                var addedPedido = await this.tfg2022Context.Pedidos.AddAsync(pedido);
+                await this.tfg2022Context.SaveChangesAsync();
+
+                int pedidoId = addedPedido.Entity.PedidoId;
+                // https://youtu.be/xO17P9LVkK0?t=14573 aqui explicado
+
+                var lineasPedidoToAdd = ReturnLineaPedidoConPedidoId(pedidoId, pedidoModel.LineasPedido);
+                this.tfg2022Context.AddRange(lineasPedidoToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+
+                await UpdateVentasPedidoReportes(pedidoId, pedido);
+                return addedPedido.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public double GetCosteEnvio()
         {
             return Constants.costeEnvio;

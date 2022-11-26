@@ -298,9 +298,6 @@ else
             </div>
         </div>
     }
-
-
-
 }
 
 <style>
@@ -563,7 +560,6 @@ else
                                                           ProductoLineaPedido = p.ProductoId,
                                                           PrecioFinal = totalProducto(p.Precio, user.Descuento, cantidadDeProducto(p, filteredLineaCarritoData)),
                                                           Cantidad = cantidadDeProducto(p, filteredLineaCarritoData)
-
                                                       }).ToList();
                 PedidoModel pedidoModel = new PedidoModel
                     {

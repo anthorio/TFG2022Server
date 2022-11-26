@@ -1,0 +1,288 @@
+﻿@page "/admin/VentaFisica"
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using TFG2022Server.Pages.Components
+@using System.IO;
+@using TFG2022Server.Data
+@using TFG2022Server.Extensions
+
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+@inject ILineaCarritoService LineaCarritoService
+@inject IProductoService ProductoService
+@inject IPedidoService PedidoService
+@inject ExportService exportService
+@inject Microsoft.JSInterop.IJSRuntime JS
+
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    @if (!pedidoTerminado)
+    {
+        <h3>Venta física</h3>
+        <hr />
+        <div>
+            Selecciona un cliente
+        </div>
+        <div>
+            <SfDropDownList TValue="UsuarioModel" TItem="UsuarioModel" Placeholder="Selecciona un usuario" AllowFiltering="true" DataSource="@usuariosData" @bind-Value="@selectedUser">
+                <DropDownListFieldSettings Text="Nombre" Value="UsuarioId"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <hr />
+        <div>
+            <SfGrid @ref="VentaFisicaGrid" DataSource="@lineasPedidoData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" Toolbar="@toolbar">
+                <GridEditSettings AllowEditOnDblClick="false" AllowAdding="true" AllowEditing="true" AllowDeleting="true"></GridEditSettings>
+                <GridEvents OnActionBegin="ActionBeginHandler" TValue="LineaPedidoModel"></GridEvents> @*OnActionComplete="ActionCompleteHandler"*@
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridColumns>
+                    <GridForeignColumn Field="@nameof(LineaPedidoModel.ProductoLineaPedido)" HeaderText="Producto" ForeignKeyValue="Nombre" ForeignKeyField="ProductoId" ForeignDataSource="productosData">
+                    </GridForeignColumn>
+                    <GridColumn Field="@nameof(LineaPedidoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
+                    <GridColumn Field="@nameof(LineaPedidoModel.PrecioFinal)" AllowAdding="false" AllowEditing="false" HeaderText="Precio final">
+                        <Template>
+                            @{
+                                var LineaInfo = (context as LineaPedidoModel);
+                                <div>@totalProducto(LineaInfo.Cantidad, LineaInfo.ProductoLineaPedido)</div>
+                    }
+                </Template>
+            </GridColumn>
+            <GridColumn TextAlign="TextAlign.Center" Width="150">
+                <Template>
+                    @{
+                                var lineap = (context as LineaPedidoModel);
+                        <SfButton OnClick="() => increaseLinea(lineap)">➕</SfButton>
+                        <SfButton OnClick="() => decreaseLinea(lineap)">➖</SfButton>
+                        <SfButton OnClick="() => deleteLinea(lineap)">✖️</SfButton>
+                    }
+                </Template>
+            </GridColumn>
+        </GridColumns>
+    </SfGrid>
+</div>
+        <hr />
+        @if (lineasPedidoData.Count() > 0)
+        {
+            <div>Resumen</div>
+            <div>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@totalPedido() €</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        }
+        <hr />
+
+        <SfButton IsPrimary="true" CssClass="e-outline" @onclick="terminarPedido" Disabled=@(!puedesTerminarPedido())>Registrar venta</SfButton>
+
+
+    }
+    else
+    {
+        <h3>Pedido terminado!</h3>
+        <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin/VentaFisica",forceLoad: true))">Registrar otra venta</SfButton>
+        <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">Volver</SfButton>
+        <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>
+
+    }
+
+}
+
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+</style>
+
+@code {
+    private Usuario? storedUser { get; set; }
+    private SfGrid<LineaPedidoModel>? VentaFisicaGrid { get; set; }
+    private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
+
+    private List<UsuarioModel>? usuariosData { get; set; }
+    private List<LineaPedidoModel>? lineasPedidoData { get; set; }
+    private List<ProductoModel>? productosData { get; set; }
+
+    private Pedido newPedido = new Pedido();
+    private UsuarioModel selectedUser = new UsuarioModel();
+
+    private bool pedidoTerminado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+
+        usuariosData = await UsuarioService.GetAllUsuarios();
+        lineasPedidoData = new List<LineaPedidoModel>();
+        productosData = await ProductoService.GetProductos();
+    }
+
+    private double totalProducto(int cantidad, int productoM)
+    {
+        foreach (var prod in productosData)
+        {
+            if (prod.ProductoId == productoM) return Math.Round((prod.Precio * cantidad), 2);
+        }
+        return 0;
+    }
+    protected void increaseLinea(LineaPedidoModel linea)
+    {
+        lineasPedidoData.Find(p => p.LineaPedidoId == linea.LineaPedidoId).Cantidad = lineasPedidoData.Find(p => p.LineaPedidoId == linea.LineaPedidoId).Cantidad + 1;
+        VentaFisicaGrid?.Refresh();
+    }
+    protected void decreaseLinea(LineaPedidoModel linea)
+    {
+        if (lineasPedidoData.Find(p => p.LineaPedidoId == linea.LineaPedidoId).Cantidad == 1)
+        {
+            deleteLinea(linea);
+        }
+        else
+        {
+            lineasPedidoData.Find(p => p.LineaPedidoId == linea.LineaPedidoId).Cantidad = lineasPedidoData.Find(p => p.LineaPedidoId == linea.LineaPedidoId).Cantidad - 1;
+            VentaFisicaGrid?.Refresh();
+        }
+    }
+    protected void deleteLinea(LineaPedidoModel linea)
+    {
+        lineasPedidoData.Remove(linea);
+        VentaFisicaGrid?.Refresh();
+
+    }
+    protected double totalPedido()
+    {
+        double result = 0;
+        if (VentaFisicaGrid != null && VentaFisicaGrid?.CurrentViewData.Count() > 0)
+        {
+
+            foreach (LineaPedidoModel lineea in VentaFisicaGrid.CurrentViewData.ToList())
+            {
+                result = result + totalProducto(lineea.Cantidad, lineea.ProductoLineaPedido);
+            }
+        }
+
+        return Math.Round(result, 2);
+    }
+
+    public async void ActionBeginHandler(ActionEventArgs<LineaPedidoModel> args)
+    {
+        try
+        {
+            if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+            {
+                if (args.Action == "Edit")
+                {
+                    var index = lineasPedidoData.FindIndex(p => p.LineaPedidoId == args.Data.LineaPedidoId);
+                    lineasPedidoData[index] = args.Data;
+                }
+                StateHasChanged();
+            }
+            else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+            {
+                lineasPedidoData.Remove(args.Data);
+            }
+
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private async Task terminarPedido()
+    {
+        try
+        {
+            List<LineaPedido> lineasPedido = (from lp in lineasPedidoData
+                                              select new LineaPedido
+                                                  {
+                                                      PedidoLineaPedido = lp.PedidoLineaPedido,
+                                                      ProductoLineaPedido = lp.ProductoLineaPedido,
+                                                      Cantidad = lp.Cantidad,
+                                                      PrecioFinal = totalProducto(lp.Cantidad, lp.ProductoLineaPedido)
+                                                  }).ToList();
+            PedidoModel pedidoModel = new PedidoModel
+                {
+                    UsuarioPedido = selectedUser.UsuarioId,
+                    LineasPedido = lineasPedido,
+                    FechaPedido = DateTime.Now,
+                    EstadoPedido = Constants.EstadosPedido.ElementAt(1)
+                };
+            newPedido = await PedidoService.CreateVentaFisica(pedidoModel);
+            pedidoTerminado = true;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private bool puedesTerminarPedido()
+    {
+        return ((selectedUser != new UsuarioModel()) && (lineasPedidoData.Count() > 0));
+    }
+
+    public async Task ExportToPdf()
+    {
+        using (MemoryStream memoryStream = ExportService.CreatePdfVentaFisica(newPedido, selectedUser.Convert(), productosData, lineasPedidoData, PedidoService.GetCosteEnvio()))
+        {
+            await JS.SaveAs(newPedido.PedidoId.ToString() + newPedido.FechaPedido.ToShortDateString() + newPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
+        }
+    }
+}

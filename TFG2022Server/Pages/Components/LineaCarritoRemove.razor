@@ -2,7 +2,7 @@
 
 @inject ILineaCarritoService LineaCarritoService
 
-<SfButton CssClass="e-small e-round" IsPrimary="true" OnClick="() => increaseLinea()"><SfIcon Name="IconName.Close"></SfIcon></SfButton>
+<SfButton CssClass="e-small e-round" IsPrimary="true" OnClick="() => deleteLinea()"><SfIcon Name="IconName.Close"></SfIcon></SfButton>
 
 @code {
     [Parameter]
@@ -27,7 +27,7 @@
         return null;
     }
 
-    private async Task increaseLinea()
+    private async Task deleteLinea()
     {
         var linea = getLinea();
         if (linea != null)

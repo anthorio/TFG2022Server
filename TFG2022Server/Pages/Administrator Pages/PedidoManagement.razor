@@ -82,7 +82,7 @@ else if (@storedUser != null)
                                     <text>@lpm.Cantidad</text>
                                 </td>
                                 <td>
-                                    <text>@prod.Precio</text>
+                                    <text>@(lpm.PrecioFinal/lpm.Cantidad)</text>
                                 </td>
                                 <td>
                                     <text> @lpm.PrecioFinal €</text>
@@ -192,7 +192,8 @@ else if (@storedUser != null)
 
     public async Task ExportToPdf()
     {
-        using (MemoryStream memoryStream = ExportService.CreatePdfPedido(SelectedPedido, storedUser, productosData, lineaPedidoData, PedidoService.GetCosteEnvio()))
+        Usuario selectedDataUser = ((await UsuarioService.GetAllUsuarios()).FindAll(e => e.UsuarioId == SelectedPedido.UsuarioPedido).First()).Convert();
+        using (MemoryStream memoryStream = ExportService.CreatePdfPedido(SelectedPedido, selectedDataUser, productosData, lineaPedidoData, PedidoService.GetCosteEnvio()))
         {
             await JS.SaveAs(SelectedPedido.PedidoId.ToString() + SelectedPedido.FechaPedido.ToShortDateString() + SelectedPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
         }
