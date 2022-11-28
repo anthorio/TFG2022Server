@@ -293,7 +293,7 @@ namespace TFG2022Server.Data
         private static PdfGrid addLineasToGrid(PdfGrid pdfGrid, Usuario user, List<ProductoModel> productos, List<LineaCarritoModel> lineas)
         {
             //Add three columns.
-            pdfGrid.Columns.Add(5);
+            pdfGrid.Columns.Add(4);
 
             //Add header.
             pdfGrid.Headers.Add(1);
@@ -302,8 +302,7 @@ namespace TFG2022Server.Data
             pdfGridHeader.Cells[0].Value = "Producto";
             pdfGridHeader.Cells[1].Value = "Precio /ud.";
             pdfGridHeader.Cells[2].Value = "Cantidad";
-            pdfGridHeader.Cells[3].Value = "Descuento";
-            pdfGridHeader.Cells[4].Value = "Importe total (IVA incluido)";
+            pdfGridHeader.Cells[3].Value = "Importe total (IVA incluido)";
 
             //Add rows.
             foreach (var producto in productos)
@@ -312,15 +311,14 @@ namespace TFG2022Server.Data
                 pdfGridRow.Cells[0].Value = producto.Nombre.ToString();
                 pdfGridRow.Cells[1].Value = producto.Precio.ToString() + " €";
                 pdfGridRow.Cells[2].Value = cantidadDeProducto(producto, lineas).ToString();
-                pdfGridRow.Cells[3].Value = user.Descuento.ToString() + "%";
-                pdfGridRow.Cells[4].Value = totalProducto(producto.Precio, user.Descuento, cantidadDeProducto(producto, lineas)).ToString() + " €";
+                pdfGridRow.Cells[3].Value = totalProducto(producto.Precio, cantidadDeProducto(producto, lineas)).ToString() + " €";
             }
             return pdfGrid;
         }
         private static PdfGrid addLineasToGridPedido(PdfGrid pdfGrid, Usuario user, List<Producto> productos, List<LineaPedidoModel> lineas)
         {
             //Add three columns.
-            pdfGrid.Columns.Add(5);
+            pdfGrid.Columns.Add(4);
 
             //Add header.
             pdfGrid.Headers.Add(1);
@@ -329,7 +327,7 @@ namespace TFG2022Server.Data
             pdfGridHeader.Cells[0].Value = "Producto";
             pdfGridHeader.Cells[1].Value = "Precio /ud.";
             pdfGridHeader.Cells[2].Value = "Cantidad";
-            pdfGridHeader.Cells[4].Value = "Importe total (IVA incluido)";
+            pdfGridHeader.Cells[3].Value = "Importe total (IVA incluido)";
 
             //Add rows.
             foreach (var linea in lineas)
@@ -342,7 +340,7 @@ namespace TFG2022Server.Data
                         pdfGridRow.Cells[0].Value = producto.Nombre.ToString();
                         pdfGridRow.Cells[1].Value = producto.Precio.ToString() + " €";
                         pdfGridRow.Cells[2].Value = linea.Cantidad.ToString();
-                        pdfGridRow.Cells[4].Value = totalProducto(producto.Precio, user.Descuento, linea.Cantidad).ToString() + " €";
+                        pdfGridRow.Cells[3].Value = totalProducto(producto.Precio, linea.Cantidad).ToString() + " €";
                     }
                 }
             }
@@ -351,7 +349,7 @@ namespace TFG2022Server.Data
         private static PdfGrid addLineasToGridVentaFisica(PdfGrid pdfGrid, Usuario user, List<ProductoModel> productos, List<LineaPedidoModel> lineas)
         {
             //Add three columns.
-            pdfGrid.Columns.Add(5);
+            pdfGrid.Columns.Add(4);
 
             //Add header.
             pdfGrid.Headers.Add(1);
@@ -360,7 +358,7 @@ namespace TFG2022Server.Data
             pdfGridHeader.Cells[0].Value = "Producto";
             pdfGridHeader.Cells[1].Value = "Precio /ud.";
             pdfGridHeader.Cells[2].Value = "Cantidad";
-            pdfGridHeader.Cells[4].Value = "Importe total (IVA incluido)";
+            pdfGridHeader.Cells[3].Value = "Importe total (IVA incluido)";
 
             //Add rows.
             foreach (var linea in lineas)
@@ -373,7 +371,7 @@ namespace TFG2022Server.Data
                         pdfGridRow.Cells[0].Value = producto.Nombre.ToString();
                         pdfGridRow.Cells[1].Value = producto.Precio.ToString() + " €";
                         pdfGridRow.Cells[2].Value = linea.Cantidad.ToString();
-                        pdfGridRow.Cells[4].Value = totalProducto(producto.Precio, user.Descuento, linea.Cantidad).ToString() + " €";
+                        pdfGridRow.Cells[3].Value = totalProducto(producto.Precio, linea.Cantidad).ToString() + " €";
                     }
                 }
             }
@@ -477,13 +475,9 @@ namespace TFG2022Server.Data
             }
             return 0;
         }
-        private static double totalProducto(double productoPrecio, int usuarioDescuento, int lineaCantidad)
+        private static double totalProducto(double productoPrecio, int lineaCantidad)
         {
-            double result = productoPrecio * lineaCantidad;
-
-            result = result - ((result * usuarioDescuento) / 100);
-
-            return Math.Round(result, 2);
+            return Math.Round(productoPrecio * lineaCantidad, 2);
         }
     }
 }

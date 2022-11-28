@@ -34,7 +34,5 @@ namespace TFG2022Server.Models
         [Required]
         [RegularExpression(@"^[0-9]{1,5}$", ErrorMessage = "El {0} tiene que estar compuesto mínimo de 5 números.")]
         public string CodigoPostal { get; set; } = null!;
-        [RegularExpression(@"^([0-9]|[1-9][0-9]|100)$", ErrorMessage = "El {0} tiene que ser un número del 0 al 100.")]
-        public int Descuento { get; set; } = 0;
     }
 }

@@ -24,7 +24,6 @@ namespace TFG2022Server.Extensions
                               Direccion = w.Direccion,
                               Poblacion = w.Poblacion,
                               CodigoPostal = w.CodigoPostal,
-                              Descuento = w.Descuento
                           }).ToListAsync();
         }
         public static async Task<List<UsuarioModel>> Convert(this IQueryable<Usuario> usuarios, TFG2022Context context)
@@ -46,7 +45,6 @@ namespace TFG2022Server.Extensions
                               Direccion = u.Direccion,
                               Poblacion = u.Poblacion,
                               CodigoPostal = u.CodigoPostal,
-                              Descuento = u.Descuento
                           }).ToListAsync();
         }
 
@@ -214,7 +212,6 @@ namespace TFG2022Server.Extensions
                 Direccion = usuarioModel.Direccion,
                 Poblacion = usuarioModel.Poblacion,
                 CodigoPostal = usuarioModel.CodigoPostal,
-                Descuento = usuarioModel.Descuento
             };
         }
         public static LineaCarrito Convert(this LineaCarritoModel lineaCarritoModel)

@@ -59,7 +59,6 @@ else
                         <th>Tu carrito</th>
                         <th>Precio /ud.</th>
                         <th>Cantidad</th>
-                        <th>Descuento</th>
                         <th>Importe total (IVA incluido)</th>
                     </tr>
                 </thead>
@@ -79,8 +78,7 @@ else
                                     <CascadingValue Value="this"><LineaCarritoRemove producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
                                 </div>
                             </td>
-                            <td>@user.Descuento %</td>
-                            <td>@totalProducto(@producto.Precio,@user.Descuento,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
+                            <td>@totalProducto(@producto.Precio,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
                         </tr>
                     }
                 </tbody>
@@ -505,13 +503,9 @@ else
         return (totalCarrito() + PedidoService.GetCosteEnvio());
     }
 
-    private double totalProducto(double productoPrecio, int usuarioDescuento, int lineaCantidad)
+    private double totalProducto(double productoPrecio, int lineaCantidad)
     {
-        double result = productoPrecio * lineaCantidad;
-
-        result = result - ((result * usuarioDescuento) / 100);
-
-        return Math.Round(result, 2);
+        return Math.Round(productoPrecio * lineaCantidad, 2);
     }
 
     public void RefreshState()
@@ -558,7 +552,7 @@ else
                                                   select new LineaPedido
                                                       {
                                                           ProductoLineaPedido = p.ProductoId,
-                                                          PrecioFinal = totalProducto(p.Precio, user.Descuento, cantidadDeProducto(p, filteredLineaCarritoData)),
+                                                          PrecioFinal = totalProducto(p.Precio, cantidadDeProducto(p, filteredLineaCarritoData)),
                                                           Cantidad = cantidadDeProducto(p, filteredLineaCarritoData)
                                                       }).ToList();
                 PedidoModel pedidoModel = new PedidoModel

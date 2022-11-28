@@ -17,6 +17,5 @@ namespace TFG2022Server.Entities
         public string Direccion { get; set; } = null!;
         public string Poblacion { get; set; } = null!;
         public string CodigoPostal { get; set; } = null!;
-        public int Descuento { get; set; }
     }
 }
