@@ -11,6 +11,7 @@ namespace TFG2022Server.Entities
         public string Nombre { get; set; }
         public string? Descripcion { get; set; }
         public int Cantidad { get; set; }
+        public int StockMinimo { get; set; }
         public double Precio { get; set; }
         public string? UrlImagen { get; set; }
     }

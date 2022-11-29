@@ -15,6 +15,7 @@
 @inject ILineaCarritoService LineaCarritoService
 @inject IProductoService ProductoService
 @inject IPedidoService PedidoService
+@inject IFacturaService FacturaService
 @inject ExportService exportService
 @inject Microsoft.JSInterop.IJSRuntime JS
 
@@ -25,6 +26,8 @@
 }
 else if (@storedUser != null)
 {
+    <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
+    <hr />
     @if (!pedidoTerminado)
     {
         <h3>Venta física</h3>
@@ -51,7 +54,7 @@ else if (@storedUser != null)
                         <Template>
                             @{
                                 var LineaInfo = (context as LineaPedidoModel);
-                                <div>@totalProducto(LineaInfo.Cantidad, LineaInfo.ProductoLineaPedido)</div>
+                        <div>@totalProducto(LineaInfo.Cantidad, LineaInfo.ProductoLineaPedido)</div>
                     }
                 </Template>
             </GridColumn>
@@ -98,8 +101,8 @@ else if (@storedUser != null)
         <h3>Pedido terminado!</h3>
         <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin/VentaFisica",forceLoad: true))">Registrar otra venta</SfButton>
         <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">Volver</SfButton>
-        <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>
-
+        @*  <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>*@
+        <ExportFacturaButton pedido="@newPedido" tieneEnvio=true></ExportFacturaButton>
     }
 
 }
@@ -262,9 +265,12 @@ else if (@storedUser != null)
                     UsuarioPedido = selectedUser.UsuarioId,
                     LineasPedido = lineasPedido,
                     FechaPedido = DateTime.Now,
-                    EstadoPedido = Constants.EstadosPedido.ElementAt(1)
+                    EstadoPedido = Constants.EstadosPedido.ElementAt(1),
+                    Envio = false,
                 };
             newPedido = await PedidoService.CreateVentaFisica(pedidoModel);
+            await FacturaService.CreateFacturaFromPedido(newPedido);
+
             pedidoTerminado = true;
         }
         catch (Exception)
@@ -277,12 +283,12 @@ else if (@storedUser != null)
     {
         return ((selectedUser != new UsuarioModel()) && (lineasPedidoData.Count() > 0));
     }
-
+    /*
     public async Task ExportToPdf()
     {
         using (MemoryStream memoryStream = ExportService.CreatePdfVentaFisica(newPedido, selectedUser.Convert(), productosData, lineasPedidoData, PedidoService.GetCosteEnvio()))
         {
             await JS.SaveAs(newPedido.PedidoId.ToString() + newPedido.FechaPedido.ToShortDateString() + newPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
         }
-    }
+    }*/
 }

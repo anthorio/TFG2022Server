@@ -18,5 +18,7 @@ namespace TFG2022Server.Models
         public double PrecioTotal { get; set; }
         [RegularExpression(@"^(0|[1-9]\d*)", ErrorMessage = "La {0} tiene que ser de al menos 1.")]
         public int CantidadTotal { get; set; }
+        [Required]
+        public bool Envio { get; set; }
     }
 }

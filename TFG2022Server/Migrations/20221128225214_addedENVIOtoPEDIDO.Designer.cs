@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFG2022Server.Data;
 
@@ -11,9 +12,10 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    partial class TFG2022ContextModelSnapshot : ModelSnapshot
+    [Migration("20221128225214_addedENVIOtoPEDIDO")]
+    partial class addedENVIOtoPEDIDO
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -350,9 +352,6 @@ namespace TFG2022Server.Migrations
 
                     b.Property<int>("CantidadTotal")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Envio")
-                        .HasColumnType("bit");
 
                     b.Property<int>("FamiliaProductoId")
                         .HasColumnType("int");

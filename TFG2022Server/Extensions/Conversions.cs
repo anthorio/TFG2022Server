@@ -143,7 +143,8 @@ namespace TFG2022Server.Extensions
                               FechaPedido = w.FechaPedido,
                               EstadoPedido = w.EstadoPedido,
                               PrecioTotal = Math.Round(w.PrecioTotal, 2),
-                              CantidadTotal = w.CantidadTotal
+                              CantidadTotal = w.CantidadTotal,
+                              Envio = w.Envio
                           }).ToListAsync();
         }
 
@@ -159,7 +160,8 @@ namespace TFG2022Server.Extensions
                               Descripcion = w.Descripcion,
                               Cantidad = w.Cantidad,
                               Precio = Math.Round(w.Precio, 2),
-                              UrlImagen = w.UrlImagen
+                              UrlImagen = w.UrlImagen,
+                              StockMinimo = w.StockMinimo
                           }).ToListAsync();
         }
 
@@ -177,7 +179,8 @@ namespace TFG2022Server.Extensions
                               Descripcion = prod.Descripcion,
                               Cantidad = prod.Cantidad,
                               Precio = Math.Round(prod.Precio, 2),
-                              UrlImagen = prod.UrlImagen
+                              UrlImagen = prod.UrlImagen,
+                              StockMinimo = prod.StockMinimo
                           }).ToListAsync();
         }
 
@@ -234,7 +237,8 @@ namespace TFG2022Server.Extensions
                 Descripcion = productoModel.Descripcion,
                 Precio = Math.Round(productoModel.Precio, 2),
                 ProductoId = productoModel.ProductoId,
-                UrlImagen = productoModel.UrlImagen
+                UrlImagen = productoModel.UrlImagen,
+                StockMinimo = productoModel.StockMinimo
             };
         }
         public static FamiliaProducto Convert(this FamiliaProductoModel fproductoModel)
@@ -257,6 +261,19 @@ namespace TFG2022Server.Extensions
                 Email = proveedor.Email,
                 Nombre = proveedor.Nombre,
                 Telefono = proveedor.Telefono
+            };
+        }
+        public static Pedido Convert(this PedidoModel pedidoModel)
+        {
+            return new Pedido
+            {
+                PedidoId = pedidoModel.PedidoId,
+                CantidadTotal = pedidoModel.CantidadTotal,
+                EstadoPedido = pedidoModel.EstadoPedido,
+                FechaPedido = pedidoModel.FechaPedido,
+                PrecioTotal = pedidoModel.PrecioTotal,
+                UsuarioPedido = pedidoModel.UsuarioPedido,
+                Envio = pedidoModel.Envio,
             };
         }
     }

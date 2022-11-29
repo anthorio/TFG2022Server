@@ -26,7 +26,8 @@ namespace TFG2022Server.Services
                     FechaPedido = pedidoModel.FechaPedido,
                     EstadoPedido = pedidoModel.EstadoPedido,
                     PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal)+GetCosteEnvio(),
-                    CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad)
+                    CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad),
+                    Envio = pedidoModel.Envio
                 };
                 var addedPedido = await this.tfg2022Context.Pedidos.AddAsync(pedido);
                 await this.tfg2022Context.SaveChangesAsync();
@@ -36,6 +37,9 @@ namespace TFG2022Server.Services
 
                 var lineasPedidoToAdd = ReturnLineaPedidoConPedidoId(pedidoId, pedidoModel.LineasPedido);
                 this.tfg2022Context.AddRange(lineasPedidoToAdd);
+                
+                // Al crear la factura se debe crear el pago también (pendiente de pago)
+
                 await this.tfg2022Context.SaveChangesAsync();
 
                 await UpdateVentasPedidoReportes(pedidoId, pedido);
@@ -56,7 +60,8 @@ namespace TFG2022Server.Services
                     FechaPedido = pedidoModel.FechaPedido,
                     EstadoPedido = pedidoModel.EstadoPedido,
                     PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal),
-                    CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad)
+                    CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad),
+                    Envio = pedidoModel.Envio
                 };
                 var addedPedido = await this.tfg2022Context.Pedidos.AddAsync(pedido);
                 await this.tfg2022Context.SaveChangesAsync();
@@ -116,7 +121,6 @@ namespace TFG2022Server.Services
                                                       where pi.PedidoLineaPedido == pedidoId
                                                       select new VentasPedidoReport
                                                       {
-
                                                           PedidoId = pedidoId,
                                                           FechaPedido = pedido.FechaPedido,
                                                           PedidoTotal = pedido.PrecioTotal,
@@ -129,7 +133,8 @@ namespace TFG2022Server.Services
                                                           FamiliaProductoId = tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).FamiliaProductoProducto,
                                                           FamiliaProductoNombre = tfg2022Context.FamiliaProductos.FirstOrDefault(f => f.FamiliaID == tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).FamiliaProductoProducto).Nombre,
                                                           UsuarioId = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).UsuarioId,
-                                                          UsuarioNombre = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).Nombre
+                                                          UsuarioNombre = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).Nombre,
+                                                          Envio = pedido.Envio,
 
                                                       }).ToListAsync();
                 this.tfg2022Context.AddRange(vpr);

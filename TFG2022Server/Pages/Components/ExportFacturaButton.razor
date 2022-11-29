@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using TFG2022Server.Pages.Components
+@using Syncfusion.Blazor.Buttons
+@using TFG2022Server.Data
+@using TFG2022Server.Extensions
+@using System.IO;
+
+@inject ProtectedLocalStorage LocalStorage
+@inject NavigationManager NavigationManager
+@inject ILineaPedidoService LineaPedidoService
+@inject ICarritoService CarritoService
+@inject IProductoService ProductoService
+@inject IUsuarioService UsuarioService
+@inject IPedidoService PedidoService
+@inject IFacturaService FacturaService
+@inject ExportService exportService
+@inject Microsoft.JSInterop.IJSRuntime JS
+
+<SfButton @onclick="@ExportToPdf">Imprimir factura</SfButton>
+
+
+
+
+@code {
+    [Parameter]
+    public Pedido pedido { get; set; }
+    public UsuarioModel user;
+    public List<LineaPedidoModel> lineasPedido;
+    public List<ProductoModel> productos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = (await UsuarioService.GetAllUsuarios()).FindAll(e => e.UsuarioId == pedido.UsuarioPedido).First();
+        lineasPedido = (await LineaPedidoService.GetLineaPedidos()).FindAll(e => e.PedidoLineaPedido == pedido.PedidoId);
+        productos = (await ProductoService.GetProductos());
+    }
+
+    public async Task ExportToPdf()
+    {
+        using (MemoryStream memoryStream = ExportService.CreateFactura(pedido, user, productos, lineasPedido))
+        {
+            await JS.SaveAs(pedido.FechaPedido.ToShortDateString() + "_" + pedido.FechaPedido.ToShortTimeString() + "_" + pedido.PedidoId.ToString() + ".pdf", memoryStream.ToArray());
+        }
+    }
+}

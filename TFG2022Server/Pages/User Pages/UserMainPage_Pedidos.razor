@@ -8,6 +8,7 @@
 @using TFG2022Server.Data
 @using TFG2022Server.Extensions
 @using System.IO;
+@using TFG2022Server.Pages.Components
 
 
 @inject NavigationManager NavigationManager
@@ -78,7 +79,8 @@
                 }
         </tbody>
     </table>
-    <SfButton @onclick="@ExportToPdf"> Exportar a PDF </SfButton>
+    @*   <SfButton @onclick="@ExportToPdf"> Exportar a PDF </SfButton>*@
+    <ExportFacturaButton pedido="@SelectedPedido.Convert()"></ExportFacturaButton>
 }
 
 <style>
@@ -171,12 +173,12 @@
         }
         return result;
     }
-
+    /*
     public async Task ExportToPdf()
-    {
-        using (MemoryStream memoryStream = ExportService.CreatePdfPedido(SelectedPedido, storedUser, productosData, lineaPedidoData, PedidoService.GetCosteEnvio()))
         {
+        using (MemoryStream memoryStream = ExportService.CreatePdfPedido(SelectedPedido, storedUser, productosData, lineaPedidoData, PedidoService.GetCosteEnvio()))
+            {
             await JS.SaveAs(SelectedPedido.PedidoId.ToString() + SelectedPedido.FechaPedido.ToShortDateString() + SelectedPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
-        }
     }
+    }*/
 }

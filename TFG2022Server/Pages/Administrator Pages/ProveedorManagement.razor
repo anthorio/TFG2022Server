@@ -8,6 +8,7 @@
 @using TFG2022Server.Models
 @using TFG2022Server.Services
 @using TFG2022Server.Services.Contracts
+@using Syncfusion.Blazor.Buttons
 
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
@@ -20,6 +21,8 @@
 }
 else if (@storedUser != null)
 {
+    <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
+    <hr />
     <h3>Listado de Familias de Productos</h3>
 
     <div>

@@ -32,5 +32,33 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task<Factura> CreateFacturaFromPedido(Pedido pedido)
+        {
+            try
+            {
+                Factura facturaToAdd = new Factura
+                {
+                    PedidoFactura = pedido.PedidoId,
+                    EstadoFactura = "",
+                    FechaFactura = pedido.FechaPedido,
+                    Iva = 21,
+                    Total = pedido.PrecioTotal
+                };
+
+                var result = await this.tfg2022Context.Facturas.AddAsync(facturaToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+                return result.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public Task UpdateFactura(FacturaModel factura)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

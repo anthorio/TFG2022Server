@@ -11,5 +11,7 @@ namespace TFG2022Server.Entities
         public string EstadoPedido { get; set; }
         public double PrecioTotal { get; set; }
         public int CantidadTotal { get; set; }
+        public bool Envio { get; set; }
+
     }
 }

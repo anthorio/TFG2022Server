@@ -19,5 +19,7 @@ namespace TFG2022Server.Entities
         public string FamiliaProductoNombre { get; set; }
         public int UsuarioId { get; set; }
         public string UsuarioNombre { get; set; }
+        public bool Envio { get; set; }
+
     }
 }
