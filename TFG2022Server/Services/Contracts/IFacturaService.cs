@@ -7,6 +7,7 @@ namespace TFG2022Server.Services.Contracts
     {
         Task<List<FacturaModel>> GetFacturas();
         string[] GetEstadosFactura();
+        Task<Factura> CreateFactura(FacturaModel facturaM);
         Task<Factura> CreateFacturaFromPedido(Pedido pedido);
         Task UpdateFactura(FacturaModel factura);
 

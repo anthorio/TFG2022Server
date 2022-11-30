@@ -56,9 +56,43 @@ namespace TFG2022Server.Services
             }
         }
 
-        public Task UpdateFactura(FacturaModel factura)
+        public async Task UpdateFactura(FacturaModel factura)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var facturaToUpdate = await this.tfg2022Context.Facturas.FindAsync(factura.FacturaId);
+
+                if (facturaToUpdate != null)
+                {
+                    facturaToUpdate.FechaFactura = factura.FechaFactura;
+                    facturaToUpdate.Total = factura.Total;
+                    facturaToUpdate.FacturaId = factura.FacturaId;
+                    facturaToUpdate.InfoPedido = factura.InfoPedido;
+                    facturaToUpdate.EstadoFactura = factura.EstadoFactura;
+                    facturaToUpdate.Iva = factura.Iva;
+                    facturaToUpdate.PedidoFactura = factura.PedidoFactura;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<Factura> CreateFactura(FacturaModel facturaM)
+        {
+            try
+            {
+                Factura facturaToAdd = facturaM.Convert();
+                var result = await this.tfg2022Context.Facturas.AddAsync(facturaToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+                return result.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

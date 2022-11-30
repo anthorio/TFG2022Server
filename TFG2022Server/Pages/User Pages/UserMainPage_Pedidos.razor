@@ -10,16 +10,12 @@
 @using System.IO;
 @using TFG2022Server.Pages.Components
 
-
 @inject NavigationManager NavigationManager
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject IPedidoService PedidoService
 @inject ILineaPedidoService LineaPedidoService
 @inject IProductoService ProductoService
-@inject ExportService exportService
-@inject Microsoft.JSInterop.IJSRuntime JS
-
 
 <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))"> ⬅ Volver a mi perfil</SfButton>
 
@@ -79,7 +75,6 @@
                 }
         </tbody>
     </table>
-    @*   <SfButton @onclick="@ExportToPdf"> Exportar a PDF </SfButton>*@
     <ExportFacturaButton pedido="@SelectedPedido.Convert()"></ExportFacturaButton>
 }
 
@@ -173,12 +168,4 @@
         }
         return result;
     }
-    /*
-    public async Task ExportToPdf()
-        {
-        using (MemoryStream memoryStream = ExportService.CreatePdfPedido(SelectedPedido, storedUser, productosData, lineaPedidoData, PedidoService.GetCosteEnvio()))
-            {
-            await JS.SaveAs(SelectedPedido.PedidoId.ToString() + SelectedPedido.FechaPedido.ToShortDateString() + SelectedPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
-    }
-    }*/
 }

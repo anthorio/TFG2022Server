@@ -16,8 +16,7 @@
 @inject IProductoService ProductoService
 @inject IPedidoService PedidoService
 @inject IFacturaService FacturaService
-@inject ExportService exportService
-@inject Microsoft.JSInterop.IJSRuntime JS
+@inject IPagoService PagoService
 
 
 @if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
@@ -91,20 +90,15 @@ else if (@storedUser != null)
             </div>
         }
         <hr />
-
         <SfButton IsPrimary="true" CssClass="e-outline" @onclick="terminarPedido" Disabled=@(!puedesTerminarPedido())>Registrar venta</SfButton>
-
-
     }
     else
     {
         <h3>Pedido terminado!</h3>
         <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin/VentaFisica",forceLoad: true))">Registrar otra venta</SfButton>
         <SfButton IsPrimary="true" CssClass="e-outline" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">Volver</SfButton>
-        @*  <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>*@
-        <ExportFacturaButton pedido="@newPedido" tieneEnvio=true></ExportFacturaButton>
+        <ExportFacturaButton pedido="@newPedido"></ExportFacturaButton>
     }
-
 }
 
 <style>
@@ -206,7 +200,6 @@ else if (@storedUser != null)
     {
         lineasPedidoData.Remove(linea);
         VentaFisicaGrid?.Refresh();
-
     }
     protected double totalPedido()
     {
@@ -219,7 +212,6 @@ else if (@storedUser != null)
                 result = result + totalProducto(lineea.Cantidad, lineea.ProductoLineaPedido);
             }
         }
-
         return Math.Round(result, 2);
     }
 
@@ -240,7 +232,6 @@ else if (@storedUser != null)
             {
                 lineasPedidoData.Remove(args.Data);
             }
-
         }
         catch (Exception)
         {
@@ -269,8 +260,14 @@ else if (@storedUser != null)
                     Envio = false,
                 };
             newPedido = await PedidoService.CreateVentaFisica(pedidoModel);
-            await FacturaService.CreateFacturaFromPedido(newPedido);
-
+            var facturaS = await FacturaService.CreateFacturaFromPedido(newPedido);
+            await PagoService.AddPago(
+                new PagoModel
+                    {
+                        FacturaPago = facturaS.FacturaId,
+                        Fecha = DateTime.Now,
+                        Cantidad = newPedido.PrecioTotal,
+                    });
             pedidoTerminado = true;
         }
         catch (Exception)
@@ -283,12 +280,4 @@ else if (@storedUser != null)
     {
         return ((selectedUser != new UsuarioModel()) && (lineasPedidoData.Count() > 0));
     }
-    /*
-    public async Task ExportToPdf()
-    {
-        using (MemoryStream memoryStream = ExportService.CreatePdfVentaFisica(newPedido, selectedUser.Convert(), productosData, lineasPedidoData, PedidoService.GetCosteEnvio()))
-        {
-            await JS.SaveAs(newPedido.PedidoId.ToString() + newPedido.FechaPedido.ToShortDateString() + newPedido.FechaPedido.ToShortTimeString() + ".pdf", memoryStream.ToArray());
-        }
-    }*/
 }

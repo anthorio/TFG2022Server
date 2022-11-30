@@ -1,0 +1,222 @@
+﻿@page "/admin/PagosFacturas"
+
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using TFG2022Server.Data
+@using TFG2022Server.Extensions
+@using TFG2022Server.Pages.Components
+
+@inject NavigationManager NavigationManager
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject IPedidoService PedidoService
+@inject IFacturaService FacturaService
+@inject IPagoService PagoService
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
+    <hr />
+    <h2>Lista de facturas</h2>
+    <SfGrid @ref="@Grid2" DataSource="facturasData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+        <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="false"></GridEditSettings>
+        <GridEvents OnActionBegin="ActionBeginHandler2" OnActionComplete="ActionCompleteHandler2" TValue="FacturaModel"></GridEvents>
+        <GridPageSettings PageSize="10"></GridPageSettings>
+        <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+        <GridColumns>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(FacturaModel.FacturaId)" HeaderText="ID Factura" AllowAdding="false" AllowEditing="false"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.PedidoFactura)" HeaderText="ID Pedido"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.InfoPedido)" HeaderText="Info de la Factura"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.FechaFactura)" Format="d" HeaderText="Fecha Factura"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.Iva)" HeaderText="IVA"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.Total)" HeaderText="Total"></GridColumn>
+            <GridColumn Field="@nameof(FacturaModel.EstadoFactura)" HeaderText="Estado Factura">
+                <EditTemplate>
+                    <SfDropDownList ID="Estado" DataSource="@((Constants.EstadosFactura).ToList())" TItem="string" TValue="string" @bind-Value="@((context as FacturaModel).EstadoFactura)">
+                        <DropDownListFieldSettings Value="EstadoFactura"></DropDownListFieldSettings>
+                        <DropDownListEvents TValue="string" TItem="string"></DropDownListEvents>
+                    </SfDropDownList>
+                </EditTemplate>
+            </GridColumn>
+        </GridColumns>
+        <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+    </SfGrid>
+    <hr />
+    <h3>Lista de Pagos</h3>
+    @if (PedidoFromSelectedPago != null)
+    {
+        <hr />
+        <ExportFacturaButton pedido="@PedidoFromSelectedPago.Convert()"></ExportFacturaButton>
+        <hr />
+    }
+    <div>
+        <SfGrid @ref="@Grid" DataSource="pagoData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+            <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+            <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="false"></GridEditSettings>
+            <GridEvents RowSelected="GetSelectedRecords" OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="PagoModel"></GridEvents>
+            <GridPageSettings PageSize="10"></GridPageSettings>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridColumns>
+                <GridColumn IsPrimaryKey="true" Field="@nameof(PagoModel.PagoId)" HeaderText="ID Pago" AllowAdding="false" AllowEditing="false"></GridColumn>
+                <GridForeignColumn Field="@nameof(PagoModel.FacturaPago)" HeaderText="ID Factura"
+                               ForeignKeyValue="FacturaId" ForeignKeyField="FacturaId" ForeignDataSource="facturasData" AllowEditing="false"></GridForeignColumn>
+                <GridColumn Field="@nameof(PagoModel.Fecha)" Format="d" HeaderText="Fecha del pago" AllowEditing="false"></GridColumn>
+                <GridColumn Field="@nameof(PagoModel.Cantidad)" HeaderText="Cantidad total" AllowEditing="false"></GridColumn>
+                <GridColumn Field="@nameof(PagoModel.Observaciones)" HeaderText="Observaciones"></GridColumn>
+            </GridColumns>
+            <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+        </SfGrid>
+    </div>
+
+
+}
+
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+</style>
+
+@code {
+    SfGrid<PagoModel> Grid { get; set; }
+    private Usuario storedUser { get; set; }
+    private List<PagoModel>? pagoData { get; set; }
+    private bool VisibleSpinner { get; set; } = false;
+    private PagoModel SelectedPagoModel { get; set; }
+    private PedidoModel PedidoFromSelectedPago { get; set; }
+    private List<object> toolbar = new List<object> { "Add", "Cancel", "Edit", "Update", "Search" };
+
+    SfGrid<FacturaModel> Grid2 { get; set; }
+
+    private List<FacturaModel>? facturasData { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        VisibleSpinner = true;
+        await InicializarUsuario();
+        pagoData = await PagoService.GetPagos();
+        facturasData = await FacturaService.GetFacturas();
+        VisibleSpinner = false;
+    }
+    protected async Task InicializarUsuario()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+    }
+    private async Task GetSelectedRecords(RowSelectEventArgs<PagoModel> args)
+    {
+        SelectedPagoModel = args.Data;
+        var factura = facturasData.FindAll(e => e.FacturaId == SelectedPagoModel.FacturaPago).First();
+        PedidoFromSelectedPago = (await PedidoService.GetPedidos()).FindAll(e => e.PedidoId == factura.PedidoFactura).First();
+    }
+
+    public async void ActionBeginHandler(ActionEventArgs<PagoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await PagoService.AddPago(args.Data);
+            }
+            else if (args.Action == "Edit")
+            {
+                await PagoService.UpdatePago(args.Data);
+            }
+        }
+    }
+    public async void ActionCompleteHandler(ActionEventArgs<PagoModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                pagoData = await PagoService.GetPagos();
+                Grid?.Refresh();
+            }
+        }
+    }
+
+    public async void ActionBeginHandler2(ActionEventArgs<FacturaModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await FacturaService.CreateFactura(args.Data);// args.Data.PedidoFactura);
+            }
+            else if (args.Action == "Edit")
+            {
+                await FacturaService.UpdateFactura(args.Data);
+            }
+        }
+    }
+    public async void ActionCompleteHandler2(ActionEventArgs<FacturaModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                facturasData = await FacturaService.GetFacturas();
+                Grid2?.Refresh();
+            }
+
+        }
+    }
+    public int facturaDelPedido(PedidoModel pedido)
+    {
+        if (pedido != null)
+        {
+            foreach (var factura in facturasData)
+            {
+                if (pedido.PedidoId == factura.PedidoFactura) return factura.FacturaId;
+            }
+        }
+        return 0;
+    }
+}

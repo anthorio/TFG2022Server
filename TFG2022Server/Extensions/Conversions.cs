@@ -276,5 +276,29 @@ namespace TFG2022Server.Extensions
                 Envio = pedidoModel.Envio,
             };
         }
+        public static Pago Convert(this PagoModel pagoModel)
+        {
+            return new Pago
+            {
+                PagoId = pagoModel.PagoId,
+                FacturaPago = pagoModel.FacturaPago,
+                Fecha = pagoModel.Fecha,
+                Cantidad = pagoModel.Cantidad,
+                Observaciones = pagoModel.Observaciones,
+            };
+        }
+        public static Factura Convert(this FacturaModel facturaModel)
+        {
+            return new Factura
+            {
+                FacturaId = facturaModel.FacturaId,
+                EstadoFactura = facturaModel.EstadoFactura,
+                FechaFactura = facturaModel.FechaFactura,
+                InfoPedido = facturaModel.InfoPedido,
+                Iva = facturaModel.Iva,
+                PedidoFactura = facturaModel.PedidoFactura,
+                Total = facturaModel.Total,
+            };
+        }
     }
 }

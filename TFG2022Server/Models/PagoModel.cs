@@ -11,7 +11,7 @@ namespace TFG2022Server.Models
         [Required]
         public DateTime Fecha { get; set; }
         [Required]
-        [RegularExpression(@"^(([1-9]\d*)|0)(\,\d{2})?", ErrorMessage = "La {0} no es correcta.")]
+        [RegularExpression(@"^(([1-9]\d*)|0)([\,|\.]?\d{1,2})?", ErrorMessage = "La {0} no es correcta.")]
         public double Cantidad { get; set; }
         public string? Observaciones { get; set; }
     }

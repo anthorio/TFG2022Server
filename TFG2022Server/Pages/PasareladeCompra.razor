@@ -7,7 +7,6 @@
 @using Syncfusion.Blazor.Buttons
 @using TFG2022Server.Data
 @using TFG2022Server.Extensions
-@using System.IO;
 
 @inject ProtectedLocalStorage LocalStorage
 @inject NavigationManager NavigationManager
@@ -17,10 +16,9 @@
 @inject IUsuarioService UsuarioService
 @inject IPedidoService PedidoService
 @inject IFacturaService FacturaService
-@inject ExportService exportService
-@inject Microsoft.JSInterop.IJSRuntime JS
+@inject IPagoService PagoService
 
-<h3>PasareladeCompra</h3>
+<h3>Pasarela de Compra</h3>
 
 @if (@waitForUser() == null)
 {
@@ -153,13 +151,10 @@ else
             <div class="radio-control">
                 <h3>Seleccione medio de pago</h3>
                 <div class="row">
-                    <SfRadioButton Label="Otras tarjetas" Name="payment" Value="tarjetas" @bind-Checked="@metodoDePago"></SfRadioButton>
+                    <SfRadioButton Label="Pago con tarjeta" Name="payment" Value="tarjetas" @bind-Checked="@metodoDePago"></SfRadioButton>
                 </div>
                 <div class="row">
-                    <SfRadioButton Label="PayPal" Name="payment" Value="paypal" @bind-Checked="@metodoDePago"></SfRadioButton>
-                </div>
-                <div class="row">
-                    <SfRadioButton Label="Bizum" Name="payment" Value="bizum" @bind-Checked="@metodoDePago"></SfRadioButton>
+                    <SfRadioButton Label="Pago inmediato con Bizum" Name="payment" Value="bizum" @bind-Checked="@metodoDePago"></SfRadioButton>
                 </div>
             </div>
         </div>
@@ -230,8 +225,7 @@ else
             </tbody>
         </table>
         <div>
-            <ExportFacturaButton pedido="@newPedido"></ExportFacturaButton>                  
-            @*  <SfButton @onclick="@ExportToPdf">Imprimir justificante</SfButton>*@
+            <ExportFacturaButton pedido="@newPedido"></ExportFacturaButton>
         </div>
         <div>
             <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
@@ -294,7 +288,7 @@ else
                 <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
             </div>
             <div class="float-child">
-                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3"  Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3" Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
             </div>
         </div>
     }
@@ -566,8 +560,17 @@ else
                         Envio = true,
                     };
                 var pedido = await PedidoService.CreatePedido(pedidoModel);
-                await FacturaService.CreateFacturaFromPedido(pedido);
-
+                var facturaS = await FacturaService.CreateFacturaFromPedido(pedido);
+                if (metodoDePago == "bizum")
+                {
+                    await PagoService.AddPago(
+                new PagoModel
+                    {
+                        FacturaPago = facturaS.FacturaId,
+                        Fecha = DateTime.Now,
+                        Cantidad = pedido.PrecioTotal,
+                    });
+                }
                 return pedido;
             }
             return null;
@@ -578,12 +581,4 @@ else
             throw;
         }
     }
-    /*
-    public async Task ExportToPdf()
-    {
-        using(MemoryStream memoryStream = ExportService.CreatePdf(newPedido, user, listaProductosCarrito, filteredLineaCarritoData, PedidoService.GetCosteEnvio())){
-            await JS.SaveAs(newPedido.PedidoId.ToString()+newPedido.FechaPedido.ToShortDateString()+newPedido.FechaPedido.ToShortTimeString()+".pdf", memoryStream.ToArray());
-        }
-    }
-    */
 }
