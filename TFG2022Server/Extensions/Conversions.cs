@@ -66,7 +66,9 @@ namespace TFG2022Server.Extensions
                           {
                               AlbaranId = w.AlbaranId,
                               PedidoAlbaran = w.PedidoAlbaran,
-                              FechaEntrega = w.FechaEntrega
+                              FechaEntrega = w.FechaEntrega,
+                              ProductoAlbaran = w.ProductoAlbaran,
+                              CantidadProductoAlbaran = w.CantidadProductoAlbaran
                           }).ToListAsync();
         }
 
@@ -144,7 +146,7 @@ namespace TFG2022Server.Extensions
                               EstadoPedido = w.EstadoPedido,
                               PrecioTotal = Math.Round(w.PrecioTotal, 2),
                               CantidadTotal = w.CantidadTotal,
-                              Envio = w.Envio
+                              Envio = w.Envio,
                           }).ToListAsync();
         }
 
@@ -298,6 +300,17 @@ namespace TFG2022Server.Extensions
                 Iva = facturaModel.Iva,
                 PedidoFactura = facturaModel.PedidoFactura,
                 Total = facturaModel.Total,
+            };
+        }
+        public static Albaran Convert(this AlbaranModel albaranModel)
+        {
+            return new Albaran
+            {
+                AlbaranId = albaranModel.AlbaranId,
+                CantidadProductoAlbaran = albaranModel.CantidadProductoAlbaran,
+                FechaEntrega = albaranModel.FechaEntrega,
+                PedidoAlbaran = albaranModel.PedidoAlbaran,
+                ProductoAlbaran = albaranModel.ProductoAlbaran
             };
         }
     }

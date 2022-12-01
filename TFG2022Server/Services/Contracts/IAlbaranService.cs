@@ -7,5 +7,8 @@ namespace TFG2022Server.Services.Contracts
     {
         Task<List<AlbaranModel>> GetAlbaranes();
         // Task<List<Pedido>> GetPedidos();
+        Task<Albaran> AddAlbaran(AlbaranModel albaran);
+        Task UpdateAlbaran(AlbaranModel albaran);
+        Task DeleteAlbaran(int id);
     }
 }

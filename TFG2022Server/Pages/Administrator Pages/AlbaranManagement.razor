@@ -1,0 +1,147 @@
+﻿@page "/admin/Albaranes"
+
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Spinner
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using TFG2022Server.Data
+@using TFG2022Server.Extensions
+@using TFG2022Server.Pages.Components
+
+@inject NavigationManager NavigationManager
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
+@inject IAlbaranService AlbaranService
+@inject IPedidoService PedidoService
+@inject IProductoService ProductoService
+
+@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
+    <hr />
+    <h3>Lista de Albaranes</h3>
+
+    <div>
+        <SfGrid @ref="@Grid" DataSource="albaranData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
+            <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+            <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="false"></GridEditSettings>
+            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="AlbaranModel"></GridEvents>
+            <GridPageSettings PageSize="20"></GridPageSettings>
+            <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+            <GridColumns>
+                <GridColumn IsPrimaryKey="true" Field="@nameof(AlbaranModel.AlbaranId)" HeaderText="ID" AllowAdding="false" AllowEditing="false"></GridColumn>
+                <GridColumn Field="@nameof(AlbaranModel.FechaEntrega)" Format="d" HeaderText="Fecha de entrega"></GridColumn>
+                <GridForeignColumn Field="@nameof(AlbaranModel.PedidoAlbaran)" HeaderText="Pedido"
+                               ForeignKeyValue="PedidoId" ForeignKeyField="PedidoId" ForeignDataSource="pedidosData"></GridForeignColumn>
+                <GridForeignColumn Field="@nameof(AlbaranModel.ProductoAlbaran)" HeaderText="Producto"
+                               ForeignKeyValue="Nombre" ForeignKeyField="ProductoId" ForeignDataSource="productosData"></GridForeignColumn>
+                <GridColumn Field="@nameof(AlbaranModel.CantidadProductoAlbaran)" HeaderText="Cantidad de producto"></GridColumn>
+            </GridColumns>
+            <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
+        </SfGrid>
+    </div>
+}
+
+<style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+</style>
+
+@code {
+    SfGrid<AlbaranModel> Grid { get; set; }
+    private Usuario storedUser { get; set; }
+    private List<AlbaranModel>? albaranData { get; set; }
+    private List<PedidoModel>? pedidosData { get; set; }
+    private List<ProductoModel>? productosData { get; set; }
+    private bool VisibleSpinner { get; set; } = false;
+    private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        VisibleSpinner = true;
+        await InicializarUsuario();
+        albaranData = await AlbaranService.GetAlbaranes();
+        pedidosData = await PedidoService.GetPedidos();
+        productosData = await ProductoService.GetProductos();
+        VisibleSpinner = false;
+    }
+    protected async Task InicializarUsuario()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+    }
+    public async void ActionBeginHandler(ActionEventArgs<AlbaranModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                await AlbaranService.AddAlbaran(args.Data);
+            }
+            else if (args.Action == "Edit")
+            {
+                await AlbaranService.UpdateAlbaran(args.Data);
+            }
+        }
+        else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
+        {
+            await AlbaranService.DeleteAlbaran(args.Data.AlbaranId);
+        }
+    }
+    public async void ActionCompleteHandler(ActionEventArgs<AlbaranModel> args)
+    {
+        if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Save))
+        {
+            if (args.Action == "Add")
+            {
+                albaranData = await AlbaranService.GetAlbaranes();
+                Grid?.Refresh();
+            }
+
+        }
+    }
+}
