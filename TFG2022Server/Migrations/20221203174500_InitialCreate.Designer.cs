@@ -12,8 +12,8 @@ using TFG2022Server.Data;
 namespace TFG2022Server.Migrations
 {
     [DbContext(typeof(TFG2022Context))]
-    [Migration("20221128225214_addedENVIOtoPEDIDO")]
-    partial class addedENVIOtoPEDIDO
+    [Migration("20221203174500_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,10 +32,16 @@ namespace TFG2022Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AlbaranId"), 1L, 1);
 
+                    b.Property<int>("CantidadProductoAlbaran")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("FechaEntrega")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PedidoAlbaran")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductoAlbaran")
                         .HasColumnType("int");
 
                     b.HasKey("AlbaranId");
@@ -352,6 +358,9 @@ namespace TFG2022Server.Migrations
 
                     b.Property<int>("CantidadTotal")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Envio")
+                        .HasColumnType("bit");
 
                     b.Property<int>("FamiliaProductoId")
                         .HasColumnType("int");
