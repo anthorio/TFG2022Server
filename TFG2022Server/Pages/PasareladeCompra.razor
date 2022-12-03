@@ -571,6 +571,10 @@ else
                         Cantidad = pedido.PrecioTotal,
                     });
                 }
+                foreach (var linea in lineasPedido)
+                {
+                    await ProductoService.UpdateCantidadProducto(linea.ProductoLineaPedido, linea.Cantidad);
+                }
                 return pedido;
             }
             return null;

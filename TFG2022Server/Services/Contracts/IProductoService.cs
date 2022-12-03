@@ -10,5 +10,6 @@ namespace TFG2022Server.Services.Contracts
         Task<Producto> AddProducto(ProductoModel productoMod);
         Task UpdateProducto(ProductoModel productoMod);
         Task DeleteProducto(int id);
+        Task UpdateCantidadProducto(int productoid, int cantidad);
     }
 }

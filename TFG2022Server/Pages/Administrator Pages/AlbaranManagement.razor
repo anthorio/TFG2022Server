@@ -30,7 +30,7 @@ else if (@storedUser != null)
         <SfGrid @ref="@Grid" DataSource="albaranData" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar">
             <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
             <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="false"></GridEditSettings>
-            <GridEvents OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="AlbaranModel"></GridEvents>
+            <GridEvents RowSelected="GetSelectedRecords" OnActionBegin="ActionBeginHandler" OnActionComplete="ActionCompleteHandler" TValue="AlbaranModel"></GridEvents>
             <GridPageSettings PageSize="20"></GridPageSettings>
             <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
             <GridColumns>
@@ -45,49 +45,16 @@ else if (@storedUser != null)
             <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
         </SfGrid>
     </div>
+        @if (AlbaranSelected != null)
+    {
+        <hr />
+        <ExportAlbaranButton albaran="@AlbaranSelected"></ExportAlbaranButton>
+        <hr />
+    }
 }
 
 <style>
-    .styled-table {
-        border-collapse: collapse;
-        margin: 25px 0;
-        font-size: 0.9em;
-        font-family: sans-serif;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-        background-color: white;
-    }
-
-        .styled-table thead tr {
-            background-color: #009879;
-            color: #ffffff;
-            text-align: left;
-        }
-
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-            max-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-            .styled-table tbody tr:nth-of-type(even) {
-                background-color: #f3f3f3;
-            }
-
-            .styled-table tbody tr:nth-of-type(odd) {
-                background-color: white;
-            }
-
-            .styled-table tbody tr:last-of-type {
-                border-bottom: 2px solid #009879;
-            }
+   
 </style>
 
 @code {
@@ -98,6 +65,7 @@ else if (@storedUser != null)
     private List<ProductoModel>? productosData { get; set; }
     private bool VisibleSpinner { get; set; } = false;
     private List<object> toolbar = new List<object> { "Add", "Edit", "Delete", "Update", "Cancel", "Search" };
+    private AlbaranModel AlbaranSelected { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -121,10 +89,13 @@ else if (@storedUser != null)
             if (args.Action == "Add")
             {
                 await AlbaranService.AddAlbaran(args.Data);
+                await ProductoService.UpdateCantidadProducto(args.Data.ProductoAlbaran,-args.Data.CantidadProductoAlbaran);
             }
             else if (args.Action == "Edit")
             {
+                var cantidadAnterior = ((await AlbaranService.GetAlbaranes()).FindAll(e => e.AlbaranId == args.Data.AlbaranId)).First().CantidadProductoAlbaran;
                 await AlbaranService.UpdateAlbaran(args.Data);
+                await ProductoService.UpdateCantidadProducto(args.Data.ProductoAlbaran,-(args.Data.CantidadProductoAlbaran-cantidadAnterior));
             }
         }
         else if (args.RequestType.Equals(Syncfusion.Blazor.Grids.Action.Delete))
@@ -141,7 +112,10 @@ else if (@storedUser != null)
                 albaranData = await AlbaranService.GetAlbaranes();
                 Grid?.Refresh();
             }
-
-        }
+                    }
+    }
+        private async Task GetSelectedRecords(RowSelectEventArgs<AlbaranModel> args)
+    {
+        AlbaranSelected = args.Data;
     }
 }

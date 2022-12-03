@@ -95,5 +95,23 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
+        public async Task UpdateCantidadProducto(int productoid, int cantidad)
+        {
+            try
+            {
+                var productoToUpdate = await this.tfg2022Context.Productos.FindAsync(productoid);
+
+                if (productoToUpdate != null)
+                {
+                    productoToUpdate.Cantidad = productoToUpdate.Cantidad-cantidad;
+                    await this.tfg2022Context.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
