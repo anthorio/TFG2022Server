@@ -50,8 +50,9 @@ else if (@storedUser != null)
                                ForeignKeyValue="Nombre" ForeignKeyField="ProveedorId" ForeignDataSource="proveedorData"></GridForeignColumn>
             <GridColumn Field="@nameof(ProductoModel.Nombre)" HeaderText="Nombre"></GridColumn>
             <GridColumn Field="@nameof(ProductoModel.Descripcion)" HeaderText="Descripción"></GridColumn>
-            <GridColumn Field="@nameof(ProductoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
             <GridColumn Field="@nameof(ProductoModel.Precio)" HeaderText="Precio"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
+            <GridColumn Field="@nameof(ProductoModel.StockMinimo)" HeaderText="Stock Mínimo"></GridColumn>
         </GridColumns>
         <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>

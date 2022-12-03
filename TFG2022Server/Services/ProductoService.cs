@@ -70,6 +70,7 @@ namespace TFG2022Server.Services
                     productoToUpdate.Cantidad = productoMod.Cantidad;
                     productoToUpdate.Precio = productoMod.Precio;
                     productoToUpdate.UrlImagen = productoMod.UrlImagen;
+                    productoToUpdate.StockMinimo= productoMod.StockMinimo;
                     await this.tfg2022Context.SaveChangesAsync();
                 }
             }

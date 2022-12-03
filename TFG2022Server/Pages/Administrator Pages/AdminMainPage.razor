@@ -6,6 +6,7 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
+@inject IProductoService ProductoService
 
 @if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
 {
@@ -63,9 +64,74 @@ else if (@storedUser != null)
         </div>
 
     </main>
+    <hr />
+
+    @if (productoData != null)
+    {
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Notificaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProductoModel prod in productoData)
+                {
+                    if (prod.Cantidad < prod.StockMinimo)
+                    {
+                        <tr>
+                            <td>
+                                <text>El producto '@prod.Nombre' con ID: '@prod.ProductoId' está por debajo del stock mínimo (@prod.StockMinimo). Actualmente: @prod.Cantidad.</text>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
 }
 
 <style>
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
     /* Basic Styling */
     html, body {
         height: 100%;
@@ -94,6 +160,7 @@ else if (@storedUser != null)
 
 @code {
     private Usuario? storedUser { get; set; }
+    private List<ProductoModel>? productoData { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -102,6 +169,7 @@ else if (@storedUser != null)
 
     protected async Task InicializarUsuario()
     {
+        productoData = await ProductoService.GetProductos();
         await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
