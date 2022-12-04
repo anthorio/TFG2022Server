@@ -34,12 +34,13 @@
             <ContentTemplate>
 
                 @* Grid de productos *@
-                @if (ProductoData == null )
+                @if (ProductoData == null)
                 {
                     <div>
                         <div>Cargando...</div>
                     </div>
-                }else if (this.ProductoData.Count == 0)
+                }
+                else if (this.ProductoData.Count == 0)
                 {
                     <div class="e-error">
                         <div class="e-error-content">No hay productos en esta categoría.</div>
@@ -71,17 +72,17 @@
         </TabItem>
 
         @* Tabs de familia *@
-        @if (FamiliaData == null )
+        @if (FamiliaData == null)
         {
             <div>
-                        <div>Cargando...</div>
-                    </div>
+                <div>Cargando...</div>
+            </div>
         }
         else if (this.FamiliaData.Count == 0)
         {
             <div class="e-error">
-                        <div class="e-error-content">No hay productos en esta categoría.</div>
-                    </div>
+                <div class="e-error-content">No hay productos en esta categoría.</div>
+            </div>
         }
         else
         {
@@ -92,16 +93,19 @@
                         <TabHeader Text="@familiap.Nombre"></TabHeader>
                     </ChildContent>
                     <ContentTemplate>
-
+                        <hr />
+                        @familiap.Descripcion
+                        <hr />
                         @* Grid de productos *@
-                        @if (ProductoData == null )
+                        @if (ProductoData == null)
                         {
-                            <div >
-                                <div >Cargando...</div>
+                            <div>
+                                <div>Cargando...</div>
                             </div>
-                        }else if (this.ProductoData.Count == 0)
+                        }
+                        else if (this.ProductoData.Count == 0)
                         {
-                         <div class="e-error">
+                            <div class="e-error">
                                 <div class="e-error-content">No hay productos en esta categoría.</div>
                             </div>
                         }

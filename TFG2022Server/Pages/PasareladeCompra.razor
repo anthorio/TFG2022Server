@@ -89,7 +89,7 @@ else
 
         <h4>Envío </h4>
         <p>Comprueba que la dirección es la deseada.</p>
-        <p>Si quieres modificar tu dirección, deberás modificarla en <a href="https://example.com">tu perfil</a></p>
+        <p>Si quieres modificar tu dirección, deberás modificarla en <a href="/usermainpage/data">tu perfil</a></p>
 
         @if (@user != null)
         {
@@ -227,9 +227,13 @@ else
         <div>
             <ExportFacturaButton pedido="@newPedido"></ExportFacturaButton>
         </div>
+    <hr />
+
         <div>
-            <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
+            <SfButton IsPrimary=true @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
         </div>
+    <hr />
+
     }
     @if (step != 3)
     {

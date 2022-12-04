@@ -44,12 +44,21 @@ namespace TFG2022Server.Services
                 // 
                 try
                 {
-                    Carrito carritoToAdd = new Carrito();
-                    carritoToAdd.UsuarioCarrito = user;
+                    var carritoSusuario = (await GetCarritos()).FindAll(e => e.UsuarioCarrito == user);
+                    if (carritoSusuario.Count == 0)
+                    {
+                        Carrito carritoToAdd = new Carrito();
+                        carritoToAdd.UsuarioCarrito = user;
 
-                    var result = await this.tfg2022Context.Carritos.AddAsync(carritoToAdd);
-                    await this.tfg2022Context.SaveChangesAsync();
-                    return result.Entity;
+                        var result = await this.tfg2022Context.Carritos.AddAsync(carritoToAdd);
+                        await this.tfg2022Context.SaveChangesAsync();
+                        return result.Entity;
+                    }
+                    else 
+                    {
+                        return carritoSusuario.First().Convert();
+                    }
+
                 }
                 catch (Exception)
                 {

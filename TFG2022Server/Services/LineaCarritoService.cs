@@ -49,7 +49,32 @@ namespace TFG2022Server.Services
             }
             catch (Exception)
             {
-                throw;
+                List<LineaCarritoModel> lineasRepetidas = (await GetLineaCarritos()).FindAll(e => e.CarritoLineaCarrito == lineaCarrito.CarritoLineaCarrito && e.ProductoLineaCarrito == lineaCarrito.ProductoLineaCarrito);
+                if (lineasRepetidas.Count > 1)
+                {
+                    foreach (var lineaRepe in lineasRepetidas)
+                    {
+                        await EliminarLinea(lineaRepe);
+                    }
+                    LineaCarrito lineaCombinada = new LineaCarrito
+                    {
+                        LineaCarritoId = lineasRepetidas.First().LineaCarritoId,
+                        CarritoLineaCarrito = lineasRepetidas.First().CarritoLineaCarrito,
+                        ProductoLineaCarrito = lineasRepetidas.First().ProductoLineaCarrito,
+                        Cantidad = 0
+                    };
+                    foreach (var lineaRepe in lineasRepetidas)
+                    {
+                        lineaCombinada.Cantidad = lineaCombinada.Cantidad + lineaRepe.Cantidad;
+                    }
+                    var result = await this.tfg2022Context.LineaCarritos.AddAsync(lineaCombinada);
+                    await this.tfg2022Context.SaveChangesAsync();
+                    return (result.Entity);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
@@ -60,7 +85,7 @@ namespace TFG2022Server.Services
                 var lineaCarritoExistente = await this.tfg2022Context.LineaCarritos.FindAsync(lineaCarrito.LineaCarritoId);
                 if (lineaCarritoExistente != null)
                 {
-                    lineaCarritoExistente.Cantidad=lineaCarrito.Cantidad + 1;
+                    lineaCarritoExistente.Cantidad = lineaCarrito.Cantidad + 1;
                     await this.tfg2022Context.SaveChangesAsync();
                 }
             }
@@ -79,8 +104,8 @@ namespace TFG2022Server.Services
                 {
                     if (lineaCarrito.Cantidad > 1)
                     {
-                    lineaCarritoExistente.Cantidad = lineaCarrito.Cantidad - 1;
-                    await this.tfg2022Context.SaveChangesAsync();
+                        lineaCarritoExistente.Cantidad = lineaCarrito.Cantidad - 1;
+                        await this.tfg2022Context.SaveChangesAsync();
                     }
                     else
                     {
@@ -115,12 +140,12 @@ namespace TFG2022Server.Services
 
             try
             {
-               var lineas = this.tfg2022Context.LineaCarritos.Where(lc => lc.CarritoLineaCarrito==carrito);
+                var lineas = this.tfg2022Context.LineaCarritos.Where(lc => lc.CarritoLineaCarrito == carrito);
                 foreach (var linea in lineas)
                 {
                     this.tfg2022Context.LineaCarritos.Remove(linea);
                 }
-                    await this.tfg2022Context.SaveChangesAsync();
+                await this.tfg2022Context.SaveChangesAsync();
             }
             catch (Exception)
             {

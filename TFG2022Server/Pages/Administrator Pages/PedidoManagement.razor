@@ -82,7 +82,7 @@ else if (@storedUser != null)
                                     <text>@lpm.Cantidad</text>
                                 </td>
                                 <td>
-                                    <text>@(lpm.PrecioFinal/lpm.Cantidad)</text>
+                                    <text>@Math.Round((lpm.PrecioFinal/lpm.Cantidad), 2)</text>
                                 </td>
                                 <td>
                                     <text> @lpm.PrecioFinal €</text>

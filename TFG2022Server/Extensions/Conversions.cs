@@ -313,5 +313,13 @@ namespace TFG2022Server.Extensions
                 ProductoAlbaran = albaranModel.ProductoAlbaran
             };
         }
+        public static Carrito Convert(this CarritoModel cModel)
+        {
+            return new Carrito
+            {
+                CarritoId = cModel.CarritoId,
+                UsuarioCarrito = cModel.UsuarioCarrito
+            };
+        }
     }
 }
