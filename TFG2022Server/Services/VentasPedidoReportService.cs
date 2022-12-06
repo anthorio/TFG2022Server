@@ -131,5 +131,27 @@ namespace TFG2022Server.Services
                                         .Select(e => e.UsuarioId).ToListAsync();
             return trabajadoresIds;
         }
+
+        public async Task<List<GroupedFieldCantidadModel>> GetProductosVendidosPorMesData(DateTime mes)
+        {
+            try
+            {
+                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
+                                        where v.FechaPedido.Month == mes.Month && v.FechaPedido.Year == mes.Year
+                                        group v by v.NombreProducto into GroupedData
+                                        orderby GroupedData.Key
+                                        select new GroupedFieldCantidadModel
+                                        {
+
+                                            GroupedFieldCantidadKey = GroupedData.Key.Substring(0, 20),
+                                            Cantidad = GroupedData.Sum(lp => lp.LineaPedidoCantidad)
+                                        }).ToListAsync();
+                return reportData;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

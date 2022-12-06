@@ -4,6 +4,10 @@ namespace TFG2022Server.Services.Contracts
 {
     public interface IVentasPedidoReportService
     {
+        Task<List<GroupedFieldCantidadModel>> GetProductosVendidosPorMesData(DateTime mes);
+
+
+
         // Graficas que sólo puede ver x
         Task<List<GroupedFieldPrecioModel>> GetUsuarioPrecioPorMesData();
         Task<List<GroupedFieldCantidadModel>> GetCantidadPorFamiliaProducto();

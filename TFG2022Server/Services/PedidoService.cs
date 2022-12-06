@@ -134,6 +134,7 @@ namespace TFG2022Server.Services
                                                           FamiliaProductoNombre = tfg2022Context.FamiliaProductos.FirstOrDefault(f => f.FamiliaID == tfg2022Context.Productos.FirstOrDefault(p => p.ProductoId == pi.ProductoLineaPedido).FamiliaProductoProducto).Nombre,
                                                           UsuarioId = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).UsuarioId,
                                                           UsuarioNombre = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).Nombre,
+                                                          UsuarioCodigoPostal = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).CodigoPostal,
                                                           Envio = pedido.Envio,
 
                                                       }).ToListAsync();

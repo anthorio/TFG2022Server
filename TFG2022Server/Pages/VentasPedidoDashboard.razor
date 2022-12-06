@@ -1,9 +1,14 @@
-﻿@page "/VentasPedidoDashboard"
+﻿@page "/admin/VentasPedidoDashboard"
 
 @using Syncfusion.Blazor.Charts
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Layouts
 @using System.Timers
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Calendars
+
+@inject ProtectedLocalStorage LocalStorage
+@inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
 @inject IVentasPedidoReportService VentasPedidoReportService
 
@@ -47,74 +52,121 @@
         font-weight: 500;
     }
 </style>
-<div class="control-section">
-    <SfDashboardLayout CellSpacing="@(new double[]{15 ,15 })" CellAspectRatio="0.8" Columns="8">
-        <DashboardLayoutPanels>
-            <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
-            <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
-                <HeaderTemplate>
-                    <span class="title">Ventas / Mes</span>
-                </HeaderTemplate>
-                <ContentTemplate>
-                    @if (isLayoutRender)
-                    {
-                        <SfChart @ref="chart1" Title="Ventas / Mes">
-                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-                            </ChartPrimaryXAxis>
-                            <ChartSeriesCollection>
-                                <ChartSeries DataSource="@TotalVentasPorMes"
-                                         XName="GroupedFieldKey"
-                                         YName="Precio"
+
+@if (@storedUser != null && @storedUser.Rol != UsuarioService.GetRoles().Last())
+{
+    NavigationManager.NavigateTo("/");
+}
+else if (@storedUser != null)
+{
+    <div class="col-lg-4 property-section">
+        <div class="property-panel-section">
+            <div class="property-panel-content">
+                <div class="col-lg-12 control-section">
+                    <div class="control-wrapper">
+                        <SfDatePicker TValue="DateTime" Value="@SelectorMesProductosVendidos" Placeholder="Selecciona un mes" Format="MMMM yyyy" Start="CalendarView.Year" Depth="CalendarView.Year" ShowClearButton="true">
+                            <DatePickerEvents TValue="DateTime" ValueChange="@MesValueChangeHandler"></DatePickerEvents> 
+                        </SfDatePicker>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="control-section">
+        <SfDashboardLayout CellSpacing="@(new double[]{15 ,15 })" CellAspectRatio="0.8" Columns="8">
+            <DashboardLayoutPanels>
+                <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
+                <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
+                    <HeaderTemplate>
+                        <span class="title">Cantidad de productos vendidos</span>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        @if (isLayoutRender)
+                        {
+
+                            <SfChart @ref="chart1" Title="Ventas / Mes">
+                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                                </ChartPrimaryXAxis>
+                                <ChartSeriesCollection>
+                                    <ChartSeries DataSource="@ProductosVendidos"
+                                         XName="GroupedFieldCantidadKey"
+                                         YName="Cantidad"
                                          Type="ChartSeriesType.Bar"></ChartSeries>
-                            </ChartSeriesCollection>
-                        </SfChart>
-                    }
-                </ContentTemplate>
-            </DashboardLayoutPanel>
-            <DashboardLayoutPanel Column="4" Row="0" SizeX="4" SizeY="2">
-                <HeaderTemplate>
-                    <span class="title">Cantidad / Familia Producto</span>
-                </HeaderTemplate>
-                <ContentTemplate>
-                    @if (isLayoutRender)
-                    {
-                        <SfAccumulationChart Title="Cantidad / Familia Producto">
-                            <AccumulationChartLegendSettings Visible="true" Position="LegendPosition.Top"></AccumulationChartLegendSettings>
-                            <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
-                            <AccumulationChartSeriesCollection>
-                                <AccumulationChartSeries DataSource="@CantidadProductoPorFamiliaProducto"
+                                </ChartSeriesCollection>
+                                <ChartTooltipSettings Header="<b>${point.tooltip}</b>" Enable="true" Shared="true"></ChartTooltipSettings>
+                            </SfChart>
+                        }
+                    </ContentTemplate>
+                </DashboardLayoutPanel>
+
+                @*
+            <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
+            <HeaderTemplate>
+            <span class="title">Ventas / Mes</span>
+            </HeaderTemplate>
+            <ContentTemplate>
+            @if (isLayoutRender)
+            {
+            <SfChart @ref="chart1" Title="Ventas / Mes">
+            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+            </ChartPrimaryXAxis>
+            <ChartSeriesCollection>
+            <ChartSeries DataSource="@TotalVentasPorMes"
+            XName="GroupedFieldKey"
+            YName="Precio"
+            Type="ChartSeriesType.Bar"></ChartSeries>
+            </ChartSeriesCollection>
+            </SfChart>
+            }
+            </ContentTemplate>
+            </DashboardLayoutPanel> *@
+                <DashboardLayoutPanel Column="4" Row="0" SizeX="4" SizeY="2">
+                    <HeaderTemplate>
+                        <span class="title">Cantidad / Familia Producto</span>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        @if (isLayoutRender)
+                        {
+                            <SfAccumulationChart Title="Cantidad / Familia Producto">
+                                <AccumulationChartLegendSettings Visible="true" Position="LegendPosition.Top"></AccumulationChartLegendSettings>
+                                <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
+                                <AccumulationChartSeriesCollection>
+                                    <AccumulationChartSeries DataSource="@CantidadProductoPorFamiliaProducto"
                                                      XName="GroupedFieldCantidadKey" YName="Cantidad"
                                                      Radius="70%" InnerRadius="40%" Name="CantidadPorFamiliaProducto"
                                                      Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
-                                    <AccumulationDataLabelSettings Visible="true" Name="Nombre">
-                                        <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
-                                    </AccumulationDataLabelSettings>
-                                </AccumulationChartSeries>
-                            </AccumulationChartSeriesCollection>
-                        </SfAccumulationChart>
-                    }
-                </ContentTemplate>
-            </DashboardLayoutPanel>
-            <DashboardLayoutPanel Column="0" Row="4" SizeX="8" SizeY="3">
-                <HeaderTemplate>
-                    <span class="title" style="margin-left:40%">Cantidad / Mes</span>
-                </HeaderTemplate>
-                <ContentTemplate>
-                    @if (isLayoutRender)
-                    {
-                        <SfChart @ref="chart2" Title="Cantidad / Mes">
-                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
-                            <ChartSeriesCollection>
-                                <ChartSeries DataSource="@CantidadPorMesData"
+                                        <AccumulationDataLabelSettings Visible="true" Name="Nombre">
+                                            <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
+                                        </AccumulationDataLabelSettings>
+                                    </AccumulationChartSeries>
+                                </AccumulationChartSeriesCollection>
+                            </SfAccumulationChart>
+                        }
+                    </ContentTemplate>
+                </DashboardLayoutPanel>
+                <DashboardLayoutPanel Column="0" Row="4" SizeX="8" SizeY="3">
+                    <HeaderTemplate>
+                        <span class="title" style="margin-left:40%">Cantidad / Mes</span>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        @if (isLayoutRender)
+                        {
+                            <SfChart @ref="chart2" Title="Cantidad / Mes">
+                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+                                <ChartSeriesCollection>
+                                    <ChartSeries DataSource="@CantidadPorMesData"
                                          XName="GroupedFieldCantidadKey" YName="Cantidad" Type="ChartSeriesType.Line"></ChartSeries>
-                            </ChartSeriesCollection>
-                        </SfChart>
-                    }
-                </ContentTemplate>
-            </DashboardLayoutPanel>
-        </DashboardLayoutPanels>
-    </SfDashboardLayout>
-</div>
+                                </ChartSeriesCollection>
+                            </SfChart>
+                        }
+                    </ContentTemplate>
+                </DashboardLayoutPanel>
+            </DashboardLayoutPanels>
+        </SfDashboardLayout>
+    </div>
+}
+
 <style>
     ellipse[id*=_Trackball_1] {
         stroke-width: 1 !important;
@@ -124,21 +176,48 @@
     .e-chart-focused:focus {
         outline: none !important;
     }
+
+    .control-wrapper {
+        max-width: 250px;
+        margin: 0 auto;
+        padding: 50px 0px 0px;
+    }
+
+    .example-label {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
 </style>
+
 @code {
+
+    List<GroupedFieldCantidadModel> ProductosVendidos { get; set; }
+    public DateTime SelectorMesProductosVendidos { get; set; } 
+
     List<GroupedFieldPrecioModel> TotalVentasPorMes { get; set; }
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
     List<GroupedFieldCantidadModel> CantidadPorMesData { get; set; }
 
+    private Usuario? storedUser { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
+        SelectorMesProductosVendidos= DateTime.Now;
+        await Task.Delay(1000);
+        var result = await LocalStorage.GetAsync<string>("user");
+        await Task.Delay(500);
+        var storedUserEmail = result.Success ? result.Value : null;
+        if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        await Task.Delay(500);
+
+        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesProductosVendidos);
         TotalVentasPorMes = await VentasPedidoReportService.GetUsuarioPrecioPorMesData();
         CantidadProductoPorFamiliaProducto = await VentasPedidoReportService.GetCantidadPorFamiliaProducto();
         CantidadPorMesData = await VentasPedidoReportService.GetCantidadPorMesData();
     }
 
     private bool isLayoutRender;
-    private Theme theme;
     private static Timer timer;
     SfChart chart1;
     SfChart chart2;
@@ -146,10 +225,6 @@
     "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
     private string annotationFontColor;
 
-    protected override void OnInitialized()
-    {
-        annotationFontColor = NavigationManager.Uri.Contains("dark") || theme == Theme.HighContrast ? "#E9ECEF" : "#343A40";
-    }
     public void LayoutCreated()
     {
         isLayoutRender = true;
@@ -171,24 +246,12 @@
     {
         args.Text = args.Text.Replace("10000", "10K").Replace("000", "K");
     }
-    public void OnLegendRender(AccumulationLegendRenderEventArgs args)
+
+    async void  MesValueChangeHandler(ChangedEventArgs<DateTime> args)
     {
-        string[] textCollection = args.Text.Split(":");
-        string space = "", product = ((textCollection[0] == "Laptop " || textCollection[0] == "Mobile " || textCollection[0] == "Camera ") ? textCollection[0] : textCollection[0].Trim());
-        int textCount = product.Length,
-        condition = textCount == 2 ? 8 : 9;
-        if (textCollection[0].Equals("Camera "))
-        {
-            space = "\u00A0\u00A0\u00A0";
-        }
-        else
-        {
-            for (int i = textCount; i < condition; i++)
-            {
-                space += "\u00A0\u00A0";
-            }
-        }
-        args.Text = product + space + (textCollection[1].Trim()) + "     ";
+        SelectorMesProductosVendidos = args.Value; 
+        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesProductosVendidos);
+        await chart1.RefreshAsync();
     }
 
 }
