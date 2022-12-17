@@ -6,6 +6,7 @@
 @using System.Timers
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Buttons
 
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
@@ -59,22 +60,18 @@
 }
 else if (@storedUser != null)
 {
-    <div class="col-lg-4 property-section">
-        <div class="property-panel-section">
-            <div class="property-panel-content">
-                <div class="col-lg-12 control-section">
-                    <div class="control-wrapper">
-                        <SfDatePicker TValue="DateTime" Value="@SelectorMesProductosVendidos" Placeholder="Selecciona un mes" Format="MMMM yyyy" Start="CalendarView.Year" Depth="CalendarView.Year" ShowClearButton="true">
-                            <DatePickerEvents TValue="DateTime" ValueChange="@MesValueChangeHandler"></DatePickerEvents> 
-                        </SfDatePicker>
-                    </div>
-                </div>
-            </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            <SfDateRangePicker TValue="DateTime" @bind-StartDate="@SelectorMesStartValue" @bind-EndDate="@SelectorMesEndValue"></SfDateRangePicker>
+        </div>
+        <div class="col-sm-1">
+            <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@updateDateCharts">Actualizar</SfButton>
         </div>
     </div>
+
     <hr />
     <div class="control-section">
-        <SfDashboardLayout CellSpacing="@(new double[]{15 ,15 })" CellAspectRatio="0.8" Columns="8">
+        <SfDashboardLayout CellSpacing="@(new double[]{15 ,15})" CellAspectRatio="0.8" Columns="8">
             <DashboardLayoutPanels>
                 <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
                 <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
@@ -84,7 +81,6 @@ else if (@storedUser != null)
                     <ContentTemplate>
                         @if (isLayoutRender)
                         {
-
                             <SfChart @ref="chart1" Title="Ventas / Mes">
                                 <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
                                 </ChartPrimaryXAxis>
@@ -192,7 +188,9 @@ else if (@storedUser != null)
 @code {
 
     List<GroupedFieldCantidadModel> ProductosVendidos { get; set; }
-    public DateTime SelectorMesProductosVendidos { get; set; } 
+
+    public DateTime SelectorMesStartValue { get; set; } = DateTime.Now;
+    public DateTime SelectorMesEndValue { get; set; } = DateTime.Now;
 
     List<GroupedFieldPrecioModel> TotalVentasPorMes { get; set; }
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
@@ -203,7 +201,6 @@ else if (@storedUser != null)
 
     protected override async Task OnInitializedAsync()
     {
-        SelectorMesProductosVendidos= DateTime.Now;
         await Task.Delay(1000);
         var result = await LocalStorage.GetAsync<string>("user");
         await Task.Delay(500);
@@ -211,7 +208,7 @@ else if (@storedUser != null)
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
         await Task.Delay(500);
 
-        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesProductosVendidos);
+        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesStartValue);
         TotalVentasPorMes = await VentasPedidoReportService.GetUsuarioPrecioPorMesData();
         CantidadProductoPorFamiliaProducto = await VentasPedidoReportService.GetCantidadPorFamiliaProducto();
         CantidadPorMesData = await VentasPedidoReportService.GetCantidadPorMesData();
@@ -247,11 +244,18 @@ else if (@storedUser != null)
         args.Text = args.Text.Replace("10000", "10K").Replace("000", "K");
     }
 
-    async void  MesValueChangeHandler(ChangedEventArgs<DateTime> args)
+    private async Task updateDateCharts()
     {
-        SelectorMesProductosVendidos = args.Value; 
-        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesProductosVendidos);
+        if (SelectorMesStartValue == SelectorMesEndValue)
+        {
+            ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesStartValue);// (SelectorMesStartValue,SelectorMesStartValue+1 day );
+        }
+        else
+        {
+            ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorMesData(SelectorMesStartValue);  // (SelectorMesStartValue,SelectorMesEndValue );
+        }
         await chart1.RefreshAsync();
+        // await all the charts refresh
     }
 
 }
