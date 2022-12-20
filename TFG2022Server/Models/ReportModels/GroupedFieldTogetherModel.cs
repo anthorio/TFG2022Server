@@ -2,7 +2,6 @@
 {
     public class GroupedFieldTogetherModel
     {
-
         public GroupedFieldTogetherModel(string v1, string v2, int v3)
         {
             this.GroupedFieldProduct1Key = v1;

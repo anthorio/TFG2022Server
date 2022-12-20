@@ -133,35 +133,36 @@ else if (@storedUser != null)
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
-                                @*
-                            <DashboardLayoutPanel Column="0" Row="0" SizeX="4" SizeY="2">
-                            <HeaderTemplate>
-                            <span class="title">Ventas / Mes</span>
-                            </HeaderTemplate>
-                            <ContentTemplate>
-                            @if (isLayoutRender)
-                            {
-                            <SfChart @ref="chart1" Title="Ventas / Mes">
-                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-                            </ChartPrimaryXAxis>
-                            <ChartSeriesCollection>
-                            <ChartSeries DataSource="@TotalVentasPorMes"
-                            XName="GroupedFieldKey"
-                            YName="Precio"
-                            Type="ChartSeriesType.Bar"></ChartSeries>
-                            </ChartSeriesCollection>
-                            </SfChart>
-                            }
-                            </ContentTemplate>
-                            </DashboardLayoutPanel> *@
-                                <DashboardLayoutPanel Column="0" Row="4" SizeX="8" SizeY="3">
+                                <DashboardLayoutPanel Column="0" Row="2" SizeX="4" SizeY="2">
                                     <HeaderTemplate>
                                         <span class="title" style="margin-left:40%">Cantidad de veces que los productos se han vendido juntos</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
                                         @if (isLayoutRender)
                                         {
+                                            @** GRID PRODUCTOS TOGETHER **@
+                                            <SfGrid @ref="chart4" DataSource="@ProductosVendidosTogether" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="false" AllowGrouping="false" Toolbar="(new List<object> {})">
+                                                <GridEditSettings AllowAdding="false" AllowEditing="false" AllowDeleting="false"></GridEditSettings>
+                                                <GridPageSettings PageSize="11"></GridPageSettings>
+                                                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                                                <GridColumns>
+                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct1Key)" HeaderText="Producto 1"></GridColumn>
+                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct2Key)" HeaderText="Producto 2"></GridColumn>
+                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.Cantidad)" HeaderText="Veces"></GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
                                             @****************************@
+                                        }
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+                                <DashboardLayoutPanel Column="0" Row="2" SizeX="4" SizeY="2">
+                                    <HeaderTemplate>
+                                        <span class="title" style="margin-left:40%">Cantidad de veces que los productos se han vendido juntos</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        @if (isLayoutRender)
+                                        {
+                                            @** metodo de pago mas comun **@
                                             <SfGrid @ref="chart4" DataSource="@ProductosVendidosTogether" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="false" AllowGrouping="false" Toolbar="(new List<object> {})">
                                                 <GridEditSettings AllowAdding="false" AllowEditing="false" AllowDeleting="false"></GridEditSettings>
                                                 <GridPageSettings PageSize="9"></GridPageSettings>
@@ -169,26 +170,41 @@ else if (@storedUser != null)
                                                 <GridColumns>
                                                     <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct1Key)" HeaderText="Producto 1"></GridColumn>
                                                     <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct2Key)" HeaderText="Producto 2"></GridColumn>
-                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.Cantidad)" HeaderText="Cantidad"></GridColumn>
+                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.Cantidad)" HeaderText="Veces"></GridColumn>
                                                 </GridColumns>
                                             </SfGrid>
                                             @****************************@
                                         }
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
-                                <DashboardLayoutPanel Column="0" Row="4" SizeX="6" SizeY="3">
+                                <DashboardLayoutPanel Column="0" Row="4" SizeX="8" SizeY="2">
                                     <HeaderTemplate>
-                                        <span class="title" style="margin-left:40%">Cantidad / Mes</span>
+                                        <span class="title" style="margin-left:40%">Pedidos realizados</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
                                         @if (isLayoutRender)
                                         {
-                                            <SfChart @ref="chart3" Title="Cantidad / Mes">
-                                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+                                            <SfChart @ref="chart3" Title="">
+                                                <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+                                                <ChartPrimaryXAxis LabelFormat="d MMM y" ValueType="Syncfusion.Blazor.Charts.ValueType.DateTime">
+                                                    <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                                                    <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                                </ChartPrimaryXAxis>
+                                                <ChartPrimaryYAxis LabelFormat="{value}">
+                                                    <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                                    <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+                                                </ChartPrimaryYAxis>
                                                 <ChartSeriesCollection>
-                                                    <ChartSeries DataSource="@CantidadPorMesData"
-                                                         XName="GroupedFieldCantidadKey" YName="Cantidad" Type="ChartSeriesType.Line"></ChartSeries>
+                                                    <ChartSeries TooltipMappingName="Cantidad" DataSource="@NumeroPedidosDia" XName="GroupedFieldDateKey" YName="Cantidad" Name="Cantidad" ColumnSpacing="0.1" Type="ChartSeriesType.Column">
+                                                        <ChartMarker>
+                                                            <ChartDataLabel Visible="false" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                                <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                            </ChartDataLabel>
+                                                        </ChartMarker>
+                                                    </ChartSeries>
                                                 </ChartSeriesCollection>
+                                                <ChartLegendSettings Visible="true" EnableHighlight="true"></ChartLegendSettings>
+                                                <ChartTooltipSettings  Enable="true" Shared="true"></ChartTooltipSettings>
                                             </SfChart>
                                         }
                                     </ContentTemplate>
@@ -274,14 +290,9 @@ else if (@storedUser != null)
     List<GroupedFieldCantidadModel> ProductosVendidos { get; set; }
     List<GroupedFieldCantidadModel> FamiliaProductosVendidos { get; set; }
     List<GroupedFieldTogetherModel> ProductosVendidosTogether { get; set; }
+    List<GroupedFieldDateModel> NumeroPedidosDia { get; set; }
 
-
-
-    // Revisar
-    List<GroupedFieldPrecioModel> TotalVentasPorMes { get; set; }
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
-    List<GroupedFieldCantidadModel> CantidadPorMesData { get; set; }
-
 
 
     protected override async Task OnInitializedAsync()
@@ -293,16 +304,12 @@ else if (@storedUser != null)
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
         await Task.Delay(500);
 
-        //Inicializar gráficas
-        FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
-        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
-        ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
+        // Inicializar gráficas
+        await updateCharts();
 
-
-        //Revisar
-        TotalVentasPorMes = await VentasPedidoReportService.GetUsuarioPrecioPorMesData();
+        // Inicializar gráficas generales ( no cambian )
         CantidadProductoPorFamiliaProducto = await VentasPedidoReportService.GetCantidadPorFamiliaProducto();
-        CantidadPorMesData = await VentasPedidoReportService.GetCantidadPorMesData();
+
     }
 
     private bool isLayoutRender;
@@ -339,10 +346,7 @@ else if (@storedUser != null)
 
     private async Task updateDateCharts()
     {
-        SelectorMesEndValue = SelectorMesEndValue.AddHours(23).AddMinutes(59).AddSeconds(59);
-        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
-        FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
-        ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
+        await updateCharts();
 
         await chart1.RefreshAsync();
         chart2.Refresh();
@@ -352,4 +356,13 @@ else if (@storedUser != null)
         // await all the charts refresh
     }
 
+    private async Task updateCharts()
+    {
+        SelectorMesEndValue = SelectorMesEndValue.AddHours(23).AddMinutes(59).AddSeconds(59);
+        ProductosVendidos = await VentasPedidoReportService.GetProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
+        FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
+        ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
+        NumeroPedidosDia = await VentasPedidoReportService.GetPedidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
+
+    }
 }

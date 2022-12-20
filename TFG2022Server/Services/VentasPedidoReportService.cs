@@ -13,41 +13,6 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
-        public async Task<List<GroupedFieldPrecioModel>> GetUsuarioPrecioPorMesData()
-        {
-            try
-            {
-                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
-                                        where v.UsuarioId == 1
-                                        group v by v.FechaPedido.Month into GroupedData
-                                        orderby GroupedData.Key
-                                        select new GroupedFieldPrecioModel
-                                        {
-                                            GroupedFieldKey = (
-                                              GroupedData.Key == 1 ? "Ene" :
-                                              GroupedData.Key == 2 ? "Feb" :
-                                              GroupedData.Key == 3 ? "Mar" :
-                                              GroupedData.Key == 4 ? "Abr" :
-                                              GroupedData.Key == 5 ? "May" :
-                                              GroupedData.Key == 6 ? "Jun" :
-                                              GroupedData.Key == 7 ? "Jul" :
-                                              GroupedData.Key == 8 ? "Ago" :
-                                              GroupedData.Key == 9 ? "Sep" :
-                                              GroupedData.Key == 1 ? "Oct" :
-                                              GroupedData.Key == 11 ? "Nov" :
-                                               GroupedData.Key == 12 ? "Dic" :
-                                              ""
-                                            ),
-                                            Precio = Math.Round(GroupedData.Sum(lp => lp.LineaPedidoPrecio), 2)
-                                        }).ToListAsync();
-                return reportData;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public async Task<List<GroupedFieldCantidadModel>> GetCantidadPorFamiliaProducto()
         {
             try
@@ -67,71 +32,6 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
-
-        public async Task<List<GroupedFieldCantidadModel>> GetCantidadPorMesData()
-        {
-            try
-            {
-                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
-                                        where v.UsuarioId == 1
-                                        group v by v.FechaPedido.Month into GroupedData
-                                        orderby GroupedData.Key
-                                        select new GroupedFieldCantidadModel
-                                        {
-                                            GroupedFieldCantidadKey = (
-                                              GroupedData.Key == 1 ? "Ene" :
-                                              GroupedData.Key == 2 ? "Feb" :
-                                              GroupedData.Key == 3 ? "Mar" :
-                                              GroupedData.Key == 4 ? "Abr" :
-                                              GroupedData.Key == 5 ? "May" :
-                                              GroupedData.Key == 6 ? "Jun" :
-                                              GroupedData.Key == 7 ? "Jul" :
-                                              GroupedData.Key == 8 ? "Ago" :
-                                              GroupedData.Key == 9 ? "Sep" :
-                                              GroupedData.Key == 1 ? "Oct" :
-                                              GroupedData.Key == 11 ? "Nov" :
-                                               GroupedData.Key == 12 ? "Dic" :
-                                              ""
-                                            ),
-                                            Cantidad = GroupedData.Sum(lp => lp.LineaPedidoCantidad)
-                                        }).ToListAsync();
-                return reportData;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<List<GroupedFieldPrecioModel>> GetVentasTotalesPorCliente()
-        {
-            try
-            {
-                List<int> trabajadoresIds = await GetTrabajadoresIds();
-                var reportData = await (from s in this.tfg2022Context.VentasPedidoReportes
-                                        where trabajadoresIds.Contains(s.UsuarioId)
-                                        group s by s.UsuarioNombre into GroupedData
-                                        orderby GroupedData.Key
-                                        select new GroupedFieldPrecioModel
-                                        {
-                                            GroupedFieldKey = GroupedData.Key,
-                                            Precio = Math.Round(GroupedData.Sum(oi => oi.LineaPedidoPrecio), 2)
-                                        }).ToListAsync();
-                return reportData;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        private async Task<List<int>> GetTrabajadoresIds()
-        {
-            List<int> trabajadoresIds = await this.tfg2022Context.Usuarios
-                                        .Where(e => e.Rol == "Empleado")
-                                        .Select(e => e.UsuarioId).ToListAsync();
-            return trabajadoresIds;
-        }
-
         public async Task<List<GroupedFieldCantidadModel>> GetProductosVendidosPorTiempoData(DateTime startDate, DateTime endDate)
         {
             try
@@ -152,6 +52,7 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
         public async Task<List<GroupedFieldCantidadModel>> GetFamiliaProductosVendidosPorTiempoData(DateTime startDate, DateTime endDate)
         {
             try
@@ -172,6 +73,7 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+
         public async Task<List<GroupedFieldTogetherModel>> GetProductosVendidosJuntosPorTiempoData(DateTime startDate, DateTime endDate)
         {
             try
@@ -198,6 +100,31 @@ namespace TFG2022Server.Services
             {
                 throw;
             }
+        }
+
+        public async Task<List<GroupedFieldDateModel>> GetPedidosPorTiempoData(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
+                                        group v by new { v.FechaPedido, v.PedidoId } into g
+                                        where g.Key.FechaPedido >= startDate && g.Key.FechaPedido <= endDate
+                                        select new { g.Key.FechaPedido, g.Key.PedidoId })
+                    .GroupBy(x => new { year = x.FechaPedido.Year, month = x.FechaPedido.Month, day = x.FechaPedido.Day })
+                    .Select(x => new GroupedFieldDateModel { GroupedFieldDateKey = new DateTime(x.Key.year, x.Key.month, x.Key.day), Cantidad = x.Select(y => y.PedidoId).Distinct().Count() }).ToListAsync();
+
+
+                return reportData;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public Task<List<GroupedFieldCantidadModel>> GetMetodosPagoPorTiempoData(DateTime startDate, DateTime endDate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
