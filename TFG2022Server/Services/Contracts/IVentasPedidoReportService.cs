@@ -12,6 +12,10 @@ namespace TFG2022Server.Services.Contracts
         // Graficas generales
         Task<List<GroupedFieldCantidadModel>> GetCantidadPorFamiliaProducto();
         Task<List<GroupedFieldCantidadModel>> GetProductosEnCarritos();
+        Task<List<MunicipioDetailsModel>> GetUsuariosPuntosMapa();
+        Task<List<MunicipioDetailsModel>> GetProductosPuntosMapa();
+        Task<List<GroupedFieldCantidadModel>> GetEstadoPedidos();
+
 
     }
 }

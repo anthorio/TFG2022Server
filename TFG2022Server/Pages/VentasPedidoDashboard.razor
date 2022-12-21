@@ -9,6 +9,7 @@
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Navigations
 @using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Maps
 
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
@@ -225,7 +226,7 @@ else if (@storedUser != null)
                             <DashboardLayoutPanels>
                                 <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
 
-                                                                <DashboardLayoutPanel Column="0" Row="0" SizeX="6" SizeY="2">
+                                <DashboardLayoutPanel Column="0" Row="0" SizeX="6" SizeY="2">
                                     <HeaderTemplate>
                                         <span class="title">Veces que un producto está en un carrito</span>
                                     </HeaderTemplate>
@@ -266,6 +267,83 @@ else if (@storedUser != null)
                                                 </AccumulationChartSeries>
                                             </AccumulationChartSeriesCollection>
                                         </SfAccumulationChart>
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="0" Row="2" SizeX="5" SizeY="3" CssClass="e-drag-restrict">
+                                    <HeaderTemplate>
+                                        <span class="title">Mapa de Usuarios</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        <SfMaps Height="555" Width="812">
+                                            <MapsZoomSettings Enable="true"></MapsZoomSettings>
+                                            <MapsLayers>
+                                                <MapsLayer UrlTemplate="http://a.tile.openstreetmap.fr/osmfr/level/tileX/tileY.png" TValue="string">
+                                                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Pentagon" Height="40" Width="40">
+                                                        <MapsLayerMarkerClusterLabelStyle Color="#FFFFFF" />
+                                                    </MapsMarkerClusterSettings>
+                                                    <MapsMarkerSettings>
+                                                        <MapsMarker Visible="true" Shape="MarkerType.Circle" Height="20" Width="20" DataSource="@UsuariosPuntosMapa" TValue="MunicipioDetailsModel">
+                                                            <MapsMarkerTooltipSettings Visible="true" ValuePath="Name" Format="<b>${Name}</b><br>Usuarios: <b>${Usuarios}" />
+                                                        </MapsMarker>
+                                                    </MapsMarkerSettings>
+                                                </MapsLayer>
+                                            </MapsLayers>
+                                        </SfMaps>
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="5" Row="2" SizeX="3" SizeY="3">
+                                    <HeaderTemplate>
+                                        <span class="title">Estado de los pedidos</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        <SfChart Width="90%">
+                                            <ChartArea><ChartAreaBorder Width="0"></ChartAreaBorder></ChartArea>
+                                            <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" Interval="1">
+                                                <ChartAxisMajorGridLines Width="0"></ChartAxisMajorGridLines>
+                                                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                            </ChartPrimaryXAxis>
+                                            <ChartPrimaryYAxis Title="Cantidad">
+                                                <ChartAxisMajorTickLines Width="0"></ChartAxisMajorTickLines>
+                                                <ChartAxisLineStyle Width="0"></ChartAxisLineStyle>
+                                            </ChartPrimaryYAxis>
+                                            <ChartSeriesCollection>
+                                                <ChartSeries TooltipMappingName="GroupedFieldCantidadKey" DataSource="@EstadoPedidos" XName="GroupedFieldCantidadKey" YName="Cantidad" ColumnSpacing="0.1" Type="ChartSeriesType.Column">
+                                                    <ChartMarker>
+                                                        <ChartDataLabel Visible="false" Position="Syncfusion.Blazor.Charts.LabelPosition.Top">
+                                                            <ChartDataLabelFont FontWeight="600" Color="#ffffff"></ChartDataLabelFont>
+                                                        </ChartDataLabel>
+                                                    </ChartMarker>
+                                                </ChartSeries>
+                                            </ChartSeriesCollection>
+                                            <ChartLegendSettings Visible="true" EnableHighlight="true"></ChartLegendSettings>
+                                            <ChartTooltipSettings Header="<b>${point.tooltip}</b>" Enable="true" Shared="true"></ChartTooltipSettings>
+                                        </SfChart>
+
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="0" Row="5" SizeX="5" SizeY="3" CssClass="e-drag-restrict">
+                                    <HeaderTemplate>
+                                        <span class="title">Mapa de producto más comprado</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        <SfMaps Height="555" Width="812">
+                                            <MapsZoomSettings Enable="true"></MapsZoomSettings>
+                                            <MapsLayers>
+                                                <MapsLayer UrlTemplate="http://a.tile.openstreetmap.fr/osmfr/level/tileX/tileY.png" TValue="string">
+                                                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Pentagon" Height="40" Width="40">
+                                                        <MapsLayerMarkerClusterLabelStyle Color="#FFFFFF" />
+                                                    </MapsMarkerClusterSettings>
+                                                    <MapsMarkerSettings>
+                                                        <MapsMarker Visible="true" Shape="MarkerType.Circle" Height="20" Width="20" DataSource="@ProductoPuntosMapa" TValue="MunicipioDetailsModel">
+                                                            <MapsMarkerTooltipSettings Visible="true" ValuePath="Name" Format="<b>${Name}</b><br>${Producto}: <b>${Usuarios}" />
+                                                        </MapsMarker>
+                                                    </MapsMarkerSettings>
+                                                </MapsLayer>
+                                            </MapsLayers>
+                                        </SfMaps>
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
@@ -314,7 +392,9 @@ else if (@storedUser != null)
 
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
     List<GroupedFieldCantidadModel> ProductosEnCarritos { get; set; }
-
+    List<MunicipioDetailsModel> UsuariosPuntosMapa { get; set; }
+    List<MunicipioDetailsModel> ProductoPuntosMapa { get; set; }
+    List<GroupedFieldCantidadModel> EstadoPedidos { get; set; }
 
 
     protected override async Task OnInitializedAsync()
@@ -331,7 +411,10 @@ else if (@storedUser != null)
 
         // Inicializar gráficas generales ( no cambian )
         CantidadProductoPorFamiliaProducto = await VentasPedidoReportService.GetCantidadPorFamiliaProducto();
-        ProductosEnCarritos = await VentasPedidoReportService.GetProductosEnCarritos();  
+        ProductosEnCarritos = await VentasPedidoReportService.GetProductosEnCarritos();
+        UsuariosPuntosMapa = await VentasPedidoReportService.GetUsuariosPuntosMapa();
+        ProductoPuntosMapa = await VentasPedidoReportService.GetProductosPuntosMapa();
+        EstadoPedidos = await VentasPedidoReportService.GetEstadoPedidos();
 
     }
 
@@ -386,5 +469,5 @@ else if (@storedUser != null)
         FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
         ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
         NumeroPedidosDia = await VentasPedidoReportService.GetPedidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
-            }
+    }
 }
