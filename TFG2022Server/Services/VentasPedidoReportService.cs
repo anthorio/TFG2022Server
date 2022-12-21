@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TFG2022Server.Data;
+using TFG2022Server.Extensions;
 using TFG2022Server.Models.ReportModels;
 using TFG2022Server.Services.Contracts;
 
@@ -122,9 +123,32 @@ namespace TFG2022Server.Services
             }
         }
 
-        public Task<List<GroupedFieldCantidadModel>> GetMetodosPagoPorTiempoData(DateTime startDate, DateTime endDate)
+        public async Task<List<GroupedFieldCantidadModel>> GetProductosEnCarritos()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var lineasCarrito = await this.tfg2022Context.LineaCarritos.Convert();
+                var productos = await this.tfg2022Context.Productos.Convert(tfg2022Context);
+
+                List<string> repeatList = new List<string>();
+
+                foreach (var item in lineasCarrito)
+                {
+                    repeatList.Add((await tfg2022Context.Productos.FindAsync(item.ProductoLineaCarrito)).Nombre);
+                }
+                List<GroupedFieldCantidadModel> sol = new List<GroupedFieldCantidadModel>();
+                foreach (var item in repeatList.GroupBy(x => x).Select(y => new GroupedFieldCantidadModel { GroupedFieldCantidadKey = y.Key, Cantidad = y.Count() }).ToList())
+                {
+                    if (item.GroupedFieldCantidadKey.Length >= 20) sol.Add(new GroupedFieldCantidadModel { GroupedFieldCantidadKey = item.GroupedFieldCantidadKey.Substring(0, 20), Cantidad = item.Cantidad });
+                    else sol.Add(new GroupedFieldCantidadModel { GroupedFieldCantidadKey = item.GroupedFieldCantidadKey, Cantidad = item.Cantidad });
+                }
+
+                return sol;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -204,7 +204,7 @@ else if (@storedUser != null)
                                                     </ChartSeries>
                                                 </ChartSeriesCollection>
                                                 <ChartLegendSettings Visible="true" EnableHighlight="true"></ChartLegendSettings>
-                                                <ChartTooltipSettings  Enable="true" Shared="true"></ChartTooltipSettings>
+                                                <ChartTooltipSettings Enable="true" Shared="true"></ChartTooltipSettings>
                                             </SfChart>
                                         }
                                     </ContentTemplate>
@@ -225,30 +225,50 @@ else if (@storedUser != null)
                             <DashboardLayoutPanels>
                                 <DashboardLayoutEvents Created="LayoutCreated"></DashboardLayoutEvents>
 
-                                <DashboardLayoutPanel Column="4" Row="0" SizeX="4" SizeY="2">
+                                                                <DashboardLayoutPanel Column="0" Row="0" SizeX="6" SizeY="2">
                                     <HeaderTemplate>
-                                        <span class="title">Cantidad / Familia Producto</span>
+                                        <span class="title">Veces que un producto está en un carrito</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
                                         @if (isLayoutRender)
                                         {
-                                            <SfAccumulationChart Title="Cantidad / Familia Producto">
-                                                <AccumulationChartLegendSettings Visible="true" Position="Syncfusion.Blazor.Charts.LegendPosition.Top"></AccumulationChartLegendSettings>
-                                                <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
-                                                <AccumulationChartSeriesCollection>
-                                                    <AccumulationChartSeries DataSource="@CantidadProductoPorFamiliaProducto"
-                                                                     XName="GroupedFieldCantidadKey" YName="Cantidad"
-                                                                     Radius="70%" InnerRadius="40%" Name="CantidadPorFamiliaProducto"
-                                                                     Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
-                                                        <AccumulationDataLabelSettings Visible="true" Name="Nombre">
-                                                            <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
-                                                        </AccumulationDataLabelSettings>
-                                                    </AccumulationChartSeries>
-                                                </AccumulationChartSeriesCollection>
-                                            </SfAccumulationChart>
+                                            <SfChart>
+                                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                                                </ChartPrimaryXAxis>
+                                                <ChartSeriesCollection>
+                                                    <ChartSeries DataSource="@ProductosEnCarritos"
+                                                         XName="GroupedFieldCantidadKey"
+                                                         YName="Cantidad"
+                                                         Type="ChartSeriesType.Bar"></ChartSeries>
+                                                </ChartSeriesCollection>
+                                                <ChartTooltipSettings Header="<b>${point.tooltip}</b>" Enable="true" Shared="true"></ChartTooltipSettings>
+                                            </SfChart>
                                         }
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="0" Row="0" SizeX="2" SizeY="2">
+                                    <HeaderTemplate>
+                                        <span class="title">Cantidad / Familia Producto</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        <SfAccumulationChart Title="">
+                                            <AccumulationChartLegendSettings Visible="true" Position="Syncfusion.Blazor.Charts.LegendPosition.Top"></AccumulationChartLegendSettings>
+                                            <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
+                                            <AccumulationChartSeriesCollection>
+                                                <AccumulationChartSeries DataSource="@CantidadProductoPorFamiliaProducto"
+                                                                     XName="GroupedFieldCantidadKey" YName="Cantidad"
+                                                                     Radius="70%" InnerRadius="40%" Name="CantidadPorFamiliaProducto"
+                                                                     Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
+                                                    <AccumulationDataLabelSettings Visible="true" Name="Nombre">
+                                                        <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
+                                                    </AccumulationDataLabelSettings>
+                                                </AccumulationChartSeries>
+                                            </AccumulationChartSeriesCollection>
+                                        </SfAccumulationChart>
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
                             </DashboardLayoutPanels>
                         </SfDashboardLayout>
                     </div>
@@ -293,6 +313,8 @@ else if (@storedUser != null)
     List<GroupedFieldDateModel> NumeroPedidosDia { get; set; }
 
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
+    List<GroupedFieldCantidadModel> ProductosEnCarritos { get; set; }
+
 
 
     protected override async Task OnInitializedAsync()
@@ -309,6 +331,7 @@ else if (@storedUser != null)
 
         // Inicializar gráficas generales ( no cambian )
         CantidadProductoPorFamiliaProducto = await VentasPedidoReportService.GetCantidadPorFamiliaProducto();
+        ProductosEnCarritos = await VentasPedidoReportService.GetProductosEnCarritos();  
 
     }
 
@@ -363,6 +386,5 @@ else if (@storedUser != null)
         FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
         ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
         NumeroPedidosDia = await VentasPedidoReportService.GetPedidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
-
-    }
+            }
 }
