@@ -63,7 +63,8 @@
 }
 else if (@storedUser != null)
 {
-
+    <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
+    <hr />
     <SfTab>
         <TabItems>
             <TabItem>
@@ -270,30 +271,7 @@ else if (@storedUser != null)
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
-                                <DashboardLayoutPanel Column="0" Row="2" SizeX="5" SizeY="3" CssClass="e-drag-restrict">
-                                    <HeaderTemplate>
-                                        <span class="title">Mapa de Usuarios</span>
-                                    </HeaderTemplate>
-                                    <ContentTemplate>
-                                        <SfMaps Height="555" Width="812">
-                                            <MapsZoomSettings Enable="true"></MapsZoomSettings>
-                                            <MapsLayers>
-                                                <MapsLayer UrlTemplate="http://a.tile.openstreetmap.fr/osmfr/level/tileX/tileY.png" TValue="string">
-                                                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Pentagon" Height="40" Width="40">
-                                                        <MapsLayerMarkerClusterLabelStyle Color="#FFFFFF" />
-                                                    </MapsMarkerClusterSettings>
-                                                    <MapsMarkerSettings>
-                                                        <MapsMarker Visible="true" Shape="MarkerType.Circle" Height="20" Width="20" DataSource="@UsuariosPuntosMapa" TValue="MunicipioDetailsModel">
-                                                            <MapsMarkerTooltipSettings Visible="true" ValuePath="Name" Format="<b>${Name}</b><br>Usuarios: <b>${Usuarios}" />
-                                                        </MapsMarker>
-                                                    </MapsMarkerSettings>
-                                                </MapsLayer>
-                                            </MapsLayers>
-                                        </SfMaps>
-                                    </ContentTemplate>
-                                </DashboardLayoutPanel>
-
-                                <DashboardLayoutPanel Column="5" Row="2" SizeX="3" SizeY="3">
+                                <DashboardLayoutPanel Column="0" Row="2" SizeX="3" SizeY="2">
                                     <HeaderTemplate>
                                         <span class="title">Estado de los pedidos</span>
                                     </HeaderTemplate>
@@ -324,12 +302,46 @@ else if (@storedUser != null)
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
-                                <DashboardLayoutPanel Column="0" Row="5" SizeX="5" SizeY="3" CssClass="e-drag-restrict">
+                                <DashboardLayoutPanel Column="3" Row="2" SizeX="5" SizeY="2">
+                                    <HeaderTemplate>
+                                        <span class="title"></span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+
+
+
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="0" Row="4" SizeX="4" SizeY="2" CssClass="e-drag-restrict">
+                                    <HeaderTemplate>
+                                        <span class="title">Mapa de Usuarios</span>
+                                    </HeaderTemplate>
+                                    <ContentTemplate>
+                                        <SfMaps Height="100%" Width="100%">
+                                            <MapsZoomSettings Enable="true"></MapsZoomSettings>
+                                            <MapsLayers>
+                                                <MapsLayer UrlTemplate="http://a.tile.openstreetmap.fr/osmfr/level/tileX/tileY.png" TValue="string">
+                                                    <MapsMarkerClusterSettings AllowClustering="true" Shape="MarkerType.Pentagon" Height="40" Width="40">
+                                                        <MapsLayerMarkerClusterLabelStyle Color="#FFFFFF" />
+                                                    </MapsMarkerClusterSettings>
+                                                    <MapsMarkerSettings>
+                                                        <MapsMarker Visible="true" Shape="MarkerType.Circle" Height="20" Width="20" DataSource="@UsuariosPuntosMapa" TValue="MunicipioDetailsModel">
+                                                            <MapsMarkerTooltipSettings Visible="true" ValuePath="Name" Format="<b>${Name}</b><br>Usuarios: <b>${Usuarios}" />
+                                                        </MapsMarker>
+                                                    </MapsMarkerSettings>
+                                                </MapsLayer>
+                                            </MapsLayers>
+                                        </SfMaps>
+                                    </ContentTemplate>
+                                </DashboardLayoutPanel>
+
+                                <DashboardLayoutPanel Column="4" Row="6" SizeX="4" SizeY="2" CssClass="e-drag-restrict">
                                     <HeaderTemplate>
                                         <span class="title">Mapa de producto más comprado</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
-                                        <SfMaps Height="555" Width="812">
+                                        <SfMaps Height="100%" Width="100%">
                                             <MapsZoomSettings Enable="true"></MapsZoomSettings>
                                             <MapsLayers>
                                                 <MapsLayer UrlTemplate="http://a.tile.openstreetmap.fr/osmfr/level/tileX/tileY.png" TValue="string">
@@ -354,6 +366,8 @@ else if (@storedUser != null)
             </TabItem>
         </TabItems>
     </SfTab>
+    <hr />
+
 }
 <style>
     ellipse[id*=_Trackball_1] {

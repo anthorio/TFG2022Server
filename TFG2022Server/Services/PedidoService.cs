@@ -25,7 +25,7 @@ namespace TFG2022Server.Services
                     UsuarioPedido = pedidoModel.UsuarioPedido,
                     FechaPedido = pedidoModel.FechaPedido,
                     EstadoPedido = pedidoModel.EstadoPedido,
-                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal)+GetCosteEnvio(),
+                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal) + GetCosteEnvio(),
                     CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad),
                     Envio = pedidoModel.Envio
                 };
@@ -37,8 +37,6 @@ namespace TFG2022Server.Services
 
                 var lineasPedidoToAdd = ReturnLineaPedidoConPedidoId(pedidoId, pedidoModel.LineasPedido);
                 this.tfg2022Context.AddRange(lineasPedidoToAdd);
-                
-                // Al crear la factura se debe crear el pago también (pendiente de pago)
 
                 await this.tfg2022Context.SaveChangesAsync();
 
@@ -96,12 +94,6 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
-
-        public string[] GetTiposPedido()
-        {
-            return Constants.TiposPedido;
-        }
-
         private List<LineaPedido> ReturnLineaPedidoConPedidoId(int pedidoId, List<LineaPedido> lineasPedido)
         {
             return (from lp in lineasPedido
@@ -136,7 +128,6 @@ namespace TFG2022Server.Services
                                                           UsuarioNombre = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).Nombre,
                                                           UsuarioCodigoPostal = tfg2022Context.Usuarios.FirstOrDefault(u => u.UsuarioId == pedido.UsuarioPedido).CodigoPostal,
                                                           Envio = pedido.Envio,
-
                                                       }).ToListAsync();
                 this.tfg2022Context.AddRange(vpr);
                 await this.tfg2022Context.SaveChangesAsync();
@@ -159,7 +150,6 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
-
         public async Task UpdatePedido(PedidoModel pedidoMod)
         {
             try
@@ -169,6 +159,29 @@ namespace TFG2022Server.Services
                 if (pedidoToUpdate != null)
                 {
                     pedidoToUpdate.EstadoPedido = pedidoMod.EstadoPedido;
+                    if (pedidoMod.EstadoPedido == Constants.EstadosPedido[2])
+                    {
+                        List<LineaPedidoModel> lineasPedido = (await this.tfg2022Context.LineaPedidos.Convert()).FindAll(e => e.PedidoLineaPedido == pedidoMod.PedidoId);
+                        foreach (LineaPedidoModel linea in lineasPedido)
+                        {
+                            var productoToUpdate = await this.tfg2022Context.Productos.FindAsync(linea.ProductoLineaPedido);
+                            if (productoToUpdate != null)
+                            {
+                                productoToUpdate.Cantidad = productoToUpdate.Cantidad + linea.Cantidad; // + pq es devolver
+
+                                int ReportServiceId = (from pi in tfg2022Context.VentasPedidoReportes
+                                                       where pi.PedidoId == pedidoMod.PedidoId && pi.LineaPedidoId == linea.LineaPedidoId
+                                                       select pi.IdVentasPedido).First();
+
+                                var lineaToUpdate = await this.tfg2022Context.VentasPedidoReportes.FindAsync(ReportServiceId);
+                                if (lineaToUpdate != null)
+                                {
+                                    this.tfg2022Context.VentasPedidoReportes.Remove(lineaToUpdate);
+                                }
+                                await this.tfg2022Context.SaveChangesAsync();
+                            }
+                        }
+                    }
                     await this.tfg2022Context.SaveChangesAsync();
                 }
             }
