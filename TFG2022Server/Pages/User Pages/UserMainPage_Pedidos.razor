@@ -38,7 +38,6 @@
     </SfGrid>
 </div>
 
-
 @if (productosData != null)
 {
     <table class="styled-table">
@@ -145,6 +144,8 @@
         var result = await LocalStorage.GetAsync<string>("user");
         var storedUserEmail = result.Success ? result.Value : null;
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        else NavigationManager.NavigateTo("/login");
+
     }
     private async Task GetSelectedRecords(RowSelectEventArgs<PedidoModel> args)
     {

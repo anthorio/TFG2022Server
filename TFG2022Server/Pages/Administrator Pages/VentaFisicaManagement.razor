@@ -260,7 +260,7 @@ else if (@storedUser != null)
                     Envio = false,
                 };
             newPedido = await PedidoService.CreateVentaFisica(pedidoModel);
-            var facturaS = await FacturaService.CreateFacturaFromPedido(newPedido);
+            var facturaS = await FacturaService.CreateFacturaCompletadaFromPedido(newPedido);
             await PagoService.AddPago(
                 new PagoModel
                     {

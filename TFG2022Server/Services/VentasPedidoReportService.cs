@@ -3,6 +3,8 @@ using TFG2022Server.Data;
 using TFG2022Server.Extensions;
 using TFG2022Server.Models.ReportModels;
 using TFG2022Server.Services.Contracts;
+using TFG2022Server.Entities;
+using TFG2022Server.Models;
 
 namespace TFG2022Server.Services
 {
@@ -45,7 +47,7 @@ namespace TFG2022Server.Services
                                         {
                                             GroupedFieldCantidadKey = GroupedData.Key.Substring(0, 20),
                                             Cantidad = GroupedData.Sum(lp => lp.LineaPedidoCantidad)
-                                        }).ToListAsync();
+                                        }).OrderBy(o => o.Cantidad).ToListAsync();
                 return reportData;
             }
             catch (Exception)
@@ -122,7 +124,25 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task<List<GroupedFieldCantidadModel>> GetPedidosDeUsuarioPorTiempoData(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var reportData = await (from v in this.tfg2022Context.VentasPedidoReportes
+                                        group v by new { v.UsuarioNombre, v.UsuarioId, v.PedidoId, v.FechaPedido } into g
+                                        where g.Key.FechaPedido >= startDate && g.Key.FechaPedido <= endDate
+                                        select new { g.Key.UsuarioNombre, g.Key.UsuarioId, g.Key.PedidoId })
+                                        .GroupBy(x => new { UsuarioNombre = x.UsuarioNombre, UsuarioId = x.UsuarioId })
+                                        .Select(x => new GroupedFieldCantidadModel { GroupedFieldCantidadKey = "Usuario: " + (x.Key.UsuarioNombre) + ", id:" + (x.Key.UsuarioId), Cantidad = x.Count() }).OrderBy(o => o.Cantidad).ToListAsync();
 
+
+                return reportData;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<List<GroupedFieldCantidadModel>> GetProductosEnCarritos()
         {
             try
@@ -137,7 +157,7 @@ namespace TFG2022Server.Services
                     repeatList.Add((await tfg2022Context.Productos.FindAsync(item.ProductoLineaCarrito)).Nombre);
                 }
                 List<GroupedFieldCantidadModel> sol = new List<GroupedFieldCantidadModel>();
-                foreach (var item in repeatList.GroupBy(x => x).Select(y => new GroupedFieldCantidadModel { GroupedFieldCantidadKey = y.Key, Cantidad = y.Count() }).ToList())
+                foreach (var item in repeatList.GroupBy(x => x).Select(y => new GroupedFieldCantidadModel { GroupedFieldCantidadKey = y.Key, Cantidad = y.Count() }).OrderBy(o => o.Cantidad).ToList())
                 {
                     if (item.GroupedFieldCantidadKey.Length >= 20) sol.Add(new GroupedFieldCantidadModel { GroupedFieldCantidadKey = item.GroupedFieldCantidadKey.Substring(0, 20), Cantidad = item.Cantidad });
                     else sol.Add(new GroupedFieldCantidadModel { GroupedFieldCantidadKey = item.GroupedFieldCantidadKey, Cantidad = item.Cantidad });
@@ -266,9 +286,9 @@ namespace TFG2022Server.Services
                 {
                     foreach (var usuario in usuarios)
                     {
-                        if (pueblo.CodigoPostal == usuario.Key) 
+                        if (pueblo.CodigoPostal == usuario.Key)
                         {
-                            result.Add( new MunicipioDetailsModel() { CodigoPostal = pueblo.CodigoPostal, Latitude = pueblo.Latitude, Longitude = pueblo.Longitude, Name = pueblo.Name, Usuarios = usuario.usuarios });
+                            result.Add(new MunicipioDetailsModel() { CodigoPostal = pueblo.CodigoPostal, Latitude = pueblo.Latitude, Longitude = pueblo.Longitude, Name = pueblo.Name, Usuarios = usuario.usuarios });
                         }
                     }
                 }
@@ -408,7 +428,7 @@ namespace TFG2022Server.Services
                     {
                         if (pueblo.CodigoPostal == producto.UsuarioCodigoPostal && pueblosNoContienePueblo(result, pueblo.CodigoPostal))
                         {
-                            result.Add(new MunicipioDetailsModel() { CodigoPostal = pueblo.CodigoPostal, Latitude = pueblo.Latitude, Longitude = pueblo.Longitude, Name = pueblo.Name, Producto = producto.NombreProducto, Usuarios= producto.usuarios });
+                            result.Add(new MunicipioDetailsModel() { CodigoPostal = pueblo.CodigoPostal, Latitude = pueblo.Latitude, Longitude = pueblo.Longitude, Name = pueblo.Name, Producto = producto.NombreProducto, Usuarios = producto.usuarios });
                         }
                     }
                 }
@@ -425,10 +445,36 @@ namespace TFG2022Server.Services
         {
             try
             {
-                var reportData = await(from v in this.tfg2022Context.Pedidos
-                                       group v by v.EstadoPedido into g
-                                       select new GroupedFieldCantidadModel { GroupedFieldCantidadKey =g.Key, Cantidad = g.Count() }).ToListAsync();
+                var reportData = await (from v in this.tfg2022Context.Pedidos
+                                        group v by v.EstadoPedido into g
+                                        select new GroupedFieldCantidadModel { GroupedFieldCantidadKey = g.Key, Cantidad = g.Count() }).OrderBy(o => o.Cantidad).ToListAsync();
                 return reportData;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<GroupedFieldCantidadModel>> GetProductosProveedores()
+        {
+            try
+            {
+                var reportData = await (from v in this.tfg2022Context.Productos
+                                        group v by v.ProveedorProducto into g
+                                        select new GroupedFieldCantidadModel { GroupedFieldCantidadKey = g.Key.ToString(), Cantidad = g.Count() }).OrderBy(o => o.Cantidad).ToListAsync();
+                var result = new List<GroupedFieldCantidadModel>();
+                List<ProveedorModel> proveedores = await tfg2022Context.Proveedores.Convert();
+                foreach (var item in reportData)
+                {
+                    string proveedorName = item.GroupedFieldCantidadKey;
+                    foreach (var prov in proveedores)
+                    {
+                        if (prov.ProveedorId.ToString() == item.GroupedFieldCantidadKey) proveedorName = prov.Nombre;
+                    }
+                    result.Add(new GroupedFieldCantidadModel { GroupedFieldCantidadKey = proveedorName, Cantidad = item.Cantidad });
+                }
+                return result;
             }
             catch (Exception)
             {

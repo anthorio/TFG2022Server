@@ -40,9 +40,8 @@ namespace TFG2022Server.Services
                 Factura facturaToAdd = new Factura
                 {
                     PedidoFactura = pedido.PedidoId,
-                    EstadoFactura = "",
+                    EstadoFactura = Constants.EstadosFactura.First(),
                     FechaFactura = pedido.FechaPedido,
-                    Iva = 21,
                     Total = pedido.PrecioTotal
                 };
 
@@ -55,7 +54,27 @@ namespace TFG2022Server.Services
                 throw;
             }
         }
+        public async Task<Factura> CreateFacturaCompletadaFromPedido(Pedido pedido)
+        {
+            try
+            {
+                Factura facturaToAdd = new Factura
+                {
+                    PedidoFactura = pedido.PedidoId,
+                    EstadoFactura = Constants.EstadosFactura.Last(),
+                    FechaFactura = pedido.FechaPedido,
+                    Total = pedido.PrecioTotal
+                };
 
+                var result = await this.tfg2022Context.Facturas.AddAsync(facturaToAdd);
+                await this.tfg2022Context.SaveChangesAsync();
+                return result.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task UpdateFactura(FacturaModel factura)
         {
             try
@@ -69,7 +88,6 @@ namespace TFG2022Server.Services
                     facturaToUpdate.FacturaId = factura.FacturaId;
                     facturaToUpdate.InfoPedido = factura.InfoPedido;
                     facturaToUpdate.EstadoFactura = factura.EstadoFactura;
-                    facturaToUpdate.Iva = factura.Iva;
                     facturaToUpdate.PedidoFactura = factura.PedidoFactura;
                     await this.tfg2022Context.SaveChangesAsync();
                 }

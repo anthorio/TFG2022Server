@@ -56,7 +56,9 @@ else
                 <thead>
                     <tr>
                         <th>Tu carrito</th>
-                        <th>Precio /ud.</th>
+                        <th>IVA</th>
+                        <th>Precio /ud. sin IVA</th>
+                        <th>Precio /ud. final</th>
                         <th>Cantidad</th>
                         <th>Importe total (IVA incluido)</th>
                     </tr>
@@ -68,7 +70,9 @@ else
                             <td>
                                 <img src="@producto.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@producto.Nombre</text>
                             </td>
+                            <td>@producto.Iva %</td>
                             <td>@producto.Precio €</td>
+                            <td>@FinalPriceCalculator.FinalPrice(producto) €</td>
                             <td>
                                 <div>@cantidadDeProducto(@producto, @filteredLineaCarritoData)</div>
                                 <div style="text-align: center">
@@ -77,7 +81,7 @@ else
                                     <CascadingValue Value="this"><LineaCarritoRemove producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
                                 </div>
                             </td>
-                            <td>@totalProducto(@producto.Precio,@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
+                            <td>@totalProducto(@FinalPriceCalculator.FinalPrice(producto),@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
                         </tr>
                     }
                 </tbody>
@@ -251,7 +255,7 @@ else
                         Subtotal
                     </td>
                     <td>
-                        @totalCarrito()
+                        @totalCarrito() €
                     </td>
                 </tr>
                 <tr>
@@ -259,15 +263,15 @@ else
                         Envío
                     </td>
                     <td>
-                        @PedidoService.GetCosteEnvio()
+                        @PedidoService.GetCosteEnvio() €
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        Total con envío
+                        Total con envío 
                     </td>
                     <td>
-                        @totalPedido()
+                        @totalPedido() €
                     </td>
                 </tr>
             </tbody>
@@ -490,7 +494,7 @@ else
                 foreach (var producto in listaProductosCarrito)
                 {
                     if (lincarr.ProductoLineaCarrito == producto.ProductoId)
-                        result = result + (producto.Precio) * lincarr.Cantidad;
+                        result = result + (FinalPriceCalculator.FinalPrice(producto)) * lincarr.Cantidad;
                 }
             }
         }
@@ -564,16 +568,21 @@ else
                         Envio = true,
                     };
                 var pedido = await PedidoService.CreatePedido(pedidoModel);
-                var facturaS = await FacturaService.CreateFacturaFromPedido(pedido);
+
                 if (metodoDePago == "bizum")
                 {
+                    var facturaS = await FacturaService.CreateFacturaCompletadaFromPedido(pedido);
                     await PagoService.AddPago(
-                new PagoModel
-                    {
-                        FacturaPago = facturaS.FacturaId,
-                        Fecha = DateTime.Now,
-                        Cantidad = pedido.PrecioTotal,
-                    });
+                        new PagoModel
+                            {
+                                FacturaPago = facturaS.FacturaId,
+                                Fecha = DateTime.Now,
+                                Cantidad = pedido.PrecioTotal,
+                            });
+                }
+                else
+                {
+                    var facturaS = await FacturaService.CreateFacturaFromPedido(pedido);
                 }
                 foreach (var linea in lineasPedido)
                 {

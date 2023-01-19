@@ -135,7 +135,7 @@ else if (@storedUser != null)
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
-                                <DashboardLayoutPanel Column="0" Row="2" SizeX="4" SizeY="2">
+                                <DashboardLayoutPanel Column="2" Row="2" SizeX="4" SizeY="2">
                                     <HeaderTemplate>
                                         <span class="title" style="margin-left:40%">Cantidad de veces que los productos se han vendido juntos</span>
                                     </HeaderTemplate>
@@ -145,7 +145,7 @@ else if (@storedUser != null)
                                             @** GRID PRODUCTOS TOGETHER **@
                                             <SfGrid @ref="chart4" DataSource="@ProductosVendidosTogether" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="false" AllowGrouping="false" Toolbar="(new List<object> {})">
                                                 <GridEditSettings AllowAdding="false" AllowEditing="false" AllowDeleting="false"></GridEditSettings>
-                                                <GridPageSettings PageSize="11"></GridPageSettings>
+                                                <GridPageSettings PageSize="8"></GridPageSettings>
                                                 <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
                                                 <GridColumns>
                                                     <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct1Key)" HeaderText="Producto 1"></GridColumn>
@@ -159,22 +159,23 @@ else if (@storedUser != null)
                                 </DashboardLayoutPanel>
                                 <DashboardLayoutPanel Column="0" Row="2" SizeX="4" SizeY="2">
                                     <HeaderTemplate>
-                                        <span class="title" style="margin-left:40%">Cantidad de veces que los productos se han vendido juntos</span>
+                                        <span class="title" style="margin-left:40%">Número de pedidos por Cliente</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
                                         @if (isLayoutRender)
                                         {
-                                            @** metodo de pago mas comun **@
-                                            <SfGrid @ref="chart4" DataSource="@ProductosVendidosTogether" AllowResizing="true" AllowPaging="true" AllowSorting="true" AllowFiltering="false" AllowGrouping="false" Toolbar="(new List<object> {})">
-                                                <GridEditSettings AllowAdding="false" AllowEditing="false" AllowDeleting="false"></GridEditSettings>
-                                                <GridPageSettings PageSize="9"></GridPageSettings>
-                                                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
-                                                <GridColumns>
-                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct1Key)" HeaderText="Producto 1"></GridColumn>
-                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.GroupedFieldProduct2Key)" HeaderText="Producto 2"></GridColumn>
-                                                    <GridColumn Field="@nameof(GroupedFieldTogetherModel.Cantidad)" HeaderText="Veces"></GridColumn>
-                                                </GridColumns>
-                                            </SfGrid>
+                                            @** Cliente que ha hecho más pedidos **@
+                                            <SfChart @ref="chart5">
+                                                <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                                                </ChartPrimaryXAxis>
+                                                <ChartSeriesCollection>
+                                                    <ChartSeries DataSource="@NumeroPedidosCliente"
+                                                         XName="GroupedFieldCantidadKey"
+                                                         YName="Cantidad"
+                                                         Type="ChartSeriesType.Bar"></ChartSeries>
+                                                </ChartSeriesCollection>
+                                                <ChartTooltipSettings Header="<b>${point.tooltip}</b>" Enable="true" Shared="true"></ChartTooltipSettings>
+                                            </SfChart>
                                             @****************************@
                                         }
                                     </ContentTemplate>
@@ -260,7 +261,7 @@ else if (@storedUser != null)
                                             <AccumulationChartSeriesCollection>
                                                 <AccumulationChartSeries DataSource="@CantidadProductoPorFamiliaProducto"
                                                                      XName="GroupedFieldCantidadKey" YName="Cantidad"
-                                                                     Radius="70%" InnerRadius="40%" Name="CantidadPorFamiliaProducto"
+                                                                     Radius="70%" InnerRadius="40%" Name="Cantidad de productos"
                                                                      Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
                                                     <AccumulationDataLabelSettings Visible="true" Name="Nombre">
                                                         <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
@@ -304,12 +305,23 @@ else if (@storedUser != null)
 
                                 <DashboardLayoutPanel Column="3" Row="2" SizeX="5" SizeY="2">
                                     <HeaderTemplate>
-                                        <span class="title"></span>
+                                        <span class="title">Productos por proveedor</span>
                                     </HeaderTemplate>
                                     <ContentTemplate>
-
-
-
+                                        <SfAccumulationChart EnableAnimation="true" EnableSmartLabels="true">
+                                            <AccumulationChartLegendSettings Visible="true" Position="Syncfusion.Blazor.Charts.LegendPosition.Right"></AccumulationChartLegendSettings>
+                                            <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
+                                            <AccumulationChartSeriesCollection>
+                                                <AccumulationChartSeries DataSource="@ProveedoresProductos"
+                                                                     XName="GroupedFieldCantidadKey" YName="Cantidad"
+                                                                     Radius="70%" InnerRadius="40%" Name="Cantidad de productos"
+                                                                     Explode="true" ExplodeOffset="10%" ExplodeIndex="3">
+                                                    <AccumulationDataLabelSettings Visible="true" Name="Nombre">
+                                                        <AccumulationChartDataLabelFont FontWeight="600" Color="White"></AccumulationChartDataLabelFont>
+                                                    </AccumulationDataLabelSettings>
+                                                </AccumulationChartSeries>
+                                            </AccumulationChartSeriesCollection>
+                                        </SfAccumulationChart>
                                     </ContentTemplate>
                                 </DashboardLayoutPanel>
 
@@ -403,13 +415,14 @@ else if (@storedUser != null)
     List<GroupedFieldCantidadModel> FamiliaProductosVendidos { get; set; }
     List<GroupedFieldTogetherModel> ProductosVendidosTogether { get; set; }
     List<GroupedFieldDateModel> NumeroPedidosDia { get; set; }
+    List<GroupedFieldCantidadModel> NumeroPedidosCliente { get; set; }
 
     List<GroupedFieldCantidadModel> CantidadProductoPorFamiliaProducto { get; set; }
     List<GroupedFieldCantidadModel> ProductosEnCarritos { get; set; }
     List<MunicipioDetailsModel> UsuariosPuntosMapa { get; set; }
     List<MunicipioDetailsModel> ProductoPuntosMapa { get; set; }
     List<GroupedFieldCantidadModel> EstadoPedidos { get; set; }
-
+    List<GroupedFieldCantidadModel> ProveedoresProductos { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -429,7 +442,7 @@ else if (@storedUser != null)
         UsuariosPuntosMapa = await VentasPedidoReportService.GetUsuariosPuntosMapa();
         ProductoPuntosMapa = await VentasPedidoReportService.GetProductosPuntosMapa();
         EstadoPedidos = await VentasPedidoReportService.GetEstadoPedidos();
-
+        ProveedoresProductos = await VentasPedidoReportService.GetProductosProveedores();
     }
 
     private bool isLayoutRender;
@@ -438,7 +451,7 @@ else if (@storedUser != null)
     SfAccumulationChart chart2;
     SfChart chart3;
     SfGrid<GroupedFieldTogetherModel>? chart4;
-
+    SfChart chart5;
 
     private string[] palettes = new string[] { "#61EFCD", "#CDDE1F", "#FEC200", "#CA765A", "#2485FA", "#F57D7D", "#C152D2",
     "#8854D9", "#3D4EB8", "#00BCD7","#4472c4", "#ed7d31", "#ffc000", "#70ad47", "#5b9bd5", "#c1c1c1", "#6f6fe2", "#e269ae", "#9e480e", "#997300" };
@@ -454,11 +467,11 @@ else if (@storedUser != null)
     }
     private void RefreshCharts(Object source, ElapsedEventArgs e)
     {
-        if (chart1 == null && chart2 == null && chart3 == null)
-            return;
+        if (chart1 == null && chart2 == null && chart3 == null && chart5 == null ) return;
         chart1.RefreshAsync(false);
         chart2.Refresh(false);
         chart3.RefreshAsync(false);
+        chart5.RefreshAsync(false);
 
         timer.Enabled = false;
         timer.AutoReset = false;
@@ -472,7 +485,7 @@ else if (@storedUser != null)
         chart2.Refresh();
         await chart3.RefreshAsync();
         chart4?.Refresh();
-
+        await chart5.RefreshAsync();
         // await all the charts refresh
     }
 
@@ -483,5 +496,6 @@ else if (@storedUser != null)
         FamiliaProductosVendidos = await VentasPedidoReportService.GetFamiliaProductosVendidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);  // en el servicio se hace la comprobación de si es el mismo día o no
         ProductosVendidosTogether = await VentasPedidoReportService.GetProductosVendidosJuntosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
         NumeroPedidosDia = await VentasPedidoReportService.GetPedidosPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
+        NumeroPedidosCliente = await VentasPedidoReportService.GetPedidosDeUsuarioPorTiempoData(SelectorMesStartValue, SelectorMesEndValue);
     }
 }

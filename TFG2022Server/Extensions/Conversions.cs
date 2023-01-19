@@ -91,7 +91,6 @@ namespace TFG2022Server.Extensions
                               PedidoFactura = w.PedidoFactura,
                               InfoPedido = w.InfoPedido,
                               FechaFactura = w.FechaFactura,
-                              Iva = w.Iva,
                               Total = Math.Round(w.Total, 2),
                               EstadoFactura = w.EstadoFactura
                           }).ToListAsync();
@@ -162,6 +161,7 @@ namespace TFG2022Server.Extensions
                               Descripcion = w.Descripcion,
                               Cantidad = w.Cantidad,
                               Precio = Math.Round(w.Precio, 2),
+                              Iva = w.Iva,
                               UrlImagen = w.UrlImagen,
                               StockMinimo = w.StockMinimo
                           }).ToListAsync();
@@ -181,6 +181,7 @@ namespace TFG2022Server.Extensions
                               Descripcion = prod.Descripcion,
                               Cantidad = prod.Cantidad,
                               Precio = Math.Round(prod.Precio, 2),
+                              Iva = prod.Iva,
                               UrlImagen = prod.UrlImagen,
                               StockMinimo = prod.StockMinimo
                           }).ToListAsync();
@@ -238,6 +239,7 @@ namespace TFG2022Server.Extensions
                 Cantidad = productoModel.Cantidad,
                 Descripcion = productoModel.Descripcion,
                 Precio = Math.Round(productoModel.Precio, 2),
+                Iva = productoModel.Iva,
                 ProductoId = productoModel.ProductoId,
                 UrlImagen = productoModel.UrlImagen,
                 StockMinimo = productoModel.StockMinimo
@@ -297,7 +299,6 @@ namespace TFG2022Server.Extensions
                 EstadoFactura = facturaModel.EstadoFactura,
                 FechaFactura = facturaModel.FechaFactura,
                 InfoPedido = facturaModel.InfoPedido,
-                Iva = facturaModel.Iva,
                 PedidoFactura = facturaModel.PedidoFactura,
                 Total = facturaModel.Total,
             };

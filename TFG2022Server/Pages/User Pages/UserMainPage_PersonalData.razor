@@ -6,6 +6,7 @@
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
 
+
 <SfButton @onclick="@(()=>NavigationManager.NavigateTo("/usermainpage"))"> ⬅ Volver a mi perfil</SfButton>
 
 @if (isNotEditing)
@@ -155,6 +156,7 @@ else
         var result = await LocalStorage.GetAsync<string>("user");
         var storedUserEmail = result.Success ? result.Value : null;
         if (storedUserEmail != null) storedUser = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        else NavigationManager.NavigateTo("/login");
     }
 
     private async void HandleValidSubmit()

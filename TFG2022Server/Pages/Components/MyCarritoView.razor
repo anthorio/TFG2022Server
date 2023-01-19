@@ -1,6 +1,8 @@
 ﻿@using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Cards
+@using TFG2022Server.Extensions
+
 @inject NavigationManager NavigationManager
 @inject ILineaCarritoService LineaCarritoManagementService
 @inject ICarritoService CarritoService
@@ -33,44 +35,44 @@ else
                     <h3 style='margin-top: 5px;'>🛒 Tu carrito</h3><hr>
                     <div>
                         @if (@user != null && @listaProductosCarrito != null)
-                    {
-                        <div class="grid-container">
-                            @foreach (ProductoModel producto in listaProductosCarrito)
-                            {
-                                <div class="row">
-                                    <div class="column left">
-                                        <img src="@producto.UrlImagen" height="40">
-                                    </div>
-                                    <div class="column right">
-                                        <div>
-                                            @producto.Nombre
+                        {
+                            <div class="grid-container">
+                                @foreach (ProductoModel producto in listaProductosCarrito)
+                                {
+                                    <div class="row">
+                                        <div class="column left">
+                                            <img src="@producto.UrlImagen" height="40">
                                         </div>
-                                        <div>
-                                            @cantidadDeProducto(@producto, @filteredLineaCarritoData) x @producto.Precio €
+                                        <div class="column right">
+                                            <div>
+                                                @producto.Nombre
+                                            </div>
+                                            <div>
+                                                @cantidadDeProducto(@producto, @filteredLineaCarritoData) x @FinalPriceCalculator.FinalPrice(producto) €
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                </div>
-                <div style='margin-top: 20px;'></div>
-                <table>
-                    <tr>
-                        <th style="color:lightgray">Total (IVA incluido)</th>
-                        <th style="color:lightgray">@totalCarrito() €</th>
-                    </tr>
-                </table>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div style='margin-top: 20px;'></div>
+                    <table>
+                        <tr>
+                            <th style="color:lightgray">Total (IVA incluido)</th>
+                            <th style="color:lightgray">@totalCarrito() €</th>
+                        </tr>
+                    </table>
 
-                <div style='margin-top: 20px;'></div>
-                <SfButton CssClass="e-outline" Content=@contenidoBoton() Disabled=@(listaProductosCarrito.Count<1) @onclick="@(()=>NavigationManager.NavigateTo("/compra"))" />
-            </div>
-        </Content>
-    </TooltipTemplates>
-    @* Initializes the Button component *@
-    <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
-</SfTooltip>
-        }
+                    <div style='margin-top: 20px;'></div>
+                    <SfButton CssClass="e-outline" Content=@contenidoBoton() Disabled=@(listaProductosCarrito.Count<1) @onclick="@(()=>NavigationManager.NavigateTo("/compra"))" />
+                </div>
+            </Content>
+        </TooltipTemplates>
+        @* Initializes the Button component *@
+        <SfButton CssClass="e-outline" IsPrimary="true" Content="Carrito" @onclick="refresh"></SfButton>
+    </SfTooltip>
+}
 
 <style>
     .listview-template {
@@ -225,7 +227,7 @@ else
                 foreach (var producto in listaProductosCarrito)
                 {
                     if (lincarr.ProductoLineaCarrito == producto.ProductoId)
-                        result = result + (producto.Precio) * lincarr.Cantidad;
+                        result = result + (FinalPriceCalculator.FinalPrice(producto)) * lincarr.Cantidad;
                 }
             }
         }
@@ -234,8 +236,7 @@ else
 
     private string contenidoBoton()
     {
-
-        if (totalCarrito()>0) return "Comprar";
+        if (totalCarrito() > 0) return "Comprar";
         else return "Carrito vacío";
     }
 

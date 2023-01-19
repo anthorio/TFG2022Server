@@ -8,6 +8,7 @@ namespace TFG2022Server.Services.Contracts
         Task<List<GroupedFieldCantidadModel>> GetFamiliaProductosVendidosPorTiempoData(DateTime startDate, DateTime endDate);
         Task<List<GroupedFieldTogetherModel>> GetProductosVendidosJuntosPorTiempoData(DateTime startDate, DateTime endDate);
         Task<List<GroupedFieldDateModel>> GetPedidosPorTiempoData(DateTime startDate, DateTime endDate);
+        Task<List<GroupedFieldCantidadModel>> GetPedidosDeUsuarioPorTiempoData(DateTime startDate, DateTime endDate);
 
         // Graficas generales
         Task<List<GroupedFieldCantidadModel>> GetCantidadPorFamiliaProducto();
@@ -15,6 +16,7 @@ namespace TFG2022Server.Services.Contracts
         Task<List<MunicipioDetailsModel>> GetUsuariosPuntosMapa();
         Task<List<MunicipioDetailsModel>> GetProductosPuntosMapa();
         Task<List<GroupedFieldCantidadModel>> GetEstadoPedidos();
+        Task<List<GroupedFieldCantidadModel>> GetProductosProveedores();
 
 
     }

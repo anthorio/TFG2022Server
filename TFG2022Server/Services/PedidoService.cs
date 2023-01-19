@@ -16,6 +16,17 @@ namespace TFG2022Server.Services
             this.tfg2022Context = tfg2022Context;
         }
 
+        private  int getIVAproducto(int productoId) // no la he hecho async
+        {
+            try
+            {
+                return tfg2022Context.Productos.Find(productoId).Iva;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<Pedido> CreatePedido(PedidoModel pedidoModel)
         {
             try
@@ -25,7 +36,7 @@ namespace TFG2022Server.Services
                     UsuarioPedido = pedidoModel.UsuarioPedido,
                     FechaPedido = pedidoModel.FechaPedido,
                     EstadoPedido = pedidoModel.EstadoPedido,
-                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => o.PrecioFinal) + GetCosteEnvio(),
+                    PrecioTotal = pedidoModel.LineasPedido.Sum(o => FinalPriceCalculator.FinalPrice(o.PrecioFinal, getIVAproducto(o.ProductoLineaPedido))) + GetCosteEnvio(),
                     CantidadTotal = pedidoModel.LineasPedido.Sum(o => o.Cantidad),
                     Envio = pedidoModel.Envio
                 };
