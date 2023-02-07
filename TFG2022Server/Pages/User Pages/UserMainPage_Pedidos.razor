@@ -29,10 +29,10 @@
         <GridPageSettings PageSize="15"></GridPageSettings>
         <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
         <GridColumns>
-            <GridColumn IsPrimaryKey="true" Field="@nameof(PedidoModel.PedidoId)"></GridColumn>
-            <GridColumn Field="@nameof(PedidoModel.FechaPedido)" Format="d"></GridColumn>
-            <GridColumn Field="@nameof(PedidoModel.EstadoPedido)"></GridColumn>
-            <GridColumn Field="@nameof(PedidoModel.PrecioTotal)"></GridColumn>
+            <GridColumn IsPrimaryKey="true" Field="@nameof(PedidoModel.PedidoId)" HeaderText="ID"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.FechaPedido)" HeaderText="Fecha del pedido" Format="d"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.EstadoPedido)" HeaderText="Estado del pedido"></GridColumn>
+            <GridColumn Field="@nameof(PedidoModel.PrecioTotal)" HeaderText="Precio final"></GridColumn>
         </GridColumns>
         <SfSpinner @bind-Visible="@VisibleSpinner"></SfSpinner>
     </SfGrid>

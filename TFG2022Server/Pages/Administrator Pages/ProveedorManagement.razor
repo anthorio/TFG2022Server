@@ -23,7 +23,7 @@ else if (@storedUser != null)
 {
     <SfButton CssClass="btn" class="e-btn e-outline e-primary" @onclick="@(()=>NavigationManager.NavigateTo("/admin"))">⬅ Volver a la página anterior</SfButton>
     <hr />
-    <h3>Listado de Familias de Productos</h3>
+    <h3>Listado de Proveedores</h3>
 
     <div>
         <SfGrid @ref="SfProveedorGrid" DataSource="ProveedorData" AllowPaging="true" AllowSorting="true" AllowFiltering="true" AllowGrouping="true" Toolbar="@toolbar" AllowResizing="true">

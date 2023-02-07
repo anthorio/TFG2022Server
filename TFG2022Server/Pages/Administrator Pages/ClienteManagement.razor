@@ -33,14 +33,14 @@ else if (@storedUser != null)
                     <GridColumn Field="@nameof(UsuarioModel.UsuarioId)" AllowAdding="false" AllowEditing="false" IsPrimaryKey="true" HeaderText="ID"></GridColumn>
                     <GridColumn Field="@nameof(UsuarioModel.Nombre)" HeaderText="Nombre"></GridColumn>
                     <GridColumn Field="@nameof(UsuarioModel.Apellidos)" HeaderText="Apellidos"></GridColumn>
-                    <GridColumn Field="@nameof(UsuarioModel.Rol)" EditType="EditType.DropDownEdit">
+          @*          <GridColumn Field="@nameof(UsuarioModel.Rol)" EditType="EditType.DropDownEdit">
                         <EditTemplate>
                             <SfDropDownList ID="Rol" DataSource="@rolUsuarioData" TItem="string" TValue="string" @bind-Value="@((context as UsuarioModel).Rol)">
                                 <DropDownListFieldSettings Value="Rol"></DropDownListFieldSettings>
                                 <DropDownListEvents TValue="string" TItem="string"></DropDownListEvents>
                             </SfDropDownList>
                         </EditTemplate>
-                    </GridColumn>
+                    </GridColumn>*@
                     <GridColumn Field="@nameof(UsuarioModel.Email)"></GridColumn>
                     <GridColumn Field="@nameof(UsuarioModel.Contraseña)"></GridColumn>
                     <GridColumn Field="@nameof(UsuarioModel.Telefono)" HeaderText="Teléfono"></GridColumn>

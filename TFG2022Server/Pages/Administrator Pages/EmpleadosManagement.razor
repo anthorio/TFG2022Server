@@ -11,7 +11,7 @@
 @inject IUsuarioService UsuarioService
 @inject NavigationManager NavigationManager
 
-@if (@storedUser != null && @storedUser.Rol == UsuarioService.GetRoles().First())
+@if (@storedUser != null && @storedUser.Rol != UsuarioService.GetRoles().Last())
 {
     NavigationManager.NavigateTo("/");
 }
