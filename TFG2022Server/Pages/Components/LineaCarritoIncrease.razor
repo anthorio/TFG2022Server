@@ -1,4 +1,5 @@
 ﻿@using Syncfusion.Blazor.Buttons
+@using TFG2022Server.Pages.User_Pages
 
 @inject ILineaCarritoService LineaCarritoService
 
@@ -14,6 +15,8 @@
 
     [CascadingParameter]
     public PasareladeCompra _Parent { get; set; }
+    [CascadingParameter]
+    public ResumenCarrito _Parent2 { get; set; }
 
     private LineaCarritoModel getLinea()
     {
@@ -33,7 +36,8 @@
         if (linea != null)
         {
             await LineaCarritoService.Aumentar1CantidadLinea(linea);
-            _Parent.RefreshState();
+            if (_Parent!=null) _Parent.RefreshState();
+            if (_Parent2 != null) _Parent2.RefreshState();
         }
     }
 }

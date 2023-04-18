@@ -65,7 +65,7 @@ else
                     </table>
 
                     <div style='margin-top: 20px;'></div>
-                    <SfButton CssClass="e-outline" Content=@contenidoBoton() Disabled=@(listaProductosCarrito.Count<1) @onclick="@(()=>NavigationManager.NavigateTo("/compra"))" />
+                    <SfButton CssClass="e-outline" Content=@contenidoBoton() Disabled=@(listaProductosCarrito.Count<1) @onclick="@(()=>NavigationManager.NavigateTo("/carrito"))" />
                 </div>
             </Content>
         </TooltipTemplates>
@@ -236,7 +236,7 @@ else
 
     private string contenidoBoton()
     {
-        if (totalCarrito() > 0) return "Comprar";
+        if (totalCarrito() > 0) return "Ver mi carrito";
         else return "Carrito vacío";
     }
 

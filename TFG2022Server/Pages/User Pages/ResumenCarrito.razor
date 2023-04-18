@@ -1,0 +1,294 @@
+﻿@page "/carrito"
+
+@using Syncfusion.Blazor.Notifications
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons
+@using TFG2022Server.Extensions
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Grids
+@using TFG2022Server.Pages.Components
+@using TFG2022Server.Data
+
+@inject ProtectedLocalStorage LocalStorage
+@inject ILineaCarritoService LineaCarritoService
+@inject IPedidoService PedidoService
+@inject IFacturaService FacturaService
+@inject IPagoService PagoService
+@inject IProductoService ProductoService
+@inject IFamiliaProductoService FamiliaProductoService
+@inject IUsuarioService UsuarioService
+@inject ICarritoService CarritoService
+@inject NavigationManager NavigationManager
+
+@if (@waitForUser() == null)
+{
+    NavigationManager.NavigateTo("", forceLoad: true);
+}
+else
+{
+    <h3>Mi carrito</h3>
+
+    @if (@listaProductosCarrito != null)
+    {
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Tu carrito</th>
+                    <th>IVA</th>
+                    <th>Precio /ud. sin IVA</th>
+                    <th>Precio /ud. final</th>
+                    <th>Cantidad</th>
+                    <th>Importe total (IVA incluido)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProductoModel producto in listaProductosCarrito)
+                {
+                    <tr>
+                        <td>
+                            <img src="@producto.UrlImagen" height="40"> <text style="text-overflow: ellipsis">@producto.Nombre</text>
+                        </td>
+                        <td>@producto.Iva %</td>
+                        <td>@producto.Precio €</td>
+                        <td>@FinalPriceCalculator.FinalPrice(producto) €</td>
+                        <td>
+                            <div>@cantidadDeProducto(@producto, @filteredLineaCarritoData)</div>
+                            <div style="text-align: center">
+                                <CascadingValue Value="this"><LineaCarritoIncrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                                <CascadingValue Value="this"><LineaCarritoDecrease producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                                <CascadingValue Value="this"><LineaCarritoRemove producto="@producto" carrito="@idCarrito" listaLineas="@filteredLineaCarritoData" /></CascadingValue>
+                            </div>
+                        </td>
+                        <td>@totalProducto(@FinalPriceCalculator.FinalPrice(producto),@cantidadDeProducto(@producto, @filteredLineaCarritoData)) €</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div>
+            <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
+        </div>
+        <div>
+            <SfButton IsPrimary=true @onclick="@(()=>NavigationManager.NavigateTo("/compra"))">Realizar pedido</SfButton>
+        </div>
+    }
+
+}
+
+<style>
+
+    .styled-table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        background-color: white;
+    }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+            max-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+            .styled-table tbody tr:nth-of-type(even) {
+                background-color: #f3f3f3;
+            }
+
+            .styled-table tbody tr:nth-of-type(odd) {
+                background-color: white;
+            }
+
+            .styled-table tbody tr:last-of-type {
+                border-bottom: 2px solid #009879;
+            }
+
+
+    .e-card {
+        display: flex;
+        width: 100%;
+        margin: auto;
+    }
+
+    .e-card-step {
+        background-color: lightgrey;
+        display: flex;
+        width: 100%;
+        margin: auto;
+    }
+
+    .e-card-header-caption .e-card-header-title {
+        font-size: 20px;
+        font-family: Helvetica, 'Segoe UI';
+        font-weight: bold;
+    }
+
+    .e-card-content {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 50px;
+    }
+
+    .float-container {
+        border: 3px solid #fff;
+        padding: 20px;
+    }
+
+    .float-child {
+        width: 33%;
+        float: left;
+        padding: 20px;
+    }
+</style>
+
+@code {
+    private UsuarioModel userModel = new();
+
+    public Usuario user { get; set; }
+    private string storedUserEmail { get; set; }
+    private int idCarrito { get; set; }
+    private int step { get; set; }
+    private bool acceptCondiciones = false;
+    private bool pedidoVacio { get; set; }
+    private bool alertThatHasntAcceptCondiciones = false;
+
+    private List<LineaCarritoModel>? lineaCarritoData { get; set; }
+    private List<ProductoModel>? listaProductosCarrito { get; set; }
+    private List<LineaCarritoModel>? filteredLineaCarritoData { get; set; }
+
+    private string metodoDePago = "";
+
+    private Pedido newPedido = new Pedido();
+
+    protected override async Task OnInitializedAsync()
+    {
+        step = 1;
+        await waitForUser();
+        user = await UsuarioService.ReadUserbyEmail(storedUserEmail);
+        idCarrito = await getIdCarrito(user);
+        lineaCarritoData = await LineaCarritoService.GetLineaCarritos();
+        filteredLineaCarritoData = await filtrarLineasCarrito(lineaCarritoData, user);
+        listaProductosCarrito = await listaLineaCarritosToProductos(filteredLineaCarritoData);
+        pedidoVacio = listaProductosCarrito.Count() < 1;
+    }
+
+    private async Task<string> waitForUser()
+    {
+        var result = await LocalStorage.GetAsync<string>("user");
+        storedUserEmail = result.Success ? result.Value : null;
+
+        return storedUserEmail;
+    }
+
+    private async Task<List<ProductoModel>> listaLineaCarritosToProductos(List<LineaCarritoModel> listaLineaCarritos)
+    {
+        var result = new List<ProductoModel>();
+        try
+        {
+            if (listaLineaCarritos != null)
+            {
+                var listaProductos = await ProductoService.GetProductos();
+                foreach (var linea in listaLineaCarritos)
+                {
+                    foreach (var producto in listaProductos)
+                    {
+                        if (linea.ProductoLineaCarrito == producto.ProductoId)
+                        {
+                            result.Add(producto);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        catch (Exception)
+        {
+            return result;
+        }
+    }
+
+    private async Task<List<LineaCarritoModel>> filtrarLineasCarrito(List<LineaCarritoModel> listalc, Usuario usuario)
+    {
+        var result = new List<LineaCarritoModel>();
+        foreach (var linea in listalc)
+        {
+
+            if (linea.CarritoLineaCarrito.ToString() == idCarrito.ToString())
+            {
+                result.Add(linea);
+            }
+        }
+        return result;
+    }
+
+    private async Task<int> getIdCarrito(Usuario user)
+    {
+        try
+        {
+            return (await CarritoService.GetCarritoByUser(user.UsuarioId)).CarritoId;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private int cantidadDeProducto(ProductoModel producto, List<LineaCarritoModel> lineaCarr)
+    {
+        foreach (var item in lineaCarr)
+        {
+            if (item.ProductoLineaCarrito == producto.ProductoId) return item.Cantidad;
+        }
+        return 0;
+    }
+
+    private double totalCarrito()
+    {
+        double result = 0;
+        if (filteredLineaCarritoData != null && listaProductosCarrito != null)
+        {
+            foreach (var lincarr in filteredLineaCarritoData)
+            {
+                foreach (var producto in listaProductosCarrito)
+                {
+                    if (lincarr.ProductoLineaCarrito == producto.ProductoId)
+                        result = result + (FinalPriceCalculator.FinalPrice(producto)) * lincarr.Cantidad;
+                }
+            }
+        }
+        return Math.Round(result, 2);
+    }
+
+    private double totalPedido()
+    {
+
+        return (totalCarrito() + PedidoService.GetCosteEnvio());
+    }
+
+    private double totalProducto(double productoPrecio, int lineaCantidad)
+    {
+        return Math.Round(productoPrecio * lineaCantidad, 2);
+    }
+
+    public void RefreshState()
+    {
+        NavigationManager.NavigateTo("/refresh/carrito");//this.StateHasChanged();
+    }
+
+
+}
