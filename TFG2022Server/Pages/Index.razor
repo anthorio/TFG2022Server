@@ -19,13 +19,12 @@
 @inject ILineaCarritoService LineaCarritoService
 @inject ProtectedLocalStorage LocalStorage
 @inject IUsuarioService UsuarioService
-
+<linkhref ="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
 <div class="col-lg-4 control-section">
     <SfToast @ref="ToastObj" ID="toast_type">
         <ToastPosition X="@ToastPosition"></ToastPosition>
     </SfToast>
 </div>
-
 <SfTab @bind-SelectedItem="@SelectedTab">
     <TabItems>
         <TabItem>

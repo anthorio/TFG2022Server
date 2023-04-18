@@ -17,6 +17,7 @@
 @inject IPedidoService PedidoService
 @inject IFacturaService FacturaService
 @inject IPagoService PagoService
+@inject IModalService modal
 
 <h3>Pasarela de Compra</h3>
 
@@ -296,7 +297,7 @@ else
                 <SfButton @onclick="@(()=>NavigationManager.NavigateTo(""))">Volver y seguir comprando</SfButton>
             </div>
             <div class="float-child">
-                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToStep3" Disabled=@(@metodoDePago=="")>Terminar y pagar</SfButton>
+                <SfButton IsPrimary="true" CssClass="e-outline" @onclick="goToPagar" Disabled=@(@metodoDePago=="")>Pagar</SfButton>
             </div>
         </div>
     }
@@ -380,6 +381,10 @@ else
         width: 33%;
         float: left;
         padding: 20px;
+    }
+
+    .custom-modal-overlay {
+        background-color: rgba(255, 0, 0, 0.5);
     }
 </style>
 
@@ -543,6 +548,13 @@ else
             throw;
         }
         step = 3;
+    }
+
+    private async Task goToPagar()
+    {
+        if (metodoDePago == "bizum") modal.Show<PagoBizum>("Pago con Bizum", new ModalOptions() { Size = ModalSize.Large, OverlayCustomClass = "custom-modal-overlay" });
+        else modal.Show<PagoTarjeta>("Pago con tarjeta", new ModalOptions(){Size = ModalSize.Large});
+        goToStep3();
     }
 
     protected async Task<Pedido> CreatePedido()

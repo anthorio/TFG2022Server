@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ builder.Services.AddSingleton<ExportService>();
 builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
 
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddBlazoredModal();
 
 builder.Services.AddScoped<IAlbaranService, AlbaranService>();
 builder.Services.AddScoped<ICarritoService, CarritoService>();
